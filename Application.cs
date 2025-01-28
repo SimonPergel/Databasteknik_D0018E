@@ -3,6 +3,8 @@ using System.Data.SqlClient;
 
 class Application {
     static void main {
+
+        console.WriteLine("hello");
         string connectionString = "Server=16.170.225.238;Database=Shop;User Id=foo;Password=hejhej";
         using (SqlConnection connection = new SqlConnection(connectionstring)) {
             connection.open();
