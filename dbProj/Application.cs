@@ -6,7 +6,7 @@ public class Application
     public static void Main() 
     {
         Console.WriteLine("Hello");
-        string connectionString = "Server=16.170.225.238;Database=Shop;User Id=foo;Password=hejhej";
+        string connectionString = "Server=16.170.225.238, 1433;Database=Shop;User Id=foo;Password=hejhej;";
         using (SqlConnection connection = new SqlConnection(connectionString)) 
         {
             connection.Open(); 

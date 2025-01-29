@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "dqSLpglHyo+5yEBj3YJGaHxjz7pJU8aRxE+4hmt/pGRvGWxjlYh1QqbNY57Es4JDgYK8y40ttcYEHaP/EyLaPA==",
+  "dgSpecHash": "UBI9lxMJF2I=",
   "success": true,
-  "projectFilePath": "C:\\Users\\arvid\\Documents\\d0018e\\dbproj\\dbProj.csproj",
+  "projectFilePath": "C:\\Users\\arvid\\Documents\\d0018e\\Databasteknik_D0018E\\dbProj\\dbProj.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\arvid\\.nuget\\packages\\runtime.native.system.data.sqlclient.sni\\4.4.0\\runtime.native.system.data.sqlclient.sni.4.4.0.nupkg.sha512",
     "C:\\Users\\arvid\\.nuget\\packages\\runtime.win-arm64.runtime.native.system.data.sqlclient.sni\\4.4.0\\runtime.win-arm64.runtime.native.system.data.sqlclient.sni.4.4.0.nupkg.sha512",
