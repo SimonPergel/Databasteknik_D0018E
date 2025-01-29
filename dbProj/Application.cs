@@ -31,7 +31,7 @@ class Application {
         }
     }
 
-    [JS]
+    [JSInvokable]
     static void insertIntoCart(int Order_id, int Product_id, int Quantity, int Price) {
         string SQLQuery = "INSERT INTO Carts (Order_id, Product_id, Quantity, Price) VALUES (" + Order_id + ", " + Product_id + ", " + Quantity + ", " + Price + ");";
         makeConnection(SQLQuery);
