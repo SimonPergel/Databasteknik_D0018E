@@ -104,4 +104,10 @@ class Application {
         string SQLQuery = "UPDATE Products SET Price = " + newPrice +  " WHERE Product_name ='" + name +  "';";            //add new product to database if admin privileges exist in session
         makeConnection(SQLQuery);
     }
+
+    static int hashAuth(string password){
+        int hash = password.GetHashCode();
+        return hash;
+    }
+
 }
