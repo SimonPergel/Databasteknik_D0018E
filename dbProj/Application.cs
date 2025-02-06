@@ -1,3 +1,4 @@
+/*
 using System.Net;
 using MySql.Data.MySqlClient;
 using Microsoft.JSInterop;
@@ -14,7 +15,7 @@ class Application {
         //InsertProduct("'rubberBall'", 10, 1, 5);
         //addProductQuantity("rubberBall", 5);
         //depleteProductQuantity("rubberBall", 2);
-        alterProductPrice("rubberBall", 1337);
+        //alterProductPrice("rubberBall", 1337);
         //insertIntoCart(1, 2, 9, 16);
         //updateCarts(2, 2, 7, 20);
     }
@@ -48,11 +49,14 @@ class Application {
         string SQLQuery = "UPDATE Users SET Balance = Balance + " + Math + " WHERE Account_name = " + AcctName + ";";
         makeConnection(SQLQuery);
     }
+
     [JSInvokable]
-    static void /* bool*/ checkAdmin(char AcctName) {           //check if admin privileges should be granted during session
+    static void /* bool*/ 
+    /*checkAdmin(char AcctName) {           //check if admin privileges should be granted during session
         string SQLQuery = "SELECT role FROM Users WHERE role = 'admin';";    //NOT FUNCTIONAL YET 
     }
-
+*/
+/*
     //ORDER METHODS
     [JSInvokable]
     static void AlterOrderStatus() {            //switches  order status between finished, pending or cancelled
@@ -111,3 +115,4 @@ class Application {
     }
 
 }
+*/
