@@ -79,9 +79,9 @@
 /home/gabaxh/Databasteknik_D0018E/WebServer/obj/Debug/net8.0/staticwebassets/msbuild.buildTransitive.WebServer.props
 /home/gabaxh/Databasteknik_D0018E/WebServer/obj/Debug/net8.0/staticwebassets.pack.json
 /home/gabaxh/Databasteknik_D0018E/WebServer/obj/Debug/net8.0/scopedcss/bundle/WebServer.styles.css
-/home/gabaxh/Databasteknik_D0018E/WebServer/obj/Debug/net8.0/WebServer.csproj.Up2Date
 /home/gabaxh/Databasteknik_D0018E/WebServer/obj/Debug/net8.0/WebServer.dll
 /home/gabaxh/Databasteknik_D0018E/WebServer/obj/Debug/net8.0/refint/WebServer.dll
 /home/gabaxh/Databasteknik_D0018E/WebServer/obj/Debug/net8.0/WebServer.pdb
 /home/gabaxh/Databasteknik_D0018E/WebServer/obj/Debug/net8.0/WebServer.genruntimeconfig.cache
 /home/gabaxh/Databasteknik_D0018E/WebServer/obj/Debug/net8.0/ref/WebServer.dll
+/home/gabaxh/Databasteknik_D0018E/WebServer/obj/Debug/net8.0/WebServer.csproj.CopyComplete

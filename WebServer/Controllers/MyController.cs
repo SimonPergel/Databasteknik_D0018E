@@ -16,14 +16,6 @@ public static class Globals {
 [ApiController]
 [Route("api/mycontroller")]
 public class MyController : ControllerBase {
-//    static void Main() {
-        //InsertProduct("'rubberBall'", 10, 1, 5);
-        //addProductQuantity("rubberBall", 5);
-        //depleteProductQuantity("rubberBall", 2);
-        //alterProductPrice("rubberBall", 1337);
-        //insertIntoCart(1, 2, 9, 16);
-        //updateCarts(2, 2, 7, 20);
-//    }
     [HttpGet("makeconnection")]
     static void makeConnection(string SQLQuery) {
         Console.WriteLine("Connecting to MySQL...");
@@ -55,11 +47,20 @@ public class MyController : ControllerBase {
             return BadRequest(result);
         }  
     }
+
     [HttpGet("balanceusermath")]
-    public static void balanceUserMath(char AcctName, int Math) {          //decrease or increase balance based on deposits or purchases
-        string SQLQuery = "UPDATE Users SET Balance = Balance + " + Math + " WHERE Account_name = " + AcctName + ";";
-        makeConnection(SQLQuery);
+    public IActionResult balanceUserMath(string acctName, int math) {          //decrease or increase balance based on deposits or purchases
+        string SQLQuery = "UPDATE Users SET Balance = Balance + " + math + " WHERE Account_name = " + acctName + ";";
+        try {
+            makeConnection(SQLQuery);
+            var result = new { Message = "User balanced changed successfully!", acctName, math};
+            return Ok(result);
+        } catch (Exception exception) {
+            var result = new { Message = exception.Message};
+            return BadRequest(result);
+        }
     }
+
     [HttpGet("checkadmin")]
     public static void /* bool*/ checkAdmin(char AcctName) {           //check if admin privileges should be granted during session
         string SQLQuery = "SELECT role FROM Users WHERE role = 'admin';";    //NOT FUNCTIONAL YET 
@@ -74,48 +75,107 @@ public class MyController : ControllerBase {
     //CART METHODS
 
     [HttpGet("insertintocart")]
-    public static void insertIntoCart(int Order_id, int Product_id, int Quantity, int Price) {
-        string SQLQuery = "INSERT INTO Carts (Order_id, Product_id, Quantity, Price) VALUES (" + Order_id + ", " + Product_id + ", " + Quantity + ", " + Price + ");";
-        makeConnection(SQLQuery);
+    public IActionResult insertIntoCart(int orderID, int productID, int quantity, int price) {
+        string SQLQuery = "INSERT INTO Carts (Order_id, Product_id, Quantity, Price) VALUES (" + orderID + ", " + productID + ", " + quantity + ", " + price + ");";
+        try {
+            makeConnection(SQLQuery);
+            var result = new { Message = "New cart inserted successfully!", orderID, productID, quantity, price};
+            return Ok(result);
+        } catch (Exception exception) {
+            var result = new { Message = exception.Message};
+            return BadRequest(result);
+        }
     }
+
     [HttpGet("deletefromcart")]
-    public static void deleteFromCart(int Purchase_id) {
-        string SQLQuery = "DELETE FROM Carts WHERE Purchase_id = " + Purchase_id;
-        makeConnection(SQLQuery);
+    public IActionResult deleteFromCart(int purchaseID) {
+        string SQLQuery = "DELETE FROM Carts WHERE Purchase_id = " + purchaseID + ";";
+        try {
+            makeConnection(SQLQuery);
+            var result = new { Message = "Cart deleted successfully!", purchaseID};
+            return Ok(result);      
+        } catch (Exception exception) {
+            var result = new { Message = exception.Message};
+            return BadRequest(result);
+        }
     }
+
     [HttpGet("updatecarts")]
-    public IActionResult updateCarts(int Orderid, int Productid, int Quantity, int Price) {
-        string SQLQuery = "UPDATE Carts SET Order_id = " + Orderid + ", Product_id = " + Productid + ", Quantity = " + Quantity + ", Price = " + Price + "WHERE Purchase_id = " + Orderid + ";";
-        makeConnection(SQLQuery);
-        var result = new { Message = "Cart updated successfully!", Orderid, Productid, Quantity, Price };
-        return Ok(result);
+    public IActionResult updateCarts(int orderID, int productID, int quantity, int price) {
+        string SQLQuery = "UPDATE Carts SET Order_id = " + orderID + ", Product_id = " + productID + ", Quantity = " + quantity + ", Price = " + price + " WHERE Purchase_id = " + orderID + ";";
+        try {
+            makeConnection(SQLQuery);
+            var result = new { Message = "Cart updated successfully!", orderID, productID, quantity, price };
+            return Ok(result);
+        } catch (Exception exception) {
+            var result = new { Message = exception.Message};
+            return BadRequest(result);
+        }
     }
 
     //PRODUCT Methods
     [HttpGet("insertproduct")]
-    public static void InsertProduct( string name,  int Quantity, int in_stock, int Price) {
-        string SQLQuery = "INSERT INTO Products (Product_name, Quantity, In_stock, Price) VALUES ('" + name + "', " + Quantity + ", " + in_stock + ", " + Price + ");";             //add new product to database if admin privileges exist in session
-        makeConnection(SQLQuery);
+    public IActionResult InsertProduct( string name,  int quantity, int inStock, int price) {
+        string SQLQuery = "INSERT INTO Products (Product_name, Quantity, In_stock, Price) VALUES ('" + name + "', " + quantity + ", " + inStock + ", " + price + ");";             //add new product to database if admin privileges exist in session
+        try {
+            makeConnection(SQLQuery);
+            var result = new { Message = "Product inserted successfully!", name, quantity, inStock, price};
+            return Ok(result);
+        } catch (Exception exception) {
+            var result = new { Message = exception.Message};
+            return BadRequest(result);
+        }
     }
-    [HttpGet("removeproduct")]
-    public static void removeProduct(string name) {            // remove product from sale if  needs be
-        string SQLQuery = "DELETE FROM Products WHERE Product_name =" + name +  ";";            //add new product to database if admin privileges exist in session
-        makeConnection(SQLQuery);
-    }
-    [HttpGet("addproductquantity")]
-    public static void addProductQuantity(string name, int plusQuantity) {
-        string SQLQuery = "UPDATE Products SET QUANTITY = QUANTITY + " + plusQuantity +  " WHERE Product_name ='" + name +  "';";            //add new product to database if admin privileges exist in session
-        makeConnection(SQLQuery);
-    }
-    [HttpGet("depleteproductquantity")]
-    public static void depleteProductQuantity(string name, int minusQuantity) {
-        string SQLQuery = "UPDATE Products SET QUANTITY = QUANTITY - " + minusQuantity +  " WHERE Product_name ='" + name +  "';";            //add new product to database if admin privileges exist in session
-        makeConnection(SQLQuery);
 
+    [HttpGet("removeproduct")]
+    public IActionResult removeProduct(string name) {            // remove product from sale if  needs be
+        string SQLQuery = "DELETE FROM Products WHERE Product_name =" + name +  ";";            //add new product to database if admin privileges exist in session
+        try {
+            makeConnection(SQLQuery);
+            var result = new { Message = "Product removed successfully!", name};
+            return Ok(result);
+        } catch (Exception exception) {
+            var result = new { Message = exception.Message};
+            return BadRequest(result);
+        }
     }
+
+    [HttpGet("addproductquantity")]
+    public IActionResult addProductQuantity(string name, int plusQuantity) {
+        string SQLQuery = "UPDATE Products SET QUANTITY = QUANTITY + " + plusQuantity +  " WHERE Product_name = " + "'" + name + "'" +  ";";            //add new product to database if admin privileges exist in session
+        try {
+            makeConnection(SQLQuery);
+            var result = new { Message = "Product quantity increased successfully!", name, plusQuantity};
+            return Ok(result);
+        } catch (Exception exception) {
+            var result = new { Message = exception.Message};
+            return BadRequest(result);
+        }
+    }
+
+    [HttpGet("depleteproductquantity")]
+    public IActionResult depleteProductQuantity(string name, int minusQuantity) {
+        string SQLQuery = "UPDATE Products SET QUANTITY = QUANTITY - " + minusQuantity +  " WHERE Product_name ='" + name +  "';";            //add new product to database if admin privileges exist in session
+        try {
+            makeConnection(SQLQuery);
+            var result = new { Message = "Product quantity decreased successfully!", name, minusQuantity};
+            return Ok(result);
+        } catch (Exception exception) {
+            var result = new { Message = exception.Message};
+            return BadRequest(result);
+        }
+    }
+
     [HttpGet("alterproductprice")]
-    public static void alterProductPrice(string name, int newPrice) {
+    public IActionResult alterProductPrice(string name, int newPrice) {
         string SQLQuery = "UPDATE Products SET Price = " + newPrice +  " WHERE Product_name ='" + name +  "';";            //add new product to database if admin privileges exist in session
-        makeConnection(SQLQuery);
+        try {
+            makeConnection(SQLQuery);
+            var result = new { Message = "Product price updated successfully!", name, newPrice};
+            return Ok(result);
+        } catch (Exception exception) {
+            var result = new { Message = exception.Message};
+            return BadRequest(result);
+        }
     }
 }
