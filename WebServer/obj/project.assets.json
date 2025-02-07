@@ -9151,6 +9151,11 @@
         "warnAsError": [
           "NU1605"
         ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
       }
     },
     "frameworks": {
@@ -9205,7 +9210,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.112/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/home/gabaxh/.dotnet/sdk/8.0.405/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
