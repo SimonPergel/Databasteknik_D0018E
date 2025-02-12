@@ -84,4 +84,4 @@
 /home/gabaxh/Databasteknik_D0018E/WebServer/obj/Debug/net8.0/WebServer.pdb
 /home/gabaxh/Databasteknik_D0018E/WebServer/obj/Debug/net8.0/WebServer.genruntimeconfig.cache
 /home/gabaxh/Databasteknik_D0018E/WebServer/obj/Debug/net8.0/ref/WebServer.dll
-/home/gabaxh/Databasteknik_D0018E/WebServer/obj/Debug/net8.0/WebServer.csproj.Up2Date
+/home/gabaxh/Databasteknik_D0018E/WebServer/obj/Debug/net8.0/WebServer.csproj.CopyComplete

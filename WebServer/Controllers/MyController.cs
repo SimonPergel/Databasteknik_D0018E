@@ -1,12 +1,5 @@
-using System.Net;
 using MySql.Data.MySqlClient;
-using Microsoft.JSInterop;
-using System.Net.Mail;
-using System.Runtime.InteropServices.JavaScript;
-using System.Threading.Tasks;
-using System;
 using Microsoft.AspNetCore.Mvc;
-using Mysqlx;
 // Use MySql.Data for MySQL
 public static class Globals {
     // Correct MySQL connection string
