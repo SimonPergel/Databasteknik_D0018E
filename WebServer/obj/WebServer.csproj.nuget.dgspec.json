@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\arvid\\Documents\\d0018e\\Databasteknik_D0018E\\WebServer\\WebServer.csproj": {}
+    "/home/gabaxh/Databasteknik_D0018E/WebServer/WebServer.csproj": {}
   },
   "projects": {
-    "C:\\Users\\arvid\\Documents\\d0018e\\Databasteknik_D0018E\\WebServer\\WebServer.csproj": {
+    "/home/gabaxh/Databasteknik_D0018E/WebServer/WebServer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\arvid\\Documents\\d0018e\\Databasteknik_D0018E\\WebServer\\WebServer.csproj",
+        "projectUniqueName": "/home/gabaxh/Databasteknik_D0018E/WebServer/WebServer.csproj",
         "projectName": "WebServer",
-        "projectPath": "C:\\Users\\arvid\\Documents\\d0018e\\Databasteknik_D0018E\\WebServer\\WebServer.csproj",
-        "packagesPath": "C:\\Users\\arvid\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\arvid\\Documents\\d0018e\\Databasteknik_D0018E\\WebServer\\obj\\",
+        "projectPath": "/home/gabaxh/Databasteknik_D0018E/WebServer/WebServer.csproj",
+        "packagesPath": "/home/gabaxh/.nuget/packages/",
+        "outputPath": "/home/gabaxh/Databasteknik_D0018E/WebServer/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\arvid\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/home/gabaxh/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -32,11 +32,6 @@
           "warnAsError": [
             "NU1605"
           ]
-        },
-        "restoreAuditProperties": {
-          "enableAudit": "true",
-          "auditLevel": "low",
-          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -91,7 +86,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.405/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.112/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
