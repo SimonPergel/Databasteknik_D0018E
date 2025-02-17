@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class DataService {
-  private apiUrl = 'http:localhost:5201/api/mycontroller/getproductsadmin'; // Replace with your actual endpoint
+  private apiUrl = 'http://localhost:3000/getproductsadmin'; // Replace with your actual endpoint
 
   constructor(private http: HttpClient) { }
 

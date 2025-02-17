@@ -30,6 +30,8 @@ const app = express();
 app.use(cors());
 
 // Array of routes to forward requests to corresponding API
+
+// 
 const routes = [
     { method: 'get', path: '/getproductsadmin', target: 'getproductsadmin' },
     { method: 'get', path: '/getproductsuser', target: 'getproductsuser' },

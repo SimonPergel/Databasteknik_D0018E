@@ -6,7 +6,7 @@ import { NgFor } from '@angular/common';
 
 @Component({
   selector: 'app-json-1',
-  imports: [CommonModule],
+  imports: [CommonModule, HttpClientModule],
   templateUrl: './json-1.component.html',
   styleUrl: './json-1.component.css'  
 })
