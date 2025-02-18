@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/home/gabaxh/Databasteknik_D0018E/WebServer/WebServer.csproj": {}
+    "/home/isoepe-1/Databasteknik_D0018E/WebServer/WebServer.csproj": {}
   },
   "projects": {
-    "/home/gabaxh/Databasteknik_D0018E/WebServer/WebServer.csproj": {
+    "/home/isoepe-1/Databasteknik_D0018E/WebServer/WebServer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/gabaxh/Databasteknik_D0018E/WebServer/WebServer.csproj",
+        "projectUniqueName": "/home/isoepe-1/Databasteknik_D0018E/WebServer/WebServer.csproj",
         "projectName": "WebServer",
-        "projectPath": "/home/gabaxh/Databasteknik_D0018E/WebServer/WebServer.csproj",
-        "packagesPath": "/home/gabaxh/.nuget/packages/",
-        "outputPath": "/home/gabaxh/Databasteknik_D0018E/WebServer/obj/",
+        "projectPath": "/home/isoepe-1/Databasteknik_D0018E/WebServer/WebServer.csproj",
+        "packagesPath": "/home/isoepe-1/.nuget/packages/",
+        "outputPath": "/home/isoepe-1/Databasteknik_D0018E/WebServer/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/gabaxh/.nuget/NuGet/NuGet.Config"
+          "/home/isoepe-1/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
