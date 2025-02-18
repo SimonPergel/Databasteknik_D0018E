@@ -1,180 +1,280 @@
-using System.Net;
 using MySql.Data.MySqlClient;
-using Microsoft.JSInterop;
-using System.Net.Mail;
-using System.Runtime.InteropServices.JavaScript;
-using System.Threading.Tasks;
-using System;
 using Microsoft.AspNetCore.Mvc;
-using Mysqlx;
+using WebServer.Models; 
+
 // Use MySql.Data for MySQL
 public static class Globals {
-    // Correct MySQL connection string
-    public static string connectionString = "Server=16.170.225.238;Port=3306;Database=Shop;User Id=foo;Password=hejhej;";
+    public static string connectionString = "Server=16.170.225.238;Port=3306;Database=Shop;User Id=foo;Password=hejhej;";   // Correct MySQL connection string.
 }
 
-[ApiController]
-[Route("api/mycontroller")]
+[ApiController]                 // Create a API Controller.
+[Route("api/mycontroller")]     // Define the route to the API Controller, the subpath has to have the same name as name of class.
 public class MyController : ControllerBase {
     [HttpGet("makeconnection")]
-    static void makeConnection(string SQLQuery) {
+    static void makeConnection(string SQLQuery) {                                               
         Console.WriteLine("Connecting to MySQL...");
-        using (MySqlConnection connection = new MySqlConnection(Globals.connectionString)) {
+        using (MySqlConnection connection = new MySqlConnection(Globals.connectionString)) {    // Creates a connection with the connection string.
             try {
                 connection.Open();
                 Console.WriteLine("Connected to MySQL successfully!");           
-                // Execute query
-                using (MySqlCommand command = new MySqlCommand(SQLQuery, connection)) {
-                    int rowsAffected = command.ExecuteNonQuery();
-                    Console.WriteLine($"{rowsAffected} row(s) inserted successfully.");
+                using (MySqlCommand command = new MySqlCommand(SQLQuery, connection)) {         // Creates the SQL command based on the SQLQuery.
+                    int rowsAffected = command.ExecuteNonQuery();                               // Executes the SQLQuery.
+                    Console.WriteLine($"{rowsAffected} row(s) inserted successfully.");         // Writes in Console how many rows in the table got affected.
                 }
-            } catch (Exception ex) {
-                Console.WriteLine($"An error occurred: {ex.Message}");
+            } catch (Exception exception) {                                                     // Catches an exception and writes the exception message in the Console.
+                Console.WriteLine($"An error occurred: {exception.Message}");
             }
         }
     }
 
+    static (MySqlConnection, MySqlDataReader) StartReader(string SQLQuery) {
+        MySqlConnection connection = new MySqlConnection(Globals.connectionString); // Makes a new connection to the database.
+        connection.Open();
+        MySqlCommand command = new MySqlCommand(SQLQuery, connection);              // Makes the command that should be executed on the database.
+        MySqlDataReader reader = command.ExecuteReader();                           // Executes the command via the reader.
+        return (connection, reader);                                                // Returns the reader so the calling method can handle variables separately, returns the connection so it can be closed.
+    }
+
     //USER METHODS
+
     [HttpGet("insertuser")]
-    public IActionResult InsertUser(string role, int shpcrtid, int balance, string acctname) {
+    public IActionResult InsertUser(string role, int shpcrtid, int balance, string acctname) { // Inserts a new user into the User table. Define role, shopping cart id, balance and account name.
+        // http://localhost:5201/api/mycontroller/insertuser?role=admin&shpcrtid=1&balance=1000&acctname=test
         string SQLQuery = "INSERT into Users (role, Shopping_Cart_id, Balance, Account_name) VALUES (" + "'" + role + "'" + ", " + shpcrtid + ", " + balance + ", " + "'" + acctname + "'" +");";
         try {
-            makeConnection(SQLQuery);
-            var result = new { Message = "User inserted successfully!", role, shpcrtid, balance, acctname };
-            return Ok(result);
-        } catch (Exception exception) {
+            makeConnection(SQLQuery);                                                                           // Makes the connection to the database and runs the SQLQuery.
+            var result = new { Message = "User inserted successfully!", role, shpcrtid, balance, acctname };    // TODO: Make better return message.
+            return Ok(result);                                                                                  // Returns a OK with a result message.
+        } catch (Exception exception) {                                                                         // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message};
             return BadRequest(result);
         }  
     }
 
+     [HttpGet("running")]
+     public IActionResult running(){                            // http://localhost:5201/api/mycontroller/running
+        var result = new { Message = "WebServer is running"};   // Check if the web server is running.
+            return Ok(result);
+     }
+
+
     [HttpGet("balanceusermath")]
-    public IActionResult balanceUserMath(string acctName, int math) {          //decrease or increase balance based on deposits or purchases
+    public IActionResult balanceUserMath(string acctName, int math) { // Decrease or increase balance based on deposits or purchases. Define account name and +/- value.
+        // http://localhost:5201/api/mycontroller/balanceusermath?acctName=test&math=100
         string SQLQuery = "UPDATE Users SET Balance = Balance + " + math + " WHERE Account_name = " + acctName + ";";
         try {
-            makeConnection(SQLQuery);
-            var result = new { Message = "User balanced changed successfully!", acctName, math};
-            return Ok(result);
-        } catch (Exception exception) {
+            makeConnection(SQLQuery);                                                               // Makes the connection to the database and runs the SQLQuery.
+            var result = new { Message = "User balanced changed successfully!", acctName, math};    // TODO: Make better return message.
+            return Ok(result);                                                                      // Returns a OK with a result message.
+        } catch (Exception exception) {                                                             // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message};
             return BadRequest(result);
         }
     }
 
     [HttpGet("checkadmin")]
-    public static void /* bool*/ checkAdmin(char AcctName) {           //check if admin privileges should be granted during session
+    public static void /* bool*/ checkAdmin(char AcctName) { // Check if admin privileges should be granted during session. Define account name.
         string SQLQuery = "SELECT role FROM Users WHERE role = 'admin';";    //NOT FUNCTIONAL YET 
     }
 
     //ORDER METHODS
-    [HttpGet("alterorderstatus")]
-    public static void AlterOrderStatus() {            //switches  order status between finished, pending or cancelled
 
+    [HttpGet("alterorderstatus")]
+    public static void AlterOrderStatus() { // Switches order status between finished, pending or cancelled.
     }
 
     //CART METHODS
 
     [HttpGet("insertintocart")]
-    public IActionResult insertIntoCart(int orderID, int productID, int quantity, int price) {
+    public IActionResult insertIntoCart(int orderID, int productID, int quantity, int price) { // Inserts a new cart into the Cart table. Define order id, product id, quantity and price.
+    // http://localhost:5201/api/mycontroller/insertintocart?orderID=1&productID=2&quantity=20&price=15
         string SQLQuery = "INSERT INTO Carts (Order_id, Product_id, Quantity, Price) VALUES (" + orderID + ", " + productID + ", " + quantity + ", " + price + ");";
         try {
-            makeConnection(SQLQuery);
-            var result = new { Message = "New cart inserted successfully!", orderID, productID, quantity, price};
-            return Ok(result);
-        } catch (Exception exception) {
+            makeConnection(SQLQuery);                                                                               // Makes the connection to the database and runs the SQLQuery.
+            var result = new { Message = "New cart inserted successfully!", orderID, productID, quantity, price};   // TODO: Make better return message.
+            return Ok(result);                                                                                      // Returns a OK with a result message.
+        } catch (Exception exception) {                                                                             // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message};
             return BadRequest(result);
         }
     }
 
     [HttpGet("deletefromcart")]
-    public IActionResult deleteFromCart(int purchaseID) {
+    public IActionResult deleteFromCart(int purchaseID) { // Removes a cart from the Cart table. Define purchase id.
+    // http://localhost:5201/api/mycontroller/deletefromcart?purchaseID=1
         string SQLQuery = "DELETE FROM Carts WHERE Purchase_id = " + purchaseID + ";";
         try {
-            makeConnection(SQLQuery);
-            var result = new { Message = "Cart deleted successfully!", purchaseID};
-            return Ok(result);      
-        } catch (Exception exception) {
+            makeConnection(SQLQuery);                                                   // Makes the connection to the database and runs the SQLQuery.
+            var result = new { Message = "Cart deleted successfully!", purchaseID};     // TODO: Make better return message.
+            return Ok(result);                                                          // Returns a OK with a result message.
+        } catch (Exception exception) {                                                 // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message};
             return BadRequest(result);
         }
     }
 
     [HttpGet("updatecarts")]
-    public IActionResult updateCarts(int orderID, int productID, int quantity, int price) {
+    public IActionResult updateCarts(int orderID, int productID, int quantity, int price) { // Updates a cart in the Cart table, define order id, product id, quantity and price.
+    // http://localhost:5201/api/mycontroller/updatecarts?orderID=1&productID=2&quantity=14&price=7
         string SQLQuery = "UPDATE Carts SET Order_id = " + orderID + ", Product_id = " + productID + ", Quantity = " + quantity + ", Price = " + price + " WHERE Purchase_id = " + orderID + ";";
         try {
-            makeConnection(SQLQuery);
-            var result = new { Message = "Cart updated successfully!", orderID, productID, quantity, price };
-            return Ok(result);
-        } catch (Exception exception) {
+            makeConnection(SQLQuery);                                                                           // Makes the connection to the database and runs the SQLQuery.
+            var result = new { Message = "Cart updated successfully!", orderID, productID, quantity, price };   // TODO: Make better return message.
+            return Ok(result);                                                                                  // Returns a OK with a result message.
+        } catch (Exception exception) {                                                                         // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message};
             return BadRequest(result);
         }
     }
 
     //PRODUCT Methods
+
     [HttpGet("insertproduct")]
-    public IActionResult InsertProduct( string name,  int quantity, int inStock, int price) {
-        string SQLQuery = "INSERT INTO Products (Product_name, Quantity, In_stock, Price) VALUES ('" + name + "', " + quantity + ", " + inStock + ", " + price + ");";             //add new product to database if admin privileges exist in session
+    public IActionResult InsertProduct( string name,  int quantity, int inStock, int price) { // Insert a product into the Product table. Define name, quantity, in stock and price.
+        // http://localhost:5201/api/mycontroller/insertproduct?name=product1&quantity=10&inStock=5&price=100
+        string SQLQuery = "INSERT INTO Products (Product_name, Quantity, In_stock, Price) VALUES ('" + name + "', " + quantity + ", " + inStock + ", " + price + ");";
         try {
-            makeConnection(SQLQuery);
-            var result = new { Message = "Product inserted successfully!", name, quantity, inStock, price};
-            return Ok(result);
-        } catch (Exception exception) {
+            makeConnection(SQLQuery);                                                                           // Makes the connection to the database and runs the SQLQuery.
+            var result = new { Message = "Product inserted successfully!", name, quantity, inStock, price};     // TODO: Make better return message.
+            return Ok(result);                                                                                  // Returns a OK with a result message.
+        } catch (Exception exception) {                                                                         // Catches an exception and returns the exception message.
+            var result = new { Message = exception.Message};
+            return BadRequest(result);
+        }
+    }
+
+    [HttpGet("notforsale")]
+    public IActionResult removeProduct(string name) { // Removes a product from the Product table. Define name.
+    // http://localhost:5201/api/mycontroller/notforsale?name=Pencil
+        string SQLQuery = "UPDATE Products SET In_stock = 0 WHERE Product_name = " +name +   ";";
+        try {
+            makeConnection(SQLQuery);                                                       // Makes the connection to the database and runs the SQLQuery.
+            var result = new { Message = "Product removed from sale successfully!", name};  // TODO: Make better return message.
+            return Ok(result);                                                              // Returns a OK with a result message.
+        } catch (Exception exception) {                                                     // Catches an exception and returns the exception message.
+            var result = new { Message = exception.Message};
+            return BadRequest(result);
+        }
+    }
+
+    [HttpGet("forsale")]
+    public IActionResult forSale(string name) { // Update a product in the Product table to be in stock. Define name.
+    // http://localhost:5201/api/mycontroller/forsale?name=Pencil
+        string SQLQuery = "UPDATE Products SET In_stock = 1 WHERE Product_name = " +name +   ";";
+        try {
+            makeConnection(SQLQuery);                                                   // Makes the connection to the database and runs the SQLQuery.
+            var result = new { Message = "Product put on sale successfully!", name};    // TODO: Make better return message.
+            return Ok(result);                                                          // Returns a OK with a result message.
+        } catch (Exception exception) {                                                 // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message};
             return BadRequest(result);
         }
     }
 
     [HttpGet("removeproduct")]
-    public IActionResult removeProduct(string name) {            // remove product from sale if  needs be
-        string SQLQuery = "DELETE FROM Products WHERE Product_name =" + name +  ";";            //add new product to database if admin privileges exist in session
+    public IActionResult notForSale(string name) { // Removes a product in the Product table. Define name.
+    // http://localhost:5201/api/mycontroller/removeproduct?name=Pencil
+        string SQLQuery = "DELETE FROM Products WHERE Product_name =" + name +  ";";
         try {
-            makeConnection(SQLQuery);
-            var result = new { Message = "Product removed successfully!", name};
-            return Ok(result);
-        } catch (Exception exception) {
+            makeConnection(SQLQuery);                                               // Makes the connection to the database and runs the SQLQuery.
+            var result = new { Message = "Product removed successfully!", name};    // TODO: Make better return message.
+            return Ok(result);                                                      // Returns a OK with a result message.
+        } catch (Exception exception) {                                             // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message};
             return BadRequest(result);
         }
     }
 
     [HttpGet("addproductquantity")]
-    public IActionResult addProductQuantity(string name, int plusQuantity) {
-        string SQLQuery = "UPDATE Products SET QUANTITY = QUANTITY + " + plusQuantity +  " WHERE Product_name = " + "'" + name + "'" +  ";";            //add new product to database if admin privileges exist in session
+    public IActionResult addProductQuantity(string name, int plusQuantity) { // Updates a product in the Product table to add quantity. Define name and added quantity.
+    // http://localhost:5201/api/mycontroller/addproductquantity?name=Pencil&plusQuantity=10
+        string SQLQuery = "UPDATE Products SET QUANTITY = QUANTITY + " + plusQuantity +  " WHERE Product_name = " + "'" + name + "'" +  ";";
         try {
-            makeConnection(SQLQuery);
-            var result = new { Message = "Product quantity increased successfully!", name, plusQuantity};
-            return Ok(result);
-        } catch (Exception exception) {
+            makeConnection(SQLQuery);                                                                       // Makes the connection to the database and runs the SQLQuery.
+            var result = new { Message = "Product quantity increased successfully!", name, plusQuantity};   // TODO: Make better return message.
+            return Ok(result);                                                                              // Returns a OK with a result message.
+        } catch (Exception exception) {                                                                     // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message};
             return BadRequest(result);
         }
     }
 
     [HttpGet("depleteproductquantity")]
-    public IActionResult depleteProductQuantity(string name, int minusQuantity) {
-        string SQLQuery = "UPDATE Products SET QUANTITY = QUANTITY - " + minusQuantity +  " WHERE Product_name ='" + name +  "';";            //add new product to database if admin privileges exist in session
+    public IActionResult depleteProductQuantity(string name, int minusQuantity) { // Updates a product in the Product table to decrease quantity. Define name and decreased quantity.
+    // http://localhost:5201/api/mycontroller/depleteproductquantity?name=Pencil&minusQuantity=10
+        string SQLQuery = "UPDATE Products SET QUANTITY = QUANTITY - " + minusQuantity +  " WHERE Product_name ='" + name +  "';";
         try {
-            makeConnection(SQLQuery);
-            var result = new { Message = "Product quantity decreased successfully!", name, minusQuantity};
-            return Ok(result);
-        } catch (Exception exception) {
+            makeConnection(SQLQuery);                                                                       // Makes the connection to the database and runs the SQLQuery.
+            var result = new { Message = "Product quantity decreased successfully!", name, minusQuantity};  // TODO: Make better return message.
+            return Ok(result);                                                                              // Returns a OK with a result message.
+        } catch (Exception exception) {                                                                     // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message};
             return BadRequest(result);
         }
     }
 
     [HttpGet("alterproductprice")]
-    public IActionResult alterProductPrice(string name, int newPrice) {
-        string SQLQuery = "UPDATE Products SET Price = " + newPrice +  " WHERE Product_name ='" + name +  "';";            //add new product to database if admin privileges exist in session
+    public IActionResult alterProductPrice(string name, int newPrice) { // Updates a product in the Product table to change its price. Define name and new price.
+    // http://localhost:5201/api/mycontroller/alterproductprice?name=Pencil&newPrice=15
+        string SQLQuery = "UPDATE Products SET Price = " + newPrice +  " WHERE Product_name ='" + name +  "';";
         try {
-            makeConnection(SQLQuery);
-            var result = new { Message = "Product price updated successfully!", name, newPrice};
-            return Ok(result);
-        } catch (Exception exception) {
+            makeConnection(SQLQuery);                                                               // Makes the connection to the database and runs the SQLQuery.
+            var result = new { Message = "Product price updated successfully!", name, newPrice};    // TODO: Make better return message.
+            return Ok(result);                                                                      // Returns a OK with a result message.
+        } catch (Exception exception) {                                                             // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message};
+            return BadRequest(result);
+        }
+    }
+
+    // SELECT methods
+
+    [HttpGet("getproductsadmin")]
+    public IActionResult GetProducts() { // This retrieves all products regardless of in stock or not.
+    // http://localhost:5201/api/mycontroller/getproductsadmin
+        string SQLQuery = "SELECT * FROM Products;";
+        try {
+            List<Product> products = new List<Product>();       // Create a product object as a list for the reader to input to.
+            var (connection, reader) = StartReader(SQLQuery);   // Makes a connection to the database and starts a reader.
+            while (reader.Read()) {                             // Read each row and map to the Product object.
+                products.Add(new Product {
+                    Id = reader.GetInt32("Product_id"),         // Assuming column name 'Product_id'.
+                    Name = reader.GetString("Product_name"),
+                    Quantity = reader.GetInt32("Quantity"),
+                    InStock = reader.GetInt32("In_stock"),
+                    Price = reader.GetInt32("Price")
+                });
+            }
+            reader.Close();                                     // Closes the reader.
+            connection.Close();                                 // Closes the connection to the database.
+        return Ok(products);                                    // Returns the retrieved products as JSON.
+        } catch (Exception exception) {                         // Catches an exception and returns the exception message.
+            var result = new { Message = exception.Message };   
+            return BadRequest(result);
+        }
+    }
+
+    [HttpGet("getproductsuser")]
+    public IActionResult GetProductsUser() { // This retrieves all products in stock.
+    // http://localhost:5201/api/mycontroller/getproductsuser
+        string SQLQuery = "SELECT * FROM Products WHERE In_Stock = 1;";
+        try {
+            List<Product> products = new List<Product>();               // Create a product object as a list for the reader to input to.
+            var (connection, reader) = StartReader(SQLQuery);           // Makes a connection to the database and starts a reader.
+            while (reader.Read()) {                                     // Read each row and map to the Product object.
+                products.Add(new Product {
+                    Id = reader.GetInt32("Product_id"),                 // Assuming column name 'Product_id'.
+                    Name = reader.GetString("Product_name"),
+                    Quantity = reader.GetInt32("Quantity"),
+                    InStock = reader.GetInt32("In_stock"),
+                    Price = reader.GetInt32("Price")
+                });
+            }
+            reader.Close();                                             // Closes the reader.
+            connection.Close();                                         // Closes the connection to the database.
+            return Ok(products);                                        // Returns the retrieved products as JSON.
+        } catch (Exception exception) {                                 // Catches an exception and returns the exception message.
+            var result = new { Message = exception.Message };
             return BadRequest(result);
         }
     }
