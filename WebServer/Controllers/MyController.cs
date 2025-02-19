@@ -1,6 +1,7 @@
 using MySql.Data.MySqlClient;
 using Microsoft.AspNetCore.Mvc;
-using WebServer.Models; 
+using WebServer.Models;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 // Use MySql.Data for MySQL
 public static class Globals {
@@ -61,7 +62,7 @@ public class MyController : ControllerBase {
     [HttpGet("balanceusermath")]
     public IActionResult balanceUserMath(string acctName, int math) { // Decrease or increase balance based on deposits or purchases. Define account name and +/- value.
         // http://localhost:5201/api/mycontroller/balanceusermath?acctName=test&math=100
-        string SQLQuery = "UPDATE Users SET Balance = Balance + " + math + " WHERE Account_name = " + acctName + ";";
+        string SQLQuery = "UPDATE Users SET Balance = Balance + " + math + " WHERE Account_name = " + "'" + acctName + "';";
         try {
             makeConnection(SQLQuery);                                                               // Makes the connection to the database and runs the SQLQuery.
             var result = new { Message = "User balanced changed successfully!", acctName, math};    // TODO: Make better return message.
@@ -73,8 +74,29 @@ public class MyController : ControllerBase {
     }
 
     [HttpGet("checkadmin")]
-    public static void /* bool*/ checkAdmin(char AcctName) { // Check if admin privileges should be granted during session. Define account name.
-        string SQLQuery = "SELECT role FROM Users WHERE role = 'admin';";    //NOT FUNCTIONAL YET 
+    public IActionResult CheckAdmin(string AcctName) { // Check if admin privileges should be granted during session. Define account name.
+    // http://localhost:5201/api/mycontroller/checkadmin?acctname=Alice
+        string SQLQuery = "SELECT Account_name FROM Users WHERE role = 'admin';";
+        try {
+            List<Admin> users = new List<Admin>();
+            var (connection, reader) = StartReader(SQLQuery);                               // Makes a connection to the database and starts a reader.
+            while (reader.Read()) {                                                         // Read each row and map to the User object.
+                users.Add(new Admin {
+                    accountName = reader.GetString("Account_name"),                         // Reads in the account name into the Admin list
+                });
+            }
+            reader.Close();                                                                 // Closes the reader.
+            connection.Close();                                                             // Closes the connection to the database.
+            if (users.Exists(x => x.accountName == AcctName)) {
+                var goodresult = new { Message = "This account is an admin:", AcctName};    // Returns a message that says the requested account is an admin.
+                return Ok(goodresult);
+            }
+            var badresult = new { Message = "This account is not an admin:", AcctName};     // Returns a message when requested account is not an admin.
+            return Ok(badresult);                                   
+        } catch (Exception exception) {                                                     // Catches an exception and returns the exception message.
+            var result = new { Message = exception.Message };   
+            return BadRequest(result);
+        }
     }
 
     //ORDER METHODS
@@ -146,7 +168,7 @@ public class MyController : ControllerBase {
     [HttpGet("notforsale")]
     public IActionResult removeProduct(string name) { // Removes a product from the Product table. Define name.
     // http://localhost:5201/api/mycontroller/notforsale?name=Pencil
-        string SQLQuery = "UPDATE Products SET In_stock = 0 WHERE Product_name = " +name +   ";";
+        string SQLQuery = "UPDATE Products SET In_stock = 0 WHERE Product_name = " + "'" + name + "';";
         try {
             makeConnection(SQLQuery);                                                       // Makes the connection to the database and runs the SQLQuery.
             var result = new { Message = "Product removed from sale successfully!", name};  // TODO: Make better return message.
@@ -157,10 +179,24 @@ public class MyController : ControllerBase {
         }
     }
 
+    [HttpGet("updateproductname")]
+    public IActionResult UpdateProductName(string newName, string oldName) { // Updates a product name in the Product table. Define the new name and the old name.
+    // http://localhost:5201/api/mycontroller/updateproductname?newname=Eraser&oldname=Eraser1
+        string SQLQuery = "UPDATE Products SET Product_name = " + "'" + newName + "'" + "WHERE Product_name = " + "'" + oldName + "';";
+        try {
+            makeConnection(SQLQuery);                                                       // Makes the connection to the database and runs the SQLQuery.
+            var result = new { Message = "Product name updated successfully!", newName};    // TODO: Make better return message.
+            return Ok(result);                                                              // Returns a OK with a result message.
+        } catch (Exception exception) {                                                     // Catches an exception and returns the exception message.
+            var result = new { Message = exception.Message};
+            return BadRequest(result);
+        }
+    }
+
     [HttpGet("forsale")]
     public IActionResult forSale(string name) { // Update a product in the Product table to be in stock. Define name.
     // http://localhost:5201/api/mycontroller/forsale?name=Pencil
-        string SQLQuery = "UPDATE Products SET In_stock = 1 WHERE Product_name = " +name +   ";";
+        string SQLQuery = "UPDATE Products SET In_stock = 1 WHERE Product_name = " + "'" + name + "';";
         try {
             makeConnection(SQLQuery);                                                   // Makes the connection to the database and runs the SQLQuery.
             var result = new { Message = "Product put on sale successfully!", name};    // TODO: Make better return message.
@@ -174,7 +210,7 @@ public class MyController : ControllerBase {
     [HttpGet("removeproduct")]
     public IActionResult notForSale(string name) { // Removes a product in the Product table. Define name.
     // http://localhost:5201/api/mycontroller/removeproduct?name=Pencil
-        string SQLQuery = "DELETE FROM Products WHERE Product_name =" + name +  ";";
+        string SQLQuery = "DELETE FROM Products WHERE Product_name = " + "'" + name +  "';";
         try {
             makeConnection(SQLQuery);                                               // Makes the connection to the database and runs the SQLQuery.
             var result = new { Message = "Product removed successfully!", name};    // TODO: Make better return message.
@@ -188,7 +224,7 @@ public class MyController : ControllerBase {
     [HttpGet("addproductquantity")]
     public IActionResult addProductQuantity(string name, int plusQuantity) { // Updates a product in the Product table to add quantity. Define name and added quantity.
     // http://localhost:5201/api/mycontroller/addproductquantity?name=Pencil&plusQuantity=10
-        string SQLQuery = "UPDATE Products SET QUANTITY = QUANTITY + " + plusQuantity +  " WHERE Product_name = " + "'" + name + "'" +  ";";
+        string SQLQuery = "UPDATE Products SET QUANTITY = QUANTITY + " + plusQuantity +  " WHERE Product_name = " + "'" + name + "';";
         try {
             makeConnection(SQLQuery);                                                                       // Makes the connection to the database and runs the SQLQuery.
             var result = new { Message = "Product quantity increased successfully!", name, plusQuantity};   // TODO: Make better return message.
@@ -202,7 +238,7 @@ public class MyController : ControllerBase {
     [HttpGet("depleteproductquantity")]
     public IActionResult depleteProductQuantity(string name, int minusQuantity) { // Updates a product in the Product table to decrease quantity. Define name and decreased quantity.
     // http://localhost:5201/api/mycontroller/depleteproductquantity?name=Pencil&minusQuantity=10
-        string SQLQuery = "UPDATE Products SET QUANTITY = QUANTITY - " + minusQuantity +  " WHERE Product_name ='" + name +  "';";
+        string SQLQuery = "UPDATE Products SET QUANTITY = QUANTITY - " + minusQuantity +  " WHERE Product_name = " + "'" + name + "';";
         try {
             makeConnection(SQLQuery);                                                                       // Makes the connection to the database and runs the SQLQuery.
             var result = new { Message = "Product quantity decreased successfully!", name, minusQuantity};  // TODO: Make better return message.
@@ -216,7 +252,7 @@ public class MyController : ControllerBase {
     [HttpGet("alterproductprice")]
     public IActionResult alterProductPrice(string name, int newPrice) { // Updates a product in the Product table to change its price. Define name and new price.
     // http://localhost:5201/api/mycontroller/alterproductprice?name=Pencil&newPrice=15
-        string SQLQuery = "UPDATE Products SET Price = " + newPrice +  " WHERE Product_name ='" + name +  "';";
+        string SQLQuery = "UPDATE Products SET Price = " + newPrice +  " WHERE Product_name = " + "'" + name +  "';";
         try {
             makeConnection(SQLQuery);                                                               // Makes the connection to the database and runs the SQLQuery.
             var result = new { Message = "Product price updated successfully!", name, newPrice};    // TODO: Make better return message.
