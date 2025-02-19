@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -23,4 +23,16 @@ export class DataService {
   getRunning(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/running`);
   }
+
+  //Database Editing Methods
+
+  insertProduct(Name: string, Quantity: number, InStock: Number, Price: number): Observable<any> {
+    const product = { Name, Quantity, InStock, Price };
+    console.log("babababa");
+    return this.http.put<any>(`${this.apiUrl}/insertproduct`, product, {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+    });
+  }
+
+
 }

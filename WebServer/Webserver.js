@@ -28,6 +28,7 @@ const cors = require('cors');
 
 const app = express();
 app.use(cors());
+app.use(express.json());
 
 // Array of routes to forward requests to corresponding API
 
@@ -38,27 +39,42 @@ const routes = [
     { method: 'get', path: '/insertuser', target: 'insertuser' },
     { method: 'get', path: '/running', target: 'running' },  // This should forward to the correct backend API
     { method: 'get', path: '/balanceusermath', target: 'balanceusermath' },
-    { method: 'get', path: '/insertproduct', target: 'insertproduct' },
+    { method: 'put', path: '/insertproduct', target: 'insertproduct' },
     { method: 'get', path: '/notForSale', target: 'notForSale' },
     { method: 'get', path: '/forSale', target: 'forSale' },
     // Add other routes as needed
 ];
 
 // Dynamically create the routes
+
 routes.forEach(route => {
     app[route.method](route.path, async (req, res) => {
         try {
-            // Construct the full URL of the backend API
             const url = `http://localhost:5201/api/mycontroller/${route.target}`;
-            console.log(`Forwarding request to: ${url}`);  // Debugging log to see where the request is going
-            const response = await axios.get(url, { params: req.query });  // Pass the query params to the target
-            res.json(response.data);  // Send the response from the target API back to the client
+            console.log(`Forwarding request to: ${url}`);  // Log to see where the request is going
+
+            if (route.method === 'get') {
+                // For GET requests, forward query parameters
+                const response = await axios.get(url, { params: req.query });
+                res.json(response.data);  // Return the data from backend
+            } else if (route.method === 'post') {
+                // For POST requests, forward the request body
+                const response = await axios.post(url, req.body);
+                res.json(response.data);  // Return the data from backend
+            } else if (route.method === 'put') {
+                // For PUT requests, forward the request body
+                console.log("Forwarding PUT request with body:", req.body);
+                const response = await axios.put(url, req.body);
+                console.log("heres the returning body", response.data);
+                res.json(response.data);  // Return the data from backend
+            }
         } catch (error) {
             console.error('Error:', error.message);  // Log the error if something goes wrong
             res.status(500).json({ error: `Error fetching data from ${route.target}` });
         }
     });
 });
+
 
 // Start the Express server
 app.listen(3000, () => {

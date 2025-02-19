@@ -3,6 +3,7 @@ import { DataService } from '../../services/data.service';
 //import { HttpClientModule } from '@angular/common/http'; // Import HttpClientModule
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs/internal/Observable';
 
 @Component({
   selector: 'app-json-1',
@@ -18,8 +19,10 @@ export class json1component implements OnInit {
     private http: HttpClient  // Inject HttpClient via constructor
   ) {}
 
+
   ngOnInit(): void {
-    this.dataService.getProductsAdmin().subscribe(response => {
+    this.dataService.getRunning().subscribe(response => {
+      
       this.data = response;
     }, error => {
       console.error('Error fetching data:', error);

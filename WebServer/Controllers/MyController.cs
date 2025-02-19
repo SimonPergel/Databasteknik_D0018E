@@ -151,8 +151,8 @@ public class MyController : ControllerBase {
 
     //PRODUCT Methods
 
-    [HttpGet("insertproduct")]
-    public IActionResult InsertProduct( string name,  int quantity, int inStock, int price) { // Insert a product into the Product table. Define name, quantity, in stock and price.
+   /* [HttpGet("insertproduct")]
+   public IActionResult InsertProduct( string name,  int quantity, int inStock, int price) { // Insert a product into the Product table. Define name, quantity, in stock and price.
         // http://localhost:5201/api/mycontroller/insertproduct?name=product1&quantity=10&inStock=5&price=100
         string SQLQuery = "INSERT INTO Products (Product_name, Quantity, In_stock, Price) VALUES ('" + name + "', " + quantity + ", " + inStock + ", " + price + ");";
         try {
@@ -164,6 +164,57 @@ public class MyController : ControllerBase {
             return BadRequest(result);
         }
     }
+*/
+public class Product {
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public int Quantity { get; set; }
+    public int InStock { get; set; }
+    public decimal Price { get; set; }
+}
+
+[HttpPut("insertproduct")]
+public IActionResult InsertProduct([FromBody] Product product) {
+    if (product == null || product.Name == null || product.Quantity == null || product.InStock == null || product.Price == null) {
+        Console.WriteLine("Invalid product data.");
+        return BadRequest(new { Message = "Invalid product data." });
+    }
+
+    string SQLQuery = "INSERT INTO Products (Product_name, Quantity, In_stock, Price) VALUES (@name, @quantity, @inStock, @price)";
+   Console.WriteLine(product.Name + product.Quantity + product.InStock + product.Price);
+    Console.WriteLine("oogabooga");
+    try {
+        Console.WriteLine($" row(s) inserted?");
+        using (var connection = new MySqlConnection(Globals.connectionString))
+        {
+            Console.WriteLine($" row(s) inserted?");
+            connection.Open();
+            using (var command = new MySqlCommand(SQLQuery, connection))
+            {
+                 Console.WriteLine($" row(s) inserted?");
+                command.Parameters.AddWithValue("@name", (string)product.Name);
+                command.Parameters.AddWithValue("@quantity", (int)product.Quantity);
+                command.Parameters.AddWithValue("@inStock", (int)product.InStock);
+                command.Parameters.AddWithValue("@price", (int)product.Price);
+
+                int rowsAffected = command.ExecuteNonQuery();
+                Console.WriteLine($"{rowsAffected} row(s) inserted?");
+                if (rowsAffected > 0)
+                {
+                    var result = new { Message = "Product inserted successfully!", product.Name, product.Quantity, product.InStock, product.Price };
+                    return Ok(result);
+                }
+                else
+                {
+                    return BadRequest(new { Message = "No rows inserted. Check data validity." });
+                }
+            }
+        }
+    } catch (Exception exception) {
+        return BadRequest(new { Message = exception.Message });
+    }
+}
+
 
     [HttpGet("notforsale")]
     public IActionResult removeProduct(string name) { // Removes a product from the Product table. Define name.
