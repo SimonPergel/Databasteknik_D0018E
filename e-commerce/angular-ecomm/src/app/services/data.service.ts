@@ -24,10 +24,18 @@ export class DataService {
     return this.http.get<any>(`${this.apiUrl}/running`);
   }
 
-  depleteStockQuantity(Name: string, minusQuantity: number): Observable<any> {
-    const sale = { Name, minusQuantity };
+  depleteStockQuantity(productID: number, minusQuantity: number): Observable<any> {
+    const sale = { productID, minusQuantity };
     console.log("babababa");
     return this.http.put<any>(`${this.apiUrl}/depleteStockQuantity`, sale, {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+    });
+  }
+
+  cartCheckout(CartId: number, productID: number): Observable<any> {
+    const checkOut = {CartId, productID};
+    console.log("babababa");
+    return this.http.put<any>(`${this.apiUrl}/cartCheckout`, checkOut, {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
     });
   }
