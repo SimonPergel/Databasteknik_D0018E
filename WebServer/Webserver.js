@@ -34,15 +34,16 @@ app.use(express.json());
 
 // 
 const routes = [
-    { method: 'get', path: '/getproductsadmin', target: 'getproductsadmin' },
-    { method: 'get', path: '/getproductsuser', target: 'getproductsuser' },
+    { method: 'get', path: '/getproductsadmin', target: 'getproductsadmin' }, // DONE
+    { method: 'get', path: '/getproductsuser', target: 'getproductsuser' }, //DONE
     { method: 'get', path: '/insertuser', target: 'insertuser' },
-    { method: 'get', path: '/running', target: 'running' },  // This should forward to the correct backend API
+    { method: 'get', path: '/running', target: 'running' },  // This should forward to the correct backend API //DONE
     { method: 'get', path: '/balanceusermath', target: 'balanceusermath' },
     { method: 'put', path: '/insertproduct', target: 'insertproduct' },
     { method: 'get', path: '/notForSale', target: 'notForSale' },
     { method: 'get', path: '/forSale', target: 'forSale' },
-    { method: 'put', path: '/depleteStockQuantity', target: 'depleteStockQuantity'},
+    { method: 'put', path: '/depleteStockQuantity', target: 'depleteStockQuantity'}, //DONE
+    { method: 'put', path: '/cartCheckout', target: 'cartCheckout'}, //DONE
     // Add other routes as needed
 ];
 
@@ -51,6 +52,7 @@ const routes = [
 routes.forEach(route => {
     app[route.method](route.path, async (req, res) => {
         console.log("bababooey");
+        console.log(req.body);
         try {
             const url = `http://localhost:5201/api/mycontroller/${route.target}`;
             console.log(`Forwarding request to: ${url}`);  // Log to see where the request is going
