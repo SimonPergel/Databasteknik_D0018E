@@ -12,7 +12,7 @@ import { CartService } from '../../../services/cart.service';
       <div class="flex flex-col mt-2">
         <span class="text-md front-bold">{{ product().name}}</span>
         <span class="text-sm ">{{ '$' + product().price}}</span>
-        <app-primary-button label="Add to cart" class="mt-3" (buttonClicked)="cartService.addToCart(product())"/>
+        <app-primary-button label="Add to cart" class="mt-3" (buttonClicked)="cartService.insertIntoCart(1, 1, product())"/>
       </div>
 
       <span class="absolute top-2 right-3 text-sm font-bald" 
