@@ -29,6 +29,7 @@ public class MyController : ControllerBase {
     }
 
     static (MySqlConnection, MySqlDataReader) StartReader(string SQLQuery) {
+        Console.WriteLine("Connecting to MySQL...");
         MySqlConnection connection = new MySqlConnection(Globals.connectionString); // Makes a new connection to the database.
         connection.Open();
         MySqlCommand command = new MySqlCommand(SQLQuery, connection);              // Makes the command that should be executed on the database.
@@ -158,14 +159,28 @@ public IActionResult cartCheckout([FromBody] CheckoutRequest request)
     }
 }
 
+    [HttpGet("deletefromcart")]
+    public IActionResult deleteFromCart(int purchaseID) { // Removes a cart from the Cart table. Define purchase id.
+    // http://localhost:5201/api/mycontroller/deletefromcart?purchaseID=1
+        Console.WriteLine("deleteFromCart method is reached...");
+        string SQLQuery = "DELETE FROM Carts WHERE Purchase_id = " + purchaseID + ";";
+        try {
+            makeConnection(SQLQuery);                                                   // Makes the connection to the database and runs the SQLQuery.
+            var result = new { Message = "Cart deleted successfully!", purchaseID};     // TODO: Make better return message.
+            return Ok(result);                                                          // Returns a OK with a result message.
+        } catch (Exception exception) {                                                 // Catches an exception and returns the exception message.
+            var result = new { Message = exception.Message};
+            return BadRequest(result);
+        }
+    }
 
     [HttpGet("updatecarts")]
-    public IActionResult updateCarts(int orderID, int productID, int quantity, int price) { // Updates a cart in the Cart table, define order id, product id, quantity and price.
+    public IActionResult updateCarts(int cartID, int productID, int quantity, int price) { // Updates a cart in the Cart table, define order id, product id, quantity and price.
     // http://localhost:5201/api/mycontroller/updatecarts?orderID=1&productID=2&quantity=14&price=7
-        string SQLQuery = "UPDATE Carts SET Order_id = " + orderID + ", Product_id = " + productID + ", Quantity = " + quantity + ", Price = " + price + " WHERE Purchase_id = " + orderID + ";";
+        string SQLQuery = "UPDATE Carts SET Cart_id = " + cartID + ", Product_id = " + productID + ", Quantity = " + quantity + ", Price = " + price + " WHERE Purchase_id = " + cartID + ";";
         try {
             makeConnection(SQLQuery);                                                                           // Makes the connection to the database and runs the SQLQuery.
-            var result = new { Message = "Cart updated successfully!", orderID, productID, quantity, price };   // TODO: Make better return message.
+            var result = new { Message = "Cart updated successfully!", cartID, productID, quantity, price };   // TODO: Make better return message.
             return Ok(result);                                                                                  // Returns a OK with a result message.
         } catch (Exception exception) {                                                                         // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message};
@@ -407,4 +422,30 @@ public IActionResult DepleteStockQuantity([FromBody] ProductDepletionRequest req
         var result = new { Message = "WebServer is running"};   // Check if the web server is running.
             return Ok(result);
      }
+
+    [HttpGet("getcarts")]
+    public IActionResult GetCarts(int productid) { // This retrieves all products in stock.
+    // http://localhost:5201/api/mycontroller/getcarts?productid=5
+        Console.WriteLine("getCarts function is reached");
+        string SQLQuery = "SELECT * FROM Carts WHERE Product_id = " + productid + ";";
+        try {
+            List<Cart> carts = new List<Cart>();               // Create a product object as a list for the reader to input to.
+            var (connection, reader) = StartReader(SQLQuery);           // Makes a connection to the database and starts a reader.
+            while (reader.Read()) {                                     // Read each row and map to the Product object.
+                carts.Add(new Cart {
+                    cartID = reader.GetInt32("Cart_id"),                 // Assuming column name 'Product_id'.
+                    productID = reader.GetInt32("Product_id"),
+                    Quantity = reader.GetInt32("Quantity"),
+                    Price = reader.GetInt32("Price"),
+                    purchaseID = reader.GetInt32("Purchase_id")
+                });
+            }
+            reader.Close();                                             // Closes the reader.
+            connection.Close();                                         // Closes the connection to the database.
+            return Ok(carts);                                           // Returns the retrieved products as JSON.
+        } catch (Exception exception) {                                 // Catches an exception and returns the exception message.
+            var result = new { Message = exception.Message };
+            return BadRequest(result);
+        }
+    }
 }

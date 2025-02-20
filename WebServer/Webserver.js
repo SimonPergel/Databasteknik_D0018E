@@ -44,6 +44,11 @@ const routes = [
     { method: 'get', path: '/forSale', target: 'forSale' },
     { method: 'put', path: '/depleteStockQuantity', target: 'depleteStockQuantity'}, //DONE
     { method: 'put', path: '/cartCheckout', target: 'cartCheckout'}, //DONE
+    { method: 'get', path: '/insertintocart', target: 'insertintocart'},
+    { method: 'get', path: '/deletefromcart', target: 'deletefromcart'},
+    { method: 'get', path: '/updatecarts', target: 'updatecarts'},
+    { method: 'get', path: '/addproductquantity', target: 'addproductquantity'},
+    { method: 'get', path: '/depleteproductquantity', target: 'depleteproductquantity'},
     // Add other routes as needed
 ];
 

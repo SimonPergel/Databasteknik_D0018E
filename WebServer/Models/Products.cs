@@ -11,4 +11,12 @@ namespace WebServer.Models {  // Adjust the namespace if needed to match your pr
         public class Admin {
         public string? accountName { get; set; }
     }
+
+    public class Cart {
+        public int cartID { get; set; }
+        public int productID { get; set; }
+        public int Quantity { get; set; }
+        public int Price { get; set; }
+        public int purchaseID { get; set; }
+    }
 }

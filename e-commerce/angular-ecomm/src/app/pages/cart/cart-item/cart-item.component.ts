@@ -13,14 +13,12 @@ import { CartService } from '../../../services/cart.service';
         <span class="text-sm">{{ '$' + item().price }}</span>
       </div>
     <div class="flex-1"> </div>
-    <app-button label="Remove item" (buttonClicked)="cartService.removeFromCart(item().id)" />
+      <app-button label="Remove item" (buttonClicked)="cartService.deleteFromCart(item().id)" />
     </div>
   `,
   styles:  ``
 })
 export class CartItemComponent {
-
   cartService = inject(CartService);
   item = input.required<Product>();
-
 }
