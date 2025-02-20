@@ -24,15 +24,13 @@ export class DataService {
     return this.http.get<any>(`${this.apiUrl}/running`);
   }
 
-  //Database Editing Methods
-
-  insertProduct(Name: string, Quantity: number, InStock: Number, Price: number): Observable<any> {
-    const product = { Name, Quantity, InStock, Price };
+  depleteStockQuantity(Name: string, minusQuantity: number): Observable<any> {
+    const sale = { Name, minusQuantity };
     console.log("babababa");
-    return this.http.put<any>(`${this.apiUrl}/insertproduct`, product, {
+    return this.http.put<any>(`${this.apiUrl}/depleteStockQuantity`, sale, {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
     });
   }
-
+  //Database Editing Methods
 
 }

@@ -21,9 +21,11 @@ export class json1component implements OnInit {
 
 
   ngOnInit(): void {
-    this.dataService.getRunning().subscribe(response => {
+    this.dataService.depleteStockQuantity('rubberBall', 1).subscribe(response => {
+      //this.dataService.getRunning().subscribe(response => {
       
       this.data = response;
+      return this.data;
     }, error => {
       console.error('Error fetching data:', error);
     });

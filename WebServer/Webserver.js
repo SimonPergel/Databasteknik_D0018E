@@ -42,6 +42,7 @@ const routes = [
     { method: 'put', path: '/insertproduct', target: 'insertproduct' },
     { method: 'get', path: '/notForSale', target: 'notForSale' },
     { method: 'get', path: '/forSale', target: 'forSale' },
+    { method: 'put', path: '/depleteStockQuantity', target: 'depleteStockQuantity'},
     // Add other routes as needed
 ];
 
@@ -49,6 +50,7 @@ const routes = [
 
 routes.forEach(route => {
     app[route.method](route.path, async (req, res) => {
+        console.log("bababooey");
         try {
             const url = `http://localhost:5201/api/mycontroller/${route.target}`;
             console.log(`Forwarding request to: ${url}`);  // Log to see where the request is going

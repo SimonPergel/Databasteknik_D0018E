@@ -300,6 +300,33 @@ public IActionResult InsertProduct([FromBody] Product product) {
         }
     }
 
+public class ProductDepletionRequest
+{
+    public string Name { get; set; }
+    public int MinusQuantity { get; set; }
+}
+
+[HttpPut("depleteStockQuantity")]
+public IActionResult DepleteStockQuantity([FromBody] ProductDepletionRequest request) 
+{
+    // Updates a product in the Product table to decrease quantity.
+    string SQLQuery = "UPDATE Products SET QUANTITY = QUANTITY - " + request.MinusQuantity + 
+                      " WHERE Product_name = '" + request.Name + "';";
+    
+    try
+    {
+        makeConnection(SQLQuery);  // Makes the connection to the database and runs the SQLQuery.
+        var result = new { Message = "Product quantity decreased successfully!", request.Name, request.MinusQuantity };
+        return Ok(result);  // Returns an OK with a result message.
+    }
+    catch (Exception exception)  // Catches an exception and returns the exception message.
+    {
+        var result = new { Message = exception.Message };
+        return BadRequest(result);
+    }
+}
+
+
     [HttpGet("alterproductprice")]
     public IActionResult alterProductPrice(string name, int newPrice) { // Updates a product in the Product table to change its price. Define name and new price.
     // http://localhost:5201/api/mycontroller/alterproductprice?name=Pencil&newPrice=15

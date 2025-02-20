@@ -84,7 +84,6 @@
 /home/gabaxh/Databasteknik_D0018E/WebServer/obj/Debug/net8.0/WebServer.pdb
 /home/gabaxh/Databasteknik_D0018E/WebServer/obj/Debug/net8.0/WebServer.genruntimeconfig.cache
 /home/gabaxh/Databasteknik_D0018E/WebServer/obj/Debug/net8.0/ref/WebServer.dll
-/home/gabaxh/Databasteknik_D0018E/WebServer/obj/Debug/net8.0/WebServer.csproj.CopyComplete
 C:/Users/arvid/Documents/d0018e/Databasteknik_D0018E/WebServer/bin/Debug/net8.0/appsettings.Development.json
 C:/Users/arvid/Documents/d0018e/Databasteknik_D0018E/WebServer/bin/Debug/net8.0/appsettings.json
 C:/Users/arvid/Documents/d0018e/Databasteknik_D0018E/WebServer/bin/Debug/net8.0/WebServer.exe
@@ -176,6 +175,7 @@ C:/Users/arvid/Documents/d0018e/Databasteknik_D0018E/WebServer/bin/Debug/net8.0/
 C:/Users/arvid/Documents/d0018e/Databasteknik_D0018E/WebServer/bin/Debug/net8.0/package.json
 /home/gabaxh/Databasteknik_D0018E/WebServer/bin/Debug/net8.0/package-lock.json
 /home/gabaxh/Databasteknik_D0018E/WebServer/bin/Debug/net8.0/package.json
+/home/gabaxh/Databasteknik_D0018E/WebServer/obj/Debug/net8.0/WebServer.csproj.Up2Date
 C:\Users\arvid\Documents\d0018e\Databasteknik_D0018E\WebServer\bin\Debug\net8.0\appsettings.Development.json
 C:\Users\arvid\Documents\d0018e\Databasteknik_D0018E\WebServer\bin\Debug\net8.0\appsettings.json
 C:\Users\arvid\Documents\d0018e\Databasteknik_D0018E\WebServer\bin\Debug\net8.0\package-lock.json
