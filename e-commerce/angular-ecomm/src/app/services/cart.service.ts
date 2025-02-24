@@ -40,7 +40,7 @@ export class CartService {
    if ( index !== -1) {
     //removes only one item thats found at the given index. 
     cartItems.splice(index, 1);
-    //updates the cart with the modified q
+    //updates the cart with the modified 
     this.cart.set(cartItems);
     await this.getCarts(id);
     fetch('http://localhost:5201/api/mycontroller/deletefromcart?purchaseID='+this.carts[0].purchaseID) 
