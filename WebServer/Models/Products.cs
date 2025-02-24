@@ -3,12 +3,12 @@ namespace WebServer.Models {  // Adjust the namespace if needed to match your pr
     public class Product {
         public int Id { get; set; }
         public string? Name { get; set; }
-        public int Quantity { get; set; }
-        public int InStock { get; set; }
-        public int Price { get; set; }
+        public int? Quantity { get; set; }
+        public int? InStock { get; set; }
+        public int? Price { get; set; }
     }
 
-        public class Admin {
+    public class Admin {
         public string? accountName { get; set; }
     }
 
@@ -18,5 +18,20 @@ namespace WebServer.Models {  // Adjust the namespace if needed to match your pr
         public int Quantity { get; set; }
         public int Price { get; set; }
         public int purchaseID { get; set; }
+    }
+
+    public class CheckoutRequest {
+        public int cartId { get; set; }
+        public int productID { get; set; }
+    }
+
+    public class ProductDepletionRequest {
+        public int ProductID { get; set; }
+        public int MinusQuantity { get; set; }
+
+        public ProductDepletionRequest(int productID, int minusQuantity) {
+            ProductID = productID;
+            MinusQuantity = minusQuantity;
+        }
     }
 }
