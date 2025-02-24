@@ -1,9 +1,9 @@
 import { Injectable, signal } from '@angular/core';
 import { Product } from '../models/product.models';
 import { ProductCardComponent } from '../pages/products-list/product-card/product-card.component';
-import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Cart } from '../models/cart.models';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -12,10 +12,10 @@ export class CartService {
   private apiUrl = 'http://localhost:3000'; // Replace with your actual endpoint
 
   constructor(private http: HttpClient) { }
-
     carts: Cart []=[]
     //OBSERVER METHODS
     cart = signal<Product[]>([]);
+    
 
   insertIntoCart(cartID: number, quantity: number, product: Product) {
     this.cart.set([...this.cart(), product]);
@@ -29,6 +29,17 @@ export class CartService {
     .then(data => console.log("API Response:", data))
     .catch(error => console.error("API call failed:", error));
   }
+
+
+  cartCheckout(CartId: number, productID: number): Observable<any> {
+    const checkOut = {CartId, productID};
+    console.log("sending to right address");
+    return this.http.put<any>(`${this.apiUrl}/cartCheckout`, checkOut, {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+    });
+  }
+
+  
 
   async deleteFromCart(id: number) {
 
@@ -54,7 +65,21 @@ export class CartService {
     .catch(error => console.error("API call failed:", error));
 
    } 
+   
   }
+/*
+  cartCheckout(cartID: number, product: Cart){
+    fetch('http://localhost:5201/api/mycontroller/cartcheckout?')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => console.log("API Response:", data))
+    .catch(error => console.error("API call failed:", error));
+  }
+*/
 
   updateCarts(cartID: number, product: Product) {
     fetch('http://localhost:5201/api/mycontroller/updatecarts?cartID='+cartID+'&productID='+product.id+'&quantity='+product.quantity+'&price='+product.price)

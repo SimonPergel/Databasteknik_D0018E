@@ -23,7 +23,7 @@ export class DataService {
   getRunning(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/running`);
   }
-
+  
   depleteStockQuantity(productID: number, minusQuantity: number): Observable<any> {
     const sale = { productID, minusQuantity };
     console.log("babababa");
@@ -39,6 +39,7 @@ export class DataService {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
     });
   }
+  
   //Database Editing Methods
 
 }

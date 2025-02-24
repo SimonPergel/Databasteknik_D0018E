@@ -8,30 +8,24 @@ import { DataService } from '../../services/data.service';
   selector: 'app-products-list',
   imports: [ProductCardComponent],
   template: `
+  
     <div class="p-8 grid grid-cols-2 gap-4">
-      @for (product of products; track product.id ) {
+    @for (product of products; track product.id ) {
       <app-product-card [product]="product"/>
       }
     </div>
+    
+<!--
+    <div class="p-8 grid grid-cols-2 gap-4">
+      <app-product-card 
+        *ngFor="let product of products; trackBy: trackById" 
+        [product]="product">
+      </app-product-card>
+    </div>
+    -->
   `,
   styleUrl: './products-list.component.scss'
 })
-
-/*export class ProductClass implements Product {
-  id: number;
-  name: string;
-  quantity: number;
-  inStock?: number;
-  price: number;
-
-  constructor(id: number, name: string, quantity: number, inStock: number, price: number) {
-    this.id = id;
-    this.name = name;
-    this.quantity = quantity;
-    this.inStock = inStock;
-    this.price = price;
-  }
-} */
 
 export class ProductsListComponent {
   products: Product []=[]
@@ -54,18 +48,3 @@ export class ProductsListComponent {
     return product.id; // ✅ Improves performance by tracking items correctly
   }
 }
-//    products = signal<Product[]>([])
-
-//    data = this.dataService.getProductsAdmin();
-/*  ngOnInit() {
-    fetch("http://localhost:5201/api/mycontroller/getproductsadmin")
-      .then(response => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then(data => this.products.set(data.json()))
-    .then(data => console.log("API Response:", data))
-  }
-*/
