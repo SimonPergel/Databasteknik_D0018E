@@ -107,7 +107,7 @@ public class MyController : ControllerBase {
         string SQLQuery = "INSERT INTO Carts (Cart_id, Product_id, Quantity, Price) VALUES (" + cartID + ", " + productID + ", " + quantity + ", " + price + ");";
         try {
             makeConnection(SQLQuery);                                                                               // Makes the connection to the database and runs the SQLQuery.
-            var result = new { Message = "New cart inserted successfully!", cartID, productID, quantity, price};   // TODO: Make better return message.
+            var result = new { Message = "New cart inserted successfully!", cartID, productID, quantity, price};    // TODO: Make better return message.
             return Ok(result);                                                                                      // Returns a OK with a result message.
         } catch (Exception exception) {                                                                             // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message};
@@ -115,49 +115,29 @@ public class MyController : ControllerBase {
         }
     }
 
-public class CheckoutRequest
-{
-    public int cartId { get; set; }
-    public int productID { get; set; }
-}
-
-[HttpPut("cartCheckout")]
-public IActionResult cartCheckout([FromBody] CheckoutRequest request) 
-{
-    // SQL query to delete one specific item from the cart
-    string SQLQuery = "DELETE FROM Carts WHERE Cart_id = @cartID AND Product_id = @productID LIMIT 1;";
-
-    try 
-    {
-        // Execute SQL query with parameters
-        using (var connection = new MySqlConnection(Globals.connectionString)) 
-        {
-            connection.Open();
-            using (var command = new MySqlCommand(SQLQuery, connection))
-            {
-                command.Parameters.AddWithValue("@cartID", request.cartId);
-                command.Parameters.AddWithValue("@productID", request.productID);
-
-                int rowsAffected = command.ExecuteNonQuery();
-                if (rowsAffected == 0)
-                {
-                    return NotFound(new { Message = "No matching item found in the cart." });
+    [HttpPut("cartCheckout")]
+    public IActionResult cartCheckout([FromBody] CheckoutRequest request) { // SQL query to delete one specific item from the cart
+        string SQLQuery = "DELETE FROM Carts WHERE Cart_id = @cartID AND Product_id = @productID LIMIT 1;";
+        try {
+            using (var connection = new MySqlConnection(Globals.connectionString)) {                // Execute SQL query with parameters
+                connection.Open();
+                using (var command = new MySqlCommand(SQLQuery, connection)) {
+                    command.Parameters.AddWithValue("@cartID", request.cartId);
+                    command.Parameters.AddWithValue("@productID", request.productID);
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected == 0) {
+                        return NotFound(new { Message = "No matching item found in the cart." });
+                    }
                 }
             }
+            var req = new ProductDepletionRequest(request.productID, 1);                            // Call function to reduce stock quantity
+            DepleteStockQuantity(req);
+            Console.WriteLine("productId= " + req.ProductID + " ,MinusQuantity =" + req.MinusQuantity + "REQ");
+            return Ok(new { Message = "Item successfully purchased!", CartID = request.cartId, ProductID = request.productID });
+        } catch (Exception exception) {
+            return BadRequest(new { Message = "Error processing checkout", Error = exception.Message });
         }
-
-        // Call function to reduce stock quantity
-       var req = new ProductDepletionRequest(request.productID, 1);
-        DepleteStockQuantity(req);
-       Console.WriteLine("productId= " + req.ProductID+ " ,MinusQuantity =" + req.MinusQuantity + "REQ");
-
-        return Ok(new { Message = "Item successfully purchased!", CartID = request.cartId, ProductID = request.productID });
-    } 
-    catch (Exception exception) 
-    {
-        return BadRequest(new { Message = "Error processing checkout", Error = exception.Message });
     }
-}
 
     [HttpGet("deletefromcart")]
     public IActionResult deleteFromCart(int purchaseID) { // Removes a cart from the Cart table. Define purchase id.
@@ -204,13 +184,6 @@ public IActionResult cartCheckout([FromBody] CheckoutRequest request)
         }
     }
 */
-public class Product {
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public int Quantity { get; set; }
-    public int InStock { get; set; }
-    public decimal Price { get; set; }
-}
 
 [HttpPut("insertproduct")]
 public IActionResult InsertProduct([FromBody] Product product) {
@@ -255,7 +228,7 @@ public IActionResult InsertProduct([FromBody] Product product) {
 }
 
 
-[HttpGet("notforsale")] // no put route made
+    [HttpGet("notforsale")] // no put route made
     public IActionResult removeProduct(string name) { // Removes a product from the Product table. Define name. // http://localhost:5201/api/mycontroller/notforsale?name=Pencil
         string SQLQuery = "UPDATE Products SET In_stock = 0 WHERE Product_name = " + "'" + name + "';";
         try {
@@ -266,7 +239,7 @@ public IActionResult InsertProduct([FromBody] Product product) {
             var result = new { Message = exception.Message};
             return BadRequest(result);
         }
- }
+    }
 
     [HttpGet("forsale")]    // no put route made
     public IActionResult forSale(string name) { // Update a product in the Product table to be in stock. Define name.
@@ -310,43 +283,23 @@ public IActionResult InsertProduct([FromBody] Product product) {
         }
     }
 
-
-public class ProductDepletionRequest
-{
-    public int ProductID { get; set; }
-    public int MinusQuantity { get; set; }
-
-    public ProductDepletionRequest(int productID, int minusQuantity)
-    {
-       ProductID = productID;
-        MinusQuantity = minusQuantity;
-    }
-}
-
-[HttpPut("depleteStockQuantity")]
-public IActionResult DepleteStockQuantity([FromBody] ProductDepletionRequest request) 
-{
-    Console.WriteLine("productId= " + request.ProductID+ " ,MinusQuantity =" + request.MinusQuantity);
-    Console.WriteLine("Depleting stock quantity");
-    // Updates a product in the Product table to decrease quantity.
-    string SQLQuery = "UPDATE Products SET Quantity = Quantity - " + request.MinusQuantity + 
+    [HttpPut("depleteStockQuantity")]
+    public IActionResult DepleteStockQuantity([FromBody] ProductDepletionRequest request) {
+        Console.WriteLine("productId= " + request.ProductID+ " ,MinusQuantity =" + request.MinusQuantity);  // Updates a product in the Product table to decrease quantity.
+        Console.WriteLine("Depleting stock quantity");
+        string SQLQuery = "UPDATE Products SET Quantity = Quantity - " + request.MinusQuantity + 
                       " WHERE Product_id = " + request.ProductID + " ;";
-    
-    try
-    {
-        makeConnection(SQLQuery);  // Makes the connection to the database and runs the SQLQuery.
-        var result = new { Message = "Product quantity decreased successfully!", request.ProductID, request.MinusQuantity };
-        return Ok(result);  // Returns an OK with a result message.
+        try {
+            makeConnection(SQLQuery);  // Makes the connection to the database and runs the SQLQuery.
+            var result = new { Message = "Product quantity decreased successfully!", request.ProductID, request.MinusQuantity };
+            return Ok(result);  // Returns an OK with a result message.
+        } catch (Exception exception) { // Catches an exception and returns the exception message.
+            var result = new { Message = exception.Message };
+            return BadRequest(result);
+        }
     }
-    catch (Exception exception)  // Catches an exception and returns the exception message.
-    {
-        var result = new { Message = exception.Message };
-        return BadRequest(result);
-    }
-}
 
-
-[HttpGet("alterproductprice")] //no put route made
+    [HttpGet("alterproductprice")] //no put route made
     public IActionResult alterProductPrice(string name, int newPrice) { // Updates a product in the Product table to change its price. Define name and new price.
     // http://localhost:5201/api/mycontroller/alterproductprice?name=Pencil&newPrice=15
         string SQLQuery = "UPDATE Products SET Price = " + newPrice +  " WHERE Product_name = " + "'" + name +  "';";
@@ -360,12 +313,7 @@ public IActionResult DepleteStockQuantity([FromBody] ProductDepletionRequest req
         }
     }
 
-    
-    
-    
-    
-    
-////////////////////////////////////////////////////////7// SELECT methods
+/////////////////////////////////////////////////////////// SELECT methods
 
     [HttpGet("getproductsadmin")]
     public IActionResult GetProducts() { // This retrieves all products regardless of in stock or not.
