@@ -31,7 +31,17 @@ export class CartService {
   }
 
   async deleteFromCart(id: number) {
-    this.cart.set(this.cart().filter((p) => p.id !== id));
+
+    // get the current cart items
+    const cartItems = this.cart();
+    // this finds the index of the first occurence of the product with the given id
+    const index = cartItems.findIndex((p) => p.id == id);
+   // this.cart.set(this.cart().filter((p) => p.id !== id));
+   if ( index !== -1) {
+    //removes only one item thats found at the given index. 
+    cartItems.splice(index, 1);
+    //updates the cart with the modified q
+    this.cart.set(cartItems);
     await this.getCarts(id);
     fetch('http://localhost:5201/api/mycontroller/deletefromcart?purchaseID='+this.carts[0].purchaseID) 
     .then(response => {
@@ -42,6 +52,8 @@ export class CartService {
     })
     .then(data => console.log("API Response:", data))
     .catch(error => console.error("API call failed:", error));
+
+   } 
   }
 
   updateCarts(cartID: number, product: Product) {
