@@ -146,11 +146,19 @@ public bool isCartEmpty( int cartID, int productID){
 
 
     [HttpGet("cartCheckout")]
-    public IActionResult cartCheckout(int cartID, int productID) { // SQL query to delete one specific item from the cart
+    public IActionResult cartCheckout(int cartID, int productID, int neededQuantity) { // SQL query to delete one specific item from the cart
+
+
         int flag = 1;
         bool emptyCart; 
+        string isProductAvailable;
         string SQLQuery = "DELETE FROM Carts WHERE Cart_id = " + cartID + " AND Product_id = " + productID + " LIMIT 1;";
+        
+
         try {
+            if (CheckProductAvailability(productID, neededQuantity) == false){
+                throw new Exception("Not enough in stock to proceed with checkout");
+            }
             
             while (flag == 1){
                 makeConnection(SQLQuery);                                                                           // Makes the connection to the database and runs the SQLQuery. // TODO: Make better return message.
@@ -428,4 +436,38 @@ public IActionResult InsertProduct([FromBody] Product product) {
             return BadRequest(result);
         }
     }
+
+
+[HttpGet("CheckProductAvailability")]
+public bool CheckProductAvailability(int productID, int desiredQuantity)
+{
+    //http://localhost:5201/api/mycontroller/checkproductavailability?productid=5&desiredQuantity=1
+    try
+    {
+        string SQLQuery = "SELECT Quantity FROM Products WHERE Product_id = @ProductID;";
+
+        using (var connection = new MySqlConnection(Globals.connectionString))
+        {
+            connection.Open();
+            using (var command = new MySqlCommand(SQLQuery, connection))
+            {
+                command.Parameters.AddWithValue("@ProductID", productID);
+
+                object result = command.ExecuteScalar();
+
+                if (result != null && int.TryParse(result.ToString(), out int availableQuantity))
+                {
+                    return availableQuantity >= desiredQuantity;
+                }
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("Error checking product availability: " + ex.Message);
+    }
+
+    return false; // Return false if an error occurs or the product is not found
+}
+
 }
