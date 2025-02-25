@@ -1,6 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Product } from '../models/product.models';
 import { Observable } from 'rxjs';
+import { Cart } from '../models/cart.models';
 
 @Injectable({
   providedIn: 'root'
@@ -24,14 +26,48 @@ export class DataService {
     return this.http.get<any>(`${this.apiUrl}/running`);
   }
   
-  depleteStockQuantity(productID: number, minusQuantity: number): Observable<any> {
-    const sale = { productID, minusQuantity };
-    console.log("babababa");
-    return this.http.put<any>(`${this.apiUrl}/depleteStockQuantity`, sale, {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-    });
-  }
+
+isCartEmpty(cartID: number): Promise<boolean> {
+    return fetch(`http://localhost:5201/api/mycontroller/isCartEmpty?cartID=${cartID}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            return data.Message === "Cart is empty!";
+        })
+        .catch(error => {
+            console.error("Error checking cart:", error);
+            return false; // Default to false in case of an error
+        });
+}
   
   //Database Editing Methods
 
+
+depleteStockQuantity( productID: number, minusQuantity: number){      //MIGHT NOT BE NEEDED IN THIS SCOPE
+  fetch('http://localhost:5201/api/mycontroller/depleteStockQuantity?productID='+productID+'&minusQuantity='+ minusQuantity)
+  .then(response => {
+    if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(data => console.log("API Response:", data))
+  .catch(error => console.error("API call failed:", error));
+} 
+cartCheckout(cartID: number, productID: number){
+  fetch('http://localhost:5201/api/mycontroller/cartcheckout?cartID='+cartID+'&productID='+productID)
+  .then(response => {
+    if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(data => console.log("API Response:", data))
+  .catch(error => console.error("API call failed:", error));
+
+}
 }

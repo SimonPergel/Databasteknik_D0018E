@@ -101,6 +101,35 @@ public class MyController : ControllerBase {
 
     //CART METHODS
 
+
+public bool isCartEmpty( int cartID, int productID){ 
+    try 
+    {
+        string SQLQuery = "SELECT COUNT(*) FROM Carts WHERE Cart_id ="+ cartID + " AND Product_id = " + productID + ";";
+        using (var connection = new MySqlConnection(Globals.connectionString))
+        {
+            connection.Open();
+            using (var command = new MySqlCommand(SQLQuery, connection))
+            {
+                command.Parameters.AddWithValue("@CartID", cartID);
+                int count = Convert.ToInt32(command.ExecuteScalar());
+
+                if (count == 0)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
+    } 
+    catch (Exception exception) 
+    {
+        return false;
+    }
+}
+
+
+
     [HttpGet("insertintocart")]
     public IActionResult insertIntoCart(int cartID, int productID, int quantity, int price) { // Inserts a new cart into the Cart table. Define order id, product id, quantity and price.
     // http://localhost:5201/api/mycontroller/insertintocart?cartID=1&productID=2&quantity=20&price=15
@@ -115,29 +144,30 @@ public class MyController : ControllerBase {
         }
     }
 
-    [HttpPut("cartCheckout")]
-    public IActionResult cartCheckout([FromBody] CheckoutRequest request) { // SQL query to delete one specific item from the cart
-        string SQLQuery = "DELETE FROM Carts WHERE Cart_id = @cartID AND Product_id = @productID LIMIT 1;";
+
+    [HttpGet("cartCheckout")]
+    public IActionResult cartCheckout(int cartID, int productID) { // SQL query to delete one specific item from the cart
+        int flag = 1;
+        bool emptyCart; 
+        string SQLQuery = "DELETE FROM Carts WHERE Cart_id = " + cartID + " AND Product_id = " + productID + " LIMIT 1;";
         try {
-            using (var connection = new MySqlConnection(Globals.connectionString)) {                // Execute SQL query with parameters
-                connection.Open();
-                using (var command = new MySqlCommand(SQLQuery, connection)) {
-                    command.Parameters.AddWithValue("@cartID", request.cartId);
-                    command.Parameters.AddWithValue("@productID", request.productID);
-                    int rowsAffected = command.ExecuteNonQuery();
-                    if (rowsAffected == 0) {
-                        return NotFound(new { Message = "No matching item found in the cart." });
-                    }
+            
+            while (flag == 1){
+                makeConnection(SQLQuery);                                                                           // Makes the connection to the database and runs the SQLQuery. // TODO: Make better return message.
+                DepleteStockQuantity(productID, 1);
+                emptyCart = isCartEmpty(cartID, productID);
+                if (emptyCart == true){
+                    Console.WriteLine("Cart is emptied of object type", cartID);
+                    flag =0;
                 }
             }
-            var req = new ProductDepletionRequest(request.productID, 1);                            // Call function to reduce stock quantity
-            DepleteStockQuantity(req);
-            Console.WriteLine("productId= " + req.ProductID + " ,MinusQuantity =" + req.MinusQuantity + "REQ");
-            return Ok(new { Message = "Item successfully purchased!", CartID = request.cartId, ProductID = request.productID });
+            var result = new { Message = "Cart checked out successfully!", cartID};    // TODO: Make better return message.
+            return Ok(result);
         } catch (Exception exception) {
             return BadRequest(new { Message = "Error processing checkout", Error = exception.Message });
         }
-    }
+        }
+
 
     [HttpGet("deletefromcart")]
     public IActionResult deleteFromCart(int purchaseID) { // Removes a cart from the Cart table. Define purchase id.
@@ -170,7 +200,7 @@ public class MyController : ControllerBase {
 
     //PRODUCT Methods
 
-   /* [HttpGet("insertproduct")]
+    [HttpGet("insertproduct")]
    public IActionResult InsertProduct( string name,  int quantity, int inStock, int price) { // Insert a product into the Product table. Define name, quantity, in stock and price.
         // http://localhost:5201/api/mycontroller/insertproduct?name=product1&quantity=10&inStock=5&price=100
         string SQLQuery = "INSERT INTO Products (Product_name, Quantity, In_stock, Price) VALUES ('" + name + "', " + quantity + ", " + inStock + ", " + price + ");";
@@ -183,8 +213,8 @@ public class MyController : ControllerBase {
             return BadRequest(result);
         }
     }
-*/
 
+/*
 [HttpPut("insertproduct")]
 public IActionResult InsertProduct([FromBody] Product product) {
     if (product == null || product.Name == null || product.Quantity == null || product.InStock == null || product.Price == null) {
@@ -226,6 +256,7 @@ public IActionResult InsertProduct([FromBody] Product product) {
         return BadRequest(new { Message = exception.Message });
     }
 }
+*/
 
 
     [HttpGet("notforsale")] // no put route made
@@ -283,17 +314,18 @@ public IActionResult InsertProduct([FromBody] Product product) {
         }
     }
 
-    [HttpPut("depleteStockQuantity")]
-    public IActionResult DepleteStockQuantity([FromBody] ProductDepletionRequest request) {
-        Console.WriteLine("productId= " + request.ProductID+ " ,MinusQuantity =" + request.MinusQuantity);  // Updates a product in the Product table to decrease quantity.
+    [HttpGet("depleteStockQuantity")]
+    public IActionResult DepleteStockQuantity(int productID, int MinusQuantity) {
+        Console.WriteLine("productId= " + productID+ " ,MinusQuantity =" + MinusQuantity);  // Updates a product in the Product table to decrease quantity.
         Console.WriteLine("Depleting stock quantity");
-        string SQLQuery = "UPDATE Products SET Quantity = Quantity - " + request.MinusQuantity + 
-                      " WHERE Product_id = " + request.ProductID + " ;";
+        string SQLQuery = "UPDATE Products SET Quantity = Quantity - " + MinusQuantity + 
+                      " WHERE Product_id = " + productID + " ;";
         try {
             makeConnection(SQLQuery);  // Makes the connection to the database and runs the SQLQuery.
-            var result = new { Message = "Product quantity decreased successfully!", request.ProductID, request.MinusQuantity };
+            var result = new { Message = "Product quantity decreased successfully!", productID, MinusQuantity };
             return Ok(result);  // Returns an OK with a result message.
         } catch (Exception exception) { // Catches an exception and returns the exception message.
+            Console.WriteLine("tried Deleting nonexistent item");
             var result = new { Message = exception.Message };
             return BadRequest(result);
         }
