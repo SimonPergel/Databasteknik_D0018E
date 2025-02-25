@@ -1,3 +1,4 @@
+/*
 import { Component, OnInit, inject } from '@angular/core';
 import { DataService } from '../../services/data.service';
 //import { HttpClientModule } from '@angular/common/http'; // Import HttpClientModule
@@ -31,3 +32,4 @@ export class json1component implements OnInit {
     });
   }
 }
+*/

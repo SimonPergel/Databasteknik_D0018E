@@ -1,9 +1,16 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { CartService } from '../../../services/cart.service';
 import { PrimaryButtonComponent } from "../../../component/primary-button/primary-button.component";
 import { DataService } from '../../../services/data.service';
 import { Cart } from '../../../models/cart.models';
 import { Product } from '../../../models/product.models';
+
+// Define the expected response structure
+interface CheckoutResponse {
+  Message: string;
+  CartID: number;
+  ProductID: number;
+}
 
 @Component({
   selector: 'app-checkout',
@@ -23,29 +30,25 @@ import { Product } from '../../../models/product.models';
   styles: ``
 })
 export class CheckoutComponent {
-  cart: Cart []=[]
-  //product: Product []=[]
-  item = input.required<Cart>();
+  @Input() cart: Cart[] = [];
   cartService = inject(CartService);
-  dataService = inject(DataService);
   
-
-  constructor() {}
-
 // Getter to calculate the total price of the Cart
 get totalPrice(): number {
   return this.cart.reduce((total, item) => total + item.price, 0);
 }
   // this function handles checkout button clicked
-  handleCheckout(): void {
+ async handleCheckout(): Promise<void> {
     if (this.cart.length === 0) {
       console.log("Cart is empty!");
       return;
   }
+/*
 // this part iterates over the cart items and call cartCheckout() fore each item
   this.cart.forEach((item) => {
+    // Ensure that item.cartID and item.productID are passed correctly
     this.cartService.cartCheckout(item.cartID, item.productID).subscribe({
-      next: (response) => {
+      next: (response: CheckoutResponse) => {
         console.log(`Checkout successful for item ${item.productID}:`, response);
 
       },
@@ -54,6 +57,18 @@ get totalPrice(): number {
       },
     });
   });
+  */
+ 
+  for (const item of this.cart) {
+    try {
+      //ensures that each checkout request is complete before moving forward
+      const response = await this.cartService.cartCheckout(item.cartID, item.productID);
+      console.log(`Checkout successful for item ${item.productID}:`, response);
+    } catch (error) {
+      console.error(`Error during checkout for item ${item.productID}:`, error);
+    }
+  }
+    
   }
 }
 

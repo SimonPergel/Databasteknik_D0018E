@@ -1,7 +1,6 @@
 import { Component, signal, Type } from '@angular/core';
 import { Product } from '../../models/product.models';
 import { ProductCardComponent } from "./product-card/product-card.component";
-import { json1component } from '../../components/json-1/json-1.component';
 import { DataService } from '../../services/data.service';
 
 @Component({
