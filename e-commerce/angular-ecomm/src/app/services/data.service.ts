@@ -31,14 +31,6 @@ export class DataService {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
     });
   }
-
-  cartCheckout(CartId: number, productID: number): Observable<any> {
-    const checkOut = {CartId, productID};
-    console.log("babababa");
-    return this.http.put<any>(`${this.apiUrl}/cartCheckout`, checkOut, {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-    });
-  }
   
   //Database Editing Methods
 

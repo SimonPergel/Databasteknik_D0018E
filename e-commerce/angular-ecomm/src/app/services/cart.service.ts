@@ -29,18 +29,7 @@ export class CartService {
     .then(data => console.log("API Response:", data))
     .catch(error => console.error("API call failed:", error));
   }
-
-
-  cartCheckout(CartId: number, productID: number): Observable<any> {
-    const checkOut = {CartId, productID};
-    console.log("sending to right address");
-    return this.http.put<any>(`${this.apiUrl}/cartCheckout`, checkOut, {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-    });
-  }
-
   
-
   async deleteFromCart(id: number) {
 
     // get the current cart items
@@ -67,9 +56,9 @@ export class CartService {
    } 
    
   }
-/*
+
   cartCheckout(cartID: number, product: Cart){
-    fetch('http://localhost:5201/api/mycontroller/cartcheckout?')
+    fetch('http://localhost:5201/api/mycontroller/cartcheckout?cartID='+cartID+'&productID='+product.id)
     .then(response => {
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -79,7 +68,7 @@ export class CartService {
     .then(data => console.log("API Response:", data))
     .catch(error => console.error("API call failed:", error));
   }
-*/
+
 
   updateCarts(cartID: number, product: Product) {
     fetch('http://localhost:5201/api/mycontroller/updatecarts?cartID='+cartID+'&productID='+product.id+'&quantity='+product.quantity+'&price='+product.price)

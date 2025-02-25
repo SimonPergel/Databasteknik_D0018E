@@ -14,7 +14,7 @@ import { Product } from '../../../models/product.models';
       <div class="flex flex-col gap-4">
         <div class="flex flex-col gap-4">
           <span class="text-lg">Total</span>
-          <span>{{ '$' + totalPrice()}} </span>
+          <span>{{ '$' + totalPrice}} </span>
         </div>
         <app-primary-button label="Checkout" (buttonClicked)="handleCheckout()" />
       </div>
@@ -24,25 +24,18 @@ import { Product } from '../../../models/product.models';
 })
 export class CheckoutComponent {
   cart: Cart []=[]
-  product: Product []=[]
-  //item = input.required<Cart>();
+  //product: Product []=[]
+  item = input.required<Cart>();
   cartService = inject(CartService);
   dataService = inject(DataService);
   
 
   constructor() {}
 
-// calculating the total price of the Cart
-  totalPrice = computed(() => {
-    return this.cart.reduce((total, item) => total + item.price, 0);
-    });
-   
-    /*
-  ngOnInit(): void {
-   // this.cart = this.dataService.cart(); // this loads the cart from cartService
-   this.cart = this.dataService.cart();
-  }
-*/
+// Getter to calculate the total price of the Cart
+get totalPrice(): number {
+  return this.cart.reduce((total, item) => total + item.price, 0);
+}
   // this function handles checkout button clicked
   handleCheckout(): void {
     if (this.cart.length === 0) {
@@ -51,7 +44,7 @@ export class CheckoutComponent {
   }
 // this part iterates over the cart items and call cartCheckout() fore each item
   this.cart.forEach((item) => {
-    this.dataService.cartCheckout(item.cartID, item.productID).subscribe({
+    this.cartService.cartCheckout(item.cartID, item.productID).subscribe({
       next: (response) => {
         console.log(`Checkout successful for item ${item.productID}:`, response);
 
