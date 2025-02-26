@@ -146,10 +146,6 @@ public bool isProductSoldOut( int cartID, int productID){
         }
     }
 
- 3 a
- 2 b
-
-
     [HttpGet("cartCheckout")]
     public IActionResult cartCheckout(int userID, int totalPrice, string purchasedGoods) { // SQL query to delete one specific item from the cart
     // sql query add to checkout table
