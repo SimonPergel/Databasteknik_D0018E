@@ -151,7 +151,7 @@ public bool isProductSoldOut( int cartID, int productID){
     // sql query add to checkout table
 
 
-    string SQLQuery = "INSERT INTO Checkout (Total_price, userID, purchasedGoods);Values (" + totalPrice + ", " + userID + ", " + purchasedGoods + ");";
+    string SQLQuery = "INSERT INTO Checkout (Total_price, user_id, purchasedGoods) Values (" + totalPrice + ", " + userID + ", '" + purchasedGoods + "');";
         try {
             makeConnection(SQLQuery);                                             // Makes the connection to the database and runs the SQLQuery.
             var result = new { Message = "receipt added to history!", userID};    // TODO: Make better return message.
