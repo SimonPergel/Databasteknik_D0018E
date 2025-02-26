@@ -14,11 +14,24 @@ export class CartService {
   constructor(private http: HttpClient) { }
     carts: Cart []=[]
     //OBSERVER METHODS
-    cart = signal<Product[]>([]);
+    //cart = signal<Product[]>([]);
+    cart = signal<Cart[]>([]);
+    
     
 
   insertIntoCart(cartID: number, quantity: number, product: Product) {
-    this.cart.set([...this.cart(), product]);
+   // console.log('Product Object:', product); //  to debug
+    // Create a Cart object using the Cart interface
+    const cartItem: Cart = {
+      ProductName: product.name,
+      cartID: cartID,               // The cart ID you pass to the method
+      productID: product.id, // The product ID from the Cart object
+      quantity: quantity,           // Quantity passed to the method
+      price: product.price,         // Price from the Cart object
+      purchaseID: 0,                // Set to 0 or a default value if not available
+      inStock: product.inStock      // is the product in the cart avalible
+  };
+    this.cart.set([...this.cart(), cartItem]);
     fetch('http://localhost:5201/api/mycontroller/insertintocart?cartID='+cartID+'&productID='+product.id+'&quantity='+quantity+'&price='+product.price)
     .then(response => {
         if (!response.ok) {
@@ -30,19 +43,19 @@ export class CartService {
     .catch(error => console.error("API call failed:", error));
   }
   
-  async deleteFromCart(id: number) {
+  async deleteFromCart(productID: number) {
 
     // get the current cart items
     const cartItems = this.cart();
     // this finds the index of the first occurence of the product with the given id
-    const index = cartItems.findIndex((p) => p.id == id);
+    const index = cartItems.findIndex((p) => p.productID == productID);
    // this.cart.set(this.cart().filter((p) => p.id !== id));
    if ( index !== -1) {
     //removes only one item thats found at the given index. 
     cartItems.splice(index, 1);
     //updates the cart with the modified 
     this.cart.set(cartItems);
-    await this.getCarts(id);
+    await this.getCarts(productID);
     fetch('http://localhost:5201/api/mycontroller/deletefromcart?purchaseID='+this.carts[0].purchaseID) 
     .then(response => {
         if (!response.ok) {
@@ -61,7 +74,7 @@ export class CartService {
     // Creates the Payload form
     const requestPayload = {
       cartId: cartID,
-      productId: id
+      productId: id 
     };
 
     return fetch('http://localhost:5201/api/mycontroller/cartCheckout', {
