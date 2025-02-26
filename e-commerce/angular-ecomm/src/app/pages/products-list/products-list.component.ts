@@ -2,13 +2,14 @@ import { Component, signal, Type } from '@angular/core';
 import { Product } from '../../models/product.models';
 import { ProductCardComponent } from "./product-card/product-card.component";
 import { DataService } from '../../services/data.service';
+import { Cart } from '../../models/cart.models';
 
 @Component({
   selector: 'app-products-list',
   imports: [ProductCardComponent],
   template: `
   
-    <div class="p-8 grid grid-cols-2 gap-4">
+  <div class="p-8 grid grid-cols-2 gap-4">
     @for (product of products; track product.id ) {
       <app-product-card [product]="product"/>
       }
@@ -28,6 +29,7 @@ import { DataService } from '../../services/data.service';
 
 export class ProductsListComponent {
   products: Product []=[]
+  //products: Cart []=[]
   constructor(
     private dataService: DataService,
   ) {}
@@ -35,7 +37,8 @@ export class ProductsListComponent {
     this.dataService.getProductsAdmin().subscribe( {
       next: (response) => {
         console.log("Fetched Products:", response);
-        this.products = response; // ✅ Store the API data in products
+        this.products = response; // Store the API data in products
+        console.log('Product Object:', this.products); //  to debug
       },
       error: (error) => {
         console.error("Error fetching products:", error);
@@ -44,6 +47,6 @@ export class ProductsListComponent {
   }
 
   trackById(index: number, product: Product) {
-    return product.id; // ✅ Improves performance by tracking items correctly
+    return product.id; // Improves performance by tracking items correctly
   }
 }

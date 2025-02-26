@@ -1,4 +1,4 @@
-import { Component, inject, Input } from '@angular/core';
+import { Component, computed, inject, Input } from '@angular/core';
 import { CartService } from '../../../services/cart.service';
 import { PrimaryButtonComponent } from "../../../component/primary-button/primary-button.component";
 import { DataService } from '../../../services/data.service';
@@ -30,16 +30,18 @@ interface CheckoutResponse {
   styles: ``
 })
 export class CheckoutComponent {
-  @Input() cart: Cart[] = [];
   cartService = inject(CartService);
+
+  // Reactive signal to get cart items
+  cartItems = computed(() => this.cartService.cart());
   
 // Getter to calculate the total price of the Cart
 get totalPrice(): number {
-  return this.cart.reduce((total, item) => total + item.price, 0);
+  return this.cartItems().reduce((total, item) => total + item.price, 0);
 }
   // this function handles checkout button clicked
  async handleCheckout(): Promise<void> {
-    if (this.cart.length === 0) {
+    if (this.cartItems().length === 0) {
       console.log("Cart is empty!");
       return;
   }
@@ -58,8 +60,10 @@ get totalPrice(): number {
     });
   });
   */
+
+  // TODO: cartID, totalprice, string purchaedGoods
  
-  for (const item of this.cart) {
+  for (const item of this.cartItems()) {
     try {
       //ensures that each checkout request is complete before moving forward
       const response = await this.cartService.cartCheckout(item.cartID, item.productID);
