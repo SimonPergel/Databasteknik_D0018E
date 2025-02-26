@@ -146,37 +146,24 @@ public bool isProductSoldOut( int cartID, int productID){
         }
     }
 
+ 3 a
+ 2 b
+
 
     [HttpGet("cartCheckout")]
-    public IActionResult cartCheckout(int cartID, int productID, int desiredQuantity) { // SQL query to delete one specific item from the cart
+    public IActionResult cartCheckout(int userID, int totalPrice, string purchasedGoods) { // SQL query to delete one specific item from the cart
+    // sql query add to checkout table
 
 
-        int flag = 1;
-        bool emptyCart; 
-        string isProductAvailable;
-        string SQLQuery = "DELETE FROM Carts WHERE Cart_id = " + cartID + " AND Product_id = " + productID + " LIMIT 1;";
-        
-
+    string SQLQuery = "INSERT INTO Checkout (Total_price, userID, purchasedGoods);Values (" + totalPrice + ", " + userID + ", " + purchasedGoods + ");";
         try {
-            if (CheckProductAvailability(productID, neededQuantity) == false){
-                throw new Exception("Not enough in stock to proceed with checkout");
-            }
-            
-            while (flag == 1){
-                makeConnection(SQLQuery);                                                                           // Makes the connection to the database and runs the SQLQuery. // TODO: Make better return message.
-                DepleteStockQuantity(productID, 1);
-                emptyCart = isProductSoldOut(cartID, productID);
-                if (emptyCart == true){
-                    Console.WriteLine("Cart is emptied of object type", cartID);
-                    flag =0;
-                }
-            }
-            var result = new { Message = "Cart checked out successfully!", cartID};    // TODO: Make better return message.
+            makeConnection(SQLQuery);                                             // Makes the connection to the database and runs the SQLQuery.
+            var result = new { Message = "receipt added to history!", userID};    // TODO: Make better return message.
             return Ok(result);
         } catch (Exception exception) {
             return BadRequest(new { Message = "Error processing checkout", Error = exception.Message });
         }
-        }
+    }
 
 
     [HttpGet("deletefromcart")]
