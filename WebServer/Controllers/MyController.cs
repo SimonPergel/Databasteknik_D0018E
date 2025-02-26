@@ -102,7 +102,9 @@ public class MyController : ControllerBase {
     //CART METHODS
 
 
-public bool isCartEmpty( int cartID, int productID){ 
+
+[HttpGet("isProductSoldOut")]
+public bool isProductSoldOut( int cartID, int productID){ 
     try 
     {
         string SQLQuery = "SELECT COUNT(*) FROM Carts WHERE Cart_id ="+ cartID + " AND Product_id = " + productID + ";";
@@ -146,7 +148,7 @@ public bool isCartEmpty( int cartID, int productID){
 
 
     [HttpGet("cartCheckout")]
-    public IActionResult cartCheckout(int cartID, int productID, int neededQuantity) { // SQL query to delete one specific item from the cart
+    public IActionResult cartCheckout(int cartID, int productID, int desiredQuantity) { // SQL query to delete one specific item from the cart
 
 
         int flag = 1;
@@ -163,7 +165,7 @@ public bool isCartEmpty( int cartID, int productID){
             while (flag == 1){
                 makeConnection(SQLQuery);                                                                           // Makes the connection to the database and runs the SQLQuery. // TODO: Make better return message.
                 DepleteStockQuantity(productID, 1);
-                emptyCart = isCartEmpty(cartID, productID);
+                emptyCart = isProductSoldOut(cartID, productID);
                 if (emptyCart == true){
                     Console.WriteLine("Cart is emptied of object type", cartID);
                     flag =0;
