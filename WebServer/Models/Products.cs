@@ -34,4 +34,11 @@ namespace WebServer.Models {  // Adjust the namespace if needed to match your pr
             MinusQuantity = minusQuantity;
         }
     }
+
+    public class Authentication {
+        public int id { get; set; }
+        public string? username { get; set; }
+        public string? password { get; set; }
+        public string? email { get; set; }
+    }
 }
