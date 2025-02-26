@@ -70,7 +70,7 @@ export class CartService {
    
   }
 
-  cartCheckout( userID: number, totalPrice: number, purchasedGoods:string): Promise<Response>{
+  cartCheckout( userID: number, totalPrice: number, purchasedGoods:string){
     // Creates the Payload form
     const requestPayload = {
       userID: userID,
