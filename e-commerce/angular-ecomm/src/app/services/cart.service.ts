@@ -69,6 +69,21 @@ export class CartService {
    } 
    
   }
+
+  async emtyCart(cartID: number) {
+    // get the current cart items
+    const cartItems = this.cart();
+    await this.getCarts(cartID);
+    fetch('http://localhost:5201/api/mycontroller/emtyCart?CartID='+cartID)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => console.log("API Response:", data))
+    .catch(error => console.error("API call failed:", error));
+  }
   
   
 /*

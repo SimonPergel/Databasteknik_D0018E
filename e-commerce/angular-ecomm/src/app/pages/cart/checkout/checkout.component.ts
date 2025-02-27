@@ -42,8 +42,21 @@ get totalPrice(): number {
       console.log("Cart is empty!");
       return;
   }
-  // this constructs the purchasedGoods string
-  this.purchasedGoods = this.cartItems().map(item => `${item.ProductName} x${item.quantity}`).join(': ');
+  // this groups the items in the cart by there name and sum up there quantities
+  const groupedItems = this.cartItems().reduce((acc, item) => { // reduce iterates over the cartItem array and stores the result in acc
+    if (acc[item.ProductName]) {
+      acc[item.ProductName] += item.quantity; // Add quantity if already exists
+    } else {
+      acc[item.ProductName] = item.quantity; // Initialize if it's the first time
+    }
+    return acc;
+  }, {} as { [key: string]: number }); // starts as an emty object
+
+  // Construct the purchasedGoods string as a array of key-value pairs
+  this.purchasedGoods = Object.entries(groupedItems)
+  .map(([productName, quantity]) => `${productName} x${quantity}`)
+  .join(': ');
+
   // prints for debug
   console.log('Purchased Goods:', this.purchasedGoods);
 
@@ -57,11 +70,22 @@ get totalPrice(): number {
     const cartID = this.cartItems().map(item => item.cartID);
       //ensures that each checkout request is complete before moving forward
       const response = await this.cartService.cartCheckout(CartIDs, this.totalPrice, this.purchasedGoods);
-      //console.log(`Checkout successful for item ${item.productID}:`, response);
+      // emty the whole cart
+      const resp = await this.cartService.emtyCart(CartIDs);
+      /*
+      // delete all items inside the cart
+      for (const item of this.cartItems()){
+        const resp = await this.cartService.deleteFromCart(item.productID);
+        console.log(`Deleted item with purchaseID: ${item.purchaseID}`);
+      }
+      console.log("All items is deleted from the cart! ")
+      */
+      console.log(`Checkout successful for item ${this.purchasedGoods}:`, response);
     } catch (error) {
       console.error(`Error during checkout for item :`, error);
     }
-  }
     
   }
+}
+
 
