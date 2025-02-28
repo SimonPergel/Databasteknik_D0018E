@@ -5,7 +5,9 @@ import { DataService } from '../../../services/data.service';
 import { Cart } from '../../../models/cart.models';
 import { Product } from '../../../models/product.models';
 
-
+//Sources 
+// reduce()- https://www.geeksforgeeks.org/typescript-array-reduce-method/
+// Object.entries() - https://www.w3schools.com/jsref/jsref_object_entries.asp
 @Component({
   selector: 'app-checkout',
   imports: [PrimaryButtonComponent],
@@ -28,9 +30,8 @@ export class CheckoutComponent {
   
   purchasedGoods = '' // this string will hold all the name of the items + the number of that item in one string
 
-  // Reactive signal to get cart items
+  // Reactive signal to get cart items, it recomputes when changed
   cartItems = computed(() => this.cartService.cart());
-  
 // Getter to calculate the total price of the Cart
 get totalPrice(): number {
   return this.cartItems().reduce((total, item) => total + item.price, 0);
@@ -42,6 +43,7 @@ get totalPrice(): number {
       console.log("Cart is empty!");
       return;
   }
+
   // this groups the items in the cart by there name and sum up there quantities
   const groupedItems = this.cartItems().reduce((acc, item) => { // reduce iterates over the cartItem array and stores the result in acc
     if (acc[item.ProductName]) {
@@ -53,6 +55,7 @@ get totalPrice(): number {
   }, {} as { [key: string]: number }); // starts as an emty object
 
   // Construct the purchasedGoods string as a array of key-value pairs
+  // Object.entries() converts an object into an array of key-pairs
   this.purchasedGoods = Object.entries(groupedItems)
   .map(([productName, quantity]) => `${productName} x${quantity}`)
   .join(': ');
@@ -67,9 +70,16 @@ get totalPrice(): number {
   
     try {
       // Get all cart IDs and calculate the total price
-    const cartID = this.cartItems().map(item => item.cartID);
+      const cartID = this.cartItems().map(item => item.cartID);
       //ensures that each checkout request is complete before moving forward
       const response = await this.cartService.cartCheckout(CartIDs, this.totalPrice, this.purchasedGoods);
+      
+      //This method should reduce the quantiesties localy and at the database
+      for ( const item of this.cartItems()){
+        const res = await this.cartService.depleteStockQuantity(item.productID, 1);
+        console.log(`Decreased successfully, item ${item.productID}:`, response)
+      }
+
       // emty the whole cart
       const resp = await this.cartService.emtyCart(CartIDs);
       /*
@@ -81,6 +91,7 @@ get totalPrice(): number {
       console.log("All items is deleted from the cart! ")
       */
       console.log(`Checkout successful for item ${this.purchasedGoods}:`, response);
+      console.log(`All items was successfully emtied from the cart: ${CartIDs}:`, resp);
     } catch (error) {
       console.error(`Error during checkout for item :`, error);
     }

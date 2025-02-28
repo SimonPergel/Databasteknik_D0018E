@@ -9,7 +9,7 @@ namespace WebServer.Models {  // Adjust the namespace if needed to match your pr
     }
 
     public class Admin {
-        public string? accountName { get; set; }
+        public int UserID { get; set; }
     }
 
     public class Cart {

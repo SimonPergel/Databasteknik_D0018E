@@ -21,9 +21,14 @@ export class LoginComponent {
     await this.GetAuthentication()
     console.log('Username:', this.username);
     console.log('Password:', this.password);
-    if (this.authentication[0].id != null) {
-      console.log('User ID:', this.authentication[0].id)
-      this.routes.navigate(['/'], { queryParams: { id: this.authentication[0].id }, queryParamsHandling: 'merge' })
+    try {
+      if (this.authentication[0].id != null) {
+        console.log('User ID:', this.authentication[0].id)
+        localStorage.setItem("token", this.authentication[0].id.toString())
+        this.routes.navigate(['/'], { queryParams: { id: this.authentication[0].id }, queryParamsHandling: 'merge' })
+      }
+    } catch (error: any) {
+      alert("Invalid login!");
     }
   }
 
