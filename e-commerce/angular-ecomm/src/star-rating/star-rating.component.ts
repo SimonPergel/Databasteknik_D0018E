@@ -1,54 +1,88 @@
+import { Component, OnInit, OnDestroy, inject, Output, EventEmitter, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { StarRatingService } from '../app/services/star-rating.services';
+import { ProductAndRatingService } from '../app/services/productandRating.service';
 
 @Component({
   selector: 'app-star-rating',
-  standalone: true,
   imports: [CommonModule],
   template: `
     <div class="star-rating">
       <span *ngFor="let star of stars; let i = index" 
-            (click)="rate(i)" 
+            class="star" 
+            [class.filled]="star" 
             (mouseenter)="hover(i)" 
-            (mouseleave)="resetHover()">
+            (mouseleave)="resetHover()" 
+            (click)="rate(i)">
         ★
       </span>
     </div>
   `,
   styles: [`
-    .star-rating {
-      display: flex;
-      gap: 5px;
-      font-size: 2rem;
-      color: gray;
+    .star {
+      font-size: 30px;
+      color: lightgray;
       cursor: pointer;
     }
-    .star-rating span {
-      transition: color 0.2s ease-in-out;
-    }
-    .star-rating span.filled {
+    .star.filled {
       color: gold;
-    }
-    .star-rating span:hover {
-      color: orange;
     }
   `]
 })
-export class StarRatingComponent {
-  @Input() rating: number = 0;  // The rating value (1 to 5)
-  @Output() ratingChange = new EventEmitter<number>();  // Emits rating change
+export class StarRatingComponent implements OnInit, OnDestroy {
+  @Input() rating: number = 0;
+  @Output() ratingChange = new EventEmitter<number>();
 
-  stars: boolean[] = [false, false, false, false, false]; // Tracks filled stars
-  hoverIndex: number | null = null; // Track hover effect
+  stars: boolean[] = [false, false, false, false, false];
+  hoverIndex: number | null = null;
+  productId: number | null = null;
+  private productIdSubscription: Subscription | null = null;
+  private ratingSubscription: Subscription | null = null;
 
-  ngOnInit() {
-    this.updateStars();
+  starRatingService = inject(StarRatingService);
+  productAndRatingService = inject(ProductAndRatingService);
+
+  ngOnInit(): void {
+    this.productIdSubscription = this.productAndRatingService.currentProductId$.subscribe((productId) => {
+      if (productId !== null) {
+        this.productId = productId;
+        this.ratingSubscription = this.productAndRatingService.getProductIdRating().subscribe((rating) => {
+          this.rating = rating || 0;
+          this.updateStars();
+        });
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.productIdSubscription) {
+      this.productIdSubscription.unsubscribe();
+    }
+    if (this.ratingSubscription) {
+      this.ratingSubscription.unsubscribe();
+    }
   }
 
   rate(starIndex: number): void {
     this.rating = starIndex + 1;
-    this.ratingChange.emit(this.rating);
     this.updateStars();
+    this.ratingChange.emit(this.rating);
+
+    if (this.productId !== null) {
+      const userID = 1; // Replace with actual user ID
+      this.starRatingService.starRate(userID, this.productId, this.rating)
+        .then((success: any) => {
+          if (success) {
+            console.log('Rating successfully updated!');
+          } else {
+            console.error('Failed to update the rating.');
+          }
+        })
+        .catch((error: any) => {
+          console.error('Error updating the rating:', error);
+        });
+    }
   }
 
   hover(starIndex: number): void {
@@ -62,6 +96,6 @@ export class StarRatingComponent {
   }
 
   updateStars(): void {
-    this.stars = this.stars.map((_, i) => i < (this.hoverIndex !== null ? this.hoverIndex + 1 : this.rating));
+    this.stars = [0, 1, 2, 3, 4].map((index) => index < (this.hoverIndex !== null ? this.hoverIndex + 1 : this.rating));
   }
 }
