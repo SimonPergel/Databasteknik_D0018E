@@ -3,6 +3,7 @@ import { Product } from '../../models/product.models';
 import { ProductCardComponent } from "./product-card/product-card.component";
 import { DataService } from '../../services/data.service';
 import { Cart } from '../../models/cart.models';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-products-list',
@@ -29,19 +30,38 @@ import { Cart } from '../../models/cart.models';
 
 export class ProductsListComponent {
   products: Product []=[]
+  id!: string;
   //products: Cart []=[]
   constructor(
     private dataService: DataService,
+    private route: ActivatedRoute
   ) {}
-  ngOnInit(): void {
-    this.dataService.getProductsAdmin().subscribe( {
-      next: (response) => {
-        console.log("Fetched Products:", response);
-        this.products = response; // Store the API data in products
-        console.log('Product Object:', this.products); //  to debug
-      },
-      error: (error) => {
-        console.error("Error fetching products:", error);
+  async ngOnInit() {
+    this.route.queryParams.subscribe(async params => {
+      this.id = params['id'];
+      if (await this.dataService.checkAdmin(Number(this.id))) {
+        this.dataService.getProductsAdmin().subscribe( {
+          next: (response) => {
+            console.log("Fetched Products:", response);
+            this.products = response; // Store the API data in products
+            console.log('Product Object:', this.products); //  to debug
+          },
+          error: (error) => {
+            console.error("Error fetching products:", error);
+          }
+        });
+      }
+      else {
+        this.dataService.getProductsUser().subscribe( {
+          next: (response) => {
+            console.log("Fetched Products:", response);
+            this.products = response;
+            console.log("Product Object:", this.products);
+          },
+          error: (error) => {
+            console.error("Error fetching products:", error);
+          }
+        });
       }
     });
   }

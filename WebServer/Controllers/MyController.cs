@@ -68,28 +68,28 @@ public class MyController : ControllerBase {
     }
 
     [HttpGet("checkadmin")]
-    public IActionResult CheckAdmin(string AcctName) { // Check if admin privileges should be granted during session. Define account name.
-    // http://localhost:5201/api/mycontroller/checkadmin?acctname=Alice
-        string SQLQuery = "SELECT Account_name FROM Users WHERE role = 'admin';";
+    public bool CheckAdmin(int UserID) { // Check if admin privileges should be granted during session. Define a UserID.
+    // http://localhost:5201/api/mycontroller/checkadmin?UserID=1
+        string SQLQuery = "SELECT User_id FROM Users WHERE role = 'admin';";
         try {
             List<Admin> users = new List<Admin>();
             var (connection, reader) = StartReader(SQLQuery);                               // Makes a connection to the database and starts a reader.
             while (reader.Read()) {                                                         // Read each row and map to the User object.
                 users.Add(new Admin {
-                    accountName = reader.GetString("Account_name"),                         // Reads in the account name into the Admin list
+                    UserID = reader.GetInt32("User_id"),                         // Reads in the account name into the Admin list
                 });
             }
             reader.Close();                                                                 // Closes the reader.
             connection.Close();                                                             // Closes the connection to the database.
-            if (users.Exists(x => x.accountName == AcctName)) {
-                var goodresult = new { Message = "This account is an admin:", AcctName};    // Returns a message that says the requested account is an admin.
-                return Ok(goodresult);
+            if (users.Exists(x => x.UserID == UserID)) {
+                var goodresult = new { Message = "This account is an admin:", UserID};    // Returns a message that says the requested account is an admin.
+                return true;
             }
-            var badresult = new { Message = "This account is not an admin:", AcctName};     // Returns a message when requested account is not an admin.
-            return Ok(badresult);                                   
+            var badresult = new { Message = "This account is not an admin:", UserID};     // Returns a message when requested account is not an admin.
+            return false;                                 
         } catch (Exception exception) {                                                     // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message };   
-            return BadRequest(result);
+            return false;
         }
     }
 
