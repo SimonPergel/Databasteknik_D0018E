@@ -7,11 +7,8 @@ import { StarRatingComponent } from '../../../star-rating/star-rating.component'
 
 @Component({
   selector: 'app-products-list',
-  imports: [ProductCardComponent, StarRatingComponent],
+  imports: [ProductCardComponent],
   template: `
-  <h2>Rate this page:</h2>
-  <app-star-rating [(rating)]="pageRating"></app-star-rating>
-  <p>Your rating: {{ pageRating }}</p>
 
   <div class="p-8 grid grid-cols-2 gap-4">
     @for (product of products; track product.id ) {
