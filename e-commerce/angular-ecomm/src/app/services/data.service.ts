@@ -88,4 +88,20 @@ cartCheckout(cartID: number, productID: number, desiredQuantity: number){
   .catch(error => console.error("API call failed:", error));
 
 }
+  checkAdmin(id: number): Promise<boolean> {
+    return fetch('http://localhost:5201/api/mycontroller/checkadmin?UserID='+id)
+    .then(response => {
+      if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then((data: boolean) => {
+      return data
+    })
+    .catch(error => {
+      console.error("API call failed:", error)
+      return false;
+    });
+  }
 }

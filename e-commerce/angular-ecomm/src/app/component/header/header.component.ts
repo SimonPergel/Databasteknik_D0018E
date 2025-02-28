@@ -3,6 +3,7 @@ import { PrimaryButtonComponent } from "../primary-button/primary-button.compone
 import { CartService } from '../../services/cart.service';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { NgIf } from '@angular/common';
+import { AuthenticationGuard } from '../Authentication/AuthenticationGuard';
 
 @Component({
   selector: 'app-header',
@@ -16,12 +17,15 @@ export class HeaderComponent implements OnInit {
   id!: string;
   cartService = inject(CartService);
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(
+    private route: ActivatedRoute,
+    private authGuard: AuthenticationGuard
+  ) {}
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
       this.id = params['id'];
-      if (this.id != null) {
+      if (this.id != null && this.authGuard.canActivate()) {
         this.template = 'loggedin';
       }
       else {
