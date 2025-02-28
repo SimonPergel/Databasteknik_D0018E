@@ -404,7 +404,7 @@ public IActionResult InsertProduct([FromBody] Product product) {
     }
 
     [HttpGet("running")]
-     public IActionResult running(){                            // http://localhost:5201/api/mycontroller/running
+     public IActionResult running() {                            // http://localhost:5201/api/mycontroller/running
         var result = new { Message = "WebServer is running"};   // Check if the web server is running.
             return Ok(result);
      }
@@ -468,4 +468,28 @@ public bool CheckProductAvailability(int productID, int desiredQuantity)
     return false; // Return false if an error occurs or the product is not found
 }
 
+    [HttpGet("getauthentication")]
+    public IActionResult GetAuthentication(string username, string password) {
+    // http://localhost:5201/api/mycontroller/getauthentication
+        Console.WriteLine("GetAuthentication function is reached");
+        string SQLQuery = "SELECT * FROM Authentication WHERE username = " + "'" + username + "'" + " AND password = " + "'" + password + "';";
+        try {
+            List<Authentication> authentication = new List<Authentication>();
+            var (connection, reader) = StartReader(SQLQuery);
+            while (reader.Read()) {
+                authentication.Add(new Authentication {
+                    id = reader.GetInt32("id"),
+                    username = reader.GetString("username"),
+                    password = reader.GetString("password"),
+                    email = reader.GetString("email")
+                });
+            }
+            reader.Close();
+            connection.Close();
+            return Ok(authentication);
+        } catch (Exception exception) {
+            var result = new { Message = exception.Message};
+            return BadRequest(result);
+        }
+    }
 }

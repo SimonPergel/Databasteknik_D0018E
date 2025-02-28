@@ -90,17 +90,12 @@ export class CartService {
   cartCheckout(cartID: number, id: number): Promise<void>{
     // Creates the Payload form
     const requestPayload = {
-      cartId: cartID,
-      productId: id 
+      userID: userID,
+      totalPrice: totalPrice,
+      purchasedGoods: purchasedGoods
     };
 
-    return fetch('http://localhost:5201/api/mycontroller/cartCheckout', {
-      method: 'PUT',  // HTTP method must be PUT based on your API
-      headers: {
-        'Content-Type': 'application/json'  // Sending data as JSON
-      },
-      body: JSON.stringify(requestPayload)  // Converting the object to JSON string
-    })
+    fetch('http://localhost:5201/api/mycontroller/cartcheckout?userID='+ userID +'&totalPrice='+ totalPrice +'&purchasedGoods=' + purchasedGoods+';')
     .then(response => {
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
