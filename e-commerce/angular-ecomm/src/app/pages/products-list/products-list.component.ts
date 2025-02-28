@@ -39,29 +39,33 @@ export class ProductsListComponent {
   async ngOnInit() {
     this.route.queryParams.subscribe(async params => {
       this.id = params['id'];
-      if (await this.dataService.checkAdmin(Number(this.id))) {
-        this.dataService.getProductsAdmin().subscribe( {
-          next: (response) => {
-            console.log("Fetched Products:", response);
-            this.products = response; // Store the API data in products
-            console.log('Product Object:', this.products); //  to debug
-          },
-          error: (error) => {
-            console.error("Error fetching products:", error);
-          }
-        });
-      }
-      else {
-        this.dataService.getProductsUser().subscribe( {
-          next: (response) => {
-            console.log("Fetched Products:", response);
-            this.products = response;
-            console.log("Product Object:", this.products);
-          },
-          error: (error) => {
-            console.error("Error fetching products:", error);
-          }
-        });
+      try {
+        if (await this.dataService.checkAdmin(Number(this.id))) {
+          this.dataService.getProductsAdmin().subscribe( {
+            next: (response) => {
+              console.log("Fetched Products:", response);
+              this.products = response; // Store the API data in products
+              console.log('Product Object:', this.products); //  to debug
+            },
+            error: (error) => {
+              console.error("Error fetching products:", error);
+            }
+          });
+        }
+        else {
+          this.dataService.getProductsUser().subscribe( {
+            next: (response) => {
+              console.log("Fetched Products:", response);
+              this.products = response;
+              console.log("Product Object:", this.products);
+            },
+            error: (error) => {
+              console.error("Error fetching products:", error);
+            }
+          });
+        }
+      } catch (error: any) {
+        console.error("An error occured:", error);
       }
     });
   }
