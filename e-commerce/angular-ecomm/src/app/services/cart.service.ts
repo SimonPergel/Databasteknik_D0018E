@@ -88,6 +88,20 @@ export class CartService {
     .then(data => console.log("API Response:", data))
     .catch(error => console.error("API call failed:", error));
   }
+async depleteStockQuantity(productID: number, minusQuantity: number) {
+  fetch('http://localhost:5201/api/mycontroller/depletestockquantity?productID='+productID+'&MinusQuantity='+minusQuantity)
+  .then(response => {
+      if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return;
+  })
+  .then(data => console.log("API Response:", data))
+  .catch(error => console.error("API call failed:", error));
+
+
+
+}
   
 cartCheckout(cartID: number, totalprice: number, purchasedGoods: string){
   fetch('http://localhost:5201/api/mycontroller/cartCheckout?cartID='+cartID+'&totalPrice='+totalprice+'&purchasedGoods='+purchasedGoods)

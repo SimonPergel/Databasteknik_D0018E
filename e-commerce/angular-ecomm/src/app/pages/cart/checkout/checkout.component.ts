@@ -70,12 +70,15 @@ get totalPrice(): number {
   
     try {
       // Get all cart IDs and calculate the total price
-    const cartID = this.cartItems().map(item => item.cartID);
+      const cartID = this.cartItems().map(item => item.cartID);
       //ensures that each checkout request is complete before moving forward
       const response = await this.cartService.cartCheckout(CartIDs, this.totalPrice, this.purchasedGoods);
       
-      //This method should reduce the quantiesties localy and from the database
-
+      //This method should reduce the quantiesties localy and at the database
+      for ( const item of this.cartItems()){
+        const res = await this.cartService.depleteStockQuantity(item.productID, 1);
+        console.log(`Decreased successfully, item ${item.productID}:`, response)
+      }
 
       // emty the whole cart
       const resp = await this.cartService.emtyCart(CartIDs);
