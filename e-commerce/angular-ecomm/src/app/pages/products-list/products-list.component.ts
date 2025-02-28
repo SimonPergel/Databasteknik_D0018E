@@ -1,9 +1,8 @@
 import { Component, signal, Type } from '@angular/core';
 import { Product } from '../../models/product.models';
 import { ProductCardComponent } from "./product-card/product-card.component";
-import { json1component } from '../../components/json-1/json-1.component';
 import { DataService } from '../../services/data.service';
-import { StarRatingComponent } from '../../../star-rating/star-rating.component';
+import { Cart } from '../../models/cart.models';
 
 @Component({
   selector: 'app-products-list',
@@ -12,8 +11,6 @@ import { StarRatingComponent } from '../../../star-rating/star-rating.component'
 
   <div class="p-8 grid grid-cols-2 gap-4">
     @for (product of products; track product.id ) {
-    <div class="p-8 grid grid-cols-2 gap-4">
-      @for (product of products; track product.id ) {
       <app-product-card [product]="product"/>
       }
     </div>

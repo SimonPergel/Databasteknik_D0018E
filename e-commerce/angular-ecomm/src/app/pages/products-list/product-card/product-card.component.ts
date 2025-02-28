@@ -30,9 +30,9 @@ import { signal } from '@angular/core';
   <div class="bg-white shadow-md border rounded-xl p-6 flex flex-col gap-6 relative">
     <div class="mx-auto">
       <div class="flex flex-col mt-2">
-        <span class="text-md front-bold">{{ product().name}}</span>
-        <span class="text-sm ">{{ '$' + product().price}}</span>
-        <!--<app-primary-button label="Add to cart" class="mt-3" (buttonClicked)="cartService.insertIntoCart(1, 1, product())"/> --> <!-- are we reaching the name-->
+        <span class="text-md front-bold">{{ product.name }}</span>
+        <span class="text-sm ">{{ '$' + product.price }}</span>
+        <!--<app-primary-button label="Add to cart" class="mt-3" (buttonClicked)="cartService.insertIntoCart(1, 1, product)"/> --> <!-- are we reaching the name-->
         <app-primary-button label="Add to cart" class="mt-3" (buttonClicked)="insertHandler()"/>
       </div>
     </div>
@@ -51,10 +51,10 @@ export class ProductCardComponent implements OnInit {
  // this method handles the inserting into cart part
 async insertHandler() {
   // check if the product is in stock, if not, the customer shouldent be able to add it to the cart
-  if (this.product().inStock !== 0) {
+  if (this.product.inStock !== 0) {
     try{
-    const response = await this.cartService.insertIntoCart(1,1, this.product());
-    console.log(`The inserting process was successful for item ${this.product().name}:`, response);
+    const response = await this.cartService.insertIntoCart(1,1, this.product);
+    console.log(`The inserting process was successful for item ${this.product.name}:`, response);
 
   } catch (error) {
     console.error(`Error during inserting process for item :`, error);
