@@ -70,7 +70,24 @@ export class CartService {
    
   }
 
-  cartCheckout( userID: number, totalPrice: number, purchasedGoods:string){
+  async emtyCart(cartID: number) {
+    // get the current cart items
+    const cartItems = this.cart();
+    await this.getCarts(cartID);
+    fetch('http://localhost:5201/api/mycontroller/emtyCart?CartID='+cartID)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => console.log("API Response:", data))
+    .catch(error => console.error("API call failed:", error));
+  }
+  
+  
+/*
+  cartCheckout(cartID: number, id: number): Promise<void>{
     // Creates the Payload form
     const requestPayload = {
       userID: userID,
@@ -88,7 +105,19 @@ export class CartService {
     .then(data => console.log("API Response:", data))
     .catch(error => console.error("API call failed:", error));
   }
+*/
+cartCheckout(cartID: number, totalprice: number, purchasedGoods: string){
+  fetch('http://localhost:5201/api/mycontroller/cartCheckout?cartID='+cartID+'&totalPrice='+totalprice+'&purchasedGoods='+purchasedGoods)
+  .then(response => {
+      if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return;
+  })
+  .then(data => console.log("API Response:", data))
+  .catch(error => console.error("API call failed:", error));
 
+}
 
   updateCarts(cartID: number, product: Product) {
     fetch('http://localhost:5201/api/mycontroller/updatecarts?cartID='+cartID+'&productID='+product.id+'&quantity='+product.quantity+'&price='+product.price)

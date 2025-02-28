@@ -147,14 +147,12 @@ public bool isProductSoldOut( int cartID, int productID){
     }
 
     [HttpGet("cartCheckout")]
-    public IActionResult cartCheckout(int userID, int totalPrice, string purchasedGoods) { // SQL query to delete one specific item from the cart
+    public IActionResult cartCheckout(int CartID, int totalPrice, string purchasedGoods) { // SQL query to delete one specific item from the cart
     // sql query add to checkout table
-
-
-    string SQLQuery = "INSERT INTO Checkout (Total_price, userID, purchasedGoods);Values (" + totalPrice + ", " + userID + ", " + purchasedGoods + ");";
+    string SQLQuery = "INSERT INTO Checkout (Cart_id, Total_price, purchasedGoods) VALUES (" + CartID  + ", " + totalPrice + ", '" + purchasedGoods + "');";
         try {
             makeConnection(SQLQuery);                                             // Makes the connection to the database and runs the SQLQuery.
-            var result = new { Message = "receipt added to history!", userID};    // TODO: Make better return message.
+            var result = new { Message = "receipt added to history!", CartID};    // TODO: Make better return message.
             return Ok(result);
         } catch (Exception exception) {
             return BadRequest(new { Message = "Error processing checkout", Error = exception.Message });
@@ -176,6 +174,21 @@ public bool isProductSoldOut( int cartID, int productID){
             return BadRequest(result);
         }
     }
+    [HttpGet("emtycart")]
+    public IActionResult emtyCart(int CartID) { // Removes a cart from the Cart table. Define purchase id.
+    // http://localhost:5201/api/mycontroller/emtyCart?CartID=1
+        Console.WriteLine("deleteFromCart method is reached...");
+        string SQLQuery = "DELETE FROM Carts WHERE Cart_id = " + CartID + ";";
+        try {
+            makeConnection(SQLQuery);                                                   // Makes the connection to the database and runs the SQLQuery.
+            var result = new { Message = "Cart deleted successfully!", CartID};         // TODO: Make better return message.
+            return Ok(result);                                                          // Returns a OK with a result message.
+        } catch (Exception exception) {                                                 // Catches an exception and returns the exception message.
+            var result = new { Message = exception.Message};
+            return BadRequest(result);
+        }
+    }
+
 
     [HttpGet("updatecarts")]
     public IActionResult updateCarts(int cartID, int productID, int quantity, int price) { // Updates a cart in the Cart table, define order id, product id, quantity and price.
@@ -391,7 +404,7 @@ public IActionResult InsertProduct([FromBody] Product product) {
     }
 
     [HttpGet("running")]
-     public IActionResult running(){                            // http://localhost:5201/api/mycontroller/running
+     public IActionResult running() {                            // http://localhost:5201/api/mycontroller/running
         var result = new { Message = "WebServer is running"};   // Check if the web server is running.
             return Ok(result);
      }
@@ -455,4 +468,28 @@ public bool CheckProductAvailability(int productID, int desiredQuantity)
     return false; // Return false if an error occurs or the product is not found
 }
 
+    [HttpGet("getauthentication")]
+    public IActionResult GetAuthentication(string username, string password) {
+    // http://localhost:5201/api/mycontroller/getauthentication
+        Console.WriteLine("GetAuthentication function is reached");
+        string SQLQuery = "SELECT * FROM Authentication WHERE username = " + "'" + username + "'" + " AND password = " + "'" + password + "';";
+        try {
+            List<Authentication> authentication = new List<Authentication>();
+            var (connection, reader) = StartReader(SQLQuery);
+            while (reader.Read()) {
+                authentication.Add(new Authentication {
+                    id = reader.GetInt32("id"),
+                    username = reader.GetString("username"),
+                    password = reader.GetString("password"),
+                    email = reader.GetString("email")
+                });
+            }
+            reader.Close();
+            connection.Close();
+            return Ok(authentication);
+        } catch (Exception exception) {
+            var result = new { Message = exception.Message};
+            return BadRequest(result);
+        }
+    }
 }
