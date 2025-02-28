@@ -3,12 +3,16 @@ import { Product } from '../../models/product.models';
 import { ProductCardComponent } from "./product-card/product-card.component";
 import { DataService } from '../../services/data.service';
 import { Cart } from '../../models/cart.models';
+import { StarRatingComponent } from '../../../star-rating/star-rating.component';
 
 @Component({
   selector: 'app-products-list',
-  imports: [ProductCardComponent],
+  imports: [ProductCardComponent, StarRatingComponent],
   template: `
-  
+  <h2>Rate this page:</h2>
+  <app-star-rating [(rating)]="pageRating"></app-star-rating>
+  <p>Your rating: {{ pageRating }}</p>
+
   <div class="p-8 grid grid-cols-2 gap-4">
     @for (product of products; track product.id ) {
       <app-product-card [product]="product"/>
@@ -28,6 +32,7 @@ import { Cart } from '../../models/cart.models';
 })
 
 export class ProductsListComponent {
+  pageRating: number = 3; // Default rating 
   products: Product []=[]
   //products: Cart []=[]
   constructor(

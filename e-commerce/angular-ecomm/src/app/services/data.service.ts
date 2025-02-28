@@ -27,8 +27,8 @@ export class DataService {
   }
   
 
-isProductSoldOut(cartID: number): Promise<boolean> {
-    return fetch(`http://localhost:5201/api/mycontroller/isProductSoldOut?cartID=${cartID}`)
+isProductSoldOut(cartID: number, productID :number): Promise<boolean> {
+    return fetch(`http://localhost:5201/api/mycontroller/isProductSoldOut?cartID=${cartID}&productID=${productID}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);

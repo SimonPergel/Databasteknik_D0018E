@@ -62,7 +62,7 @@ get totalPrice(): number {
   */
 
   // TODO: cartID, totalprice, string purchaedGoods
- 
+ /*
   for (const item of this.cartItems()) {
     try {
       //ensures that each checkout request is complete before moving forward
@@ -72,7 +72,7 @@ get totalPrice(): number {
       console.error(`Error during checkout for item ${item.productID}:`, error);
     }
   }
-    
+  */
   }
 }
 
