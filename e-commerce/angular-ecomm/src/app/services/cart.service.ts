@@ -73,6 +73,10 @@ export class CartService {
   async emtyCart(cartID: number) {
     // get the current cart items
     const cartItems = this.cart();
+    // setting the new length of the cart to zero
+    cartItems.length = 0;
+    // using splice to remove all items from index 0 to its emty
+    cartItems.splice(0, cartItems.length)
     await this.getCarts(cartID);
     fetch('http://localhost:5201/api/mycontroller/emtyCart?CartID='+cartID)
     .then(response => {
@@ -85,27 +89,6 @@ export class CartService {
     .catch(error => console.error("API call failed:", error));
   }
   
-  
-/*
-  cartCheckout(cartID: number, id: number): Promise<void>{
-    // Creates the Payload form
-    const requestPayload = {
-      userID: userID,
-      totalPrice: totalPrice,
-      purchasedGoods: purchasedGoods
-    };
-
-    fetch('http://localhost:5201/api/mycontroller/cartcheckout?userID='+ userID +'&totalPrice='+ totalPrice +'&purchasedGoods=' + purchasedGoods+';')
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => console.log("API Response:", data))
-    .catch(error => console.error("API call failed:", error));
-  }
-*/
 cartCheckout(cartID: number, totalprice: number, purchasedGoods: string){
   fetch('http://localhost:5201/api/mycontroller/cartCheckout?cartID='+cartID+'&totalPrice='+totalprice+'&purchasedGoods='+purchasedGoods)
   .then(response => {
