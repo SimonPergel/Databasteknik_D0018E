@@ -1,25 +1,32 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { PrimaryButtonComponent } from "../primary-button/primary-button.component";
 import { CartService } from '../../services/cart.service';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute } from '@angular/router';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-header',
-  imports: [PrimaryButtonComponent, RouterLink],
-  template: `<div class="bg-slate-100 px-4 py-3 shadow-md flex justify-between items-center">
-    <button class="text-xl" routerLink="/"> My store</button>
-    <app-primary-button [label]="'login'" routerLink="/login"/>
-    <app-primary-button [label]="'Cart (' + cartService.cart().length + ')'"
-    routerLink="/cart"
-    />
-</div>
-    
-    `,
+  imports: [PrimaryButtonComponent, RouterLink, NgIf],
+  templateUrl: './header.component.html',
 
   styles: ``
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
+  template!: string;
+  id!: string;
   cartService = inject(CartService);
 
+  constructor(private route: ActivatedRoute) {}
 
+  ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      this.id = params['id'];
+      if (this.id != null) {
+        this.template = 'loggedin';
+      }
+      else {
+        this.template = 'loggedout';
+      }
+    });
+  }
 }

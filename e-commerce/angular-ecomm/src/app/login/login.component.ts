@@ -17,13 +17,13 @@ export class LoginComponent {
   username: string = '';
   password: string = '';
 
-  onSubmit() {
-    this.GetAuthentication()
+  async onSubmit() {
+    await this.GetAuthentication()
     console.log('Username:', this.username);
     console.log('Password:', this.password);
     if (this.authentication[0].id != null) {
       console.log('User ID:', this.authentication[0].id)
-      this.routes.navigate(['/'], { queryParams: { id: 123 } })
+      this.routes.navigate(['/'], { queryParams: { id: this.authentication[0].id }, queryParamsHandling: 'merge' })
     }
   }
 
