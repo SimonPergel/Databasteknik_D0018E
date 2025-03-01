@@ -43,16 +43,19 @@ export class ProductCardComponent {
  // this method handles the inserting into cart part
 async insertHandler() {
   // check if the product is in stock, if not, the customer shouldent be able to add it to the cart
+  if (Number(localStorage.getItem("token")) === 0) {
+    alert("You have to log in to add products to your cart")
+    return
+  }
   if (this.product().inStock !== 0) {
-    try{
-    const response = await this.cartService.insertIntoCart(1,1, this.product());
+    try {
+    const response = await this.cartService.insertIntoCart(Number(localStorage.getItem("token")), 1, this.product());
     console.log(`The inserting process was successful for item ${this.product().name}:`, response);
 
-  } catch (error) {
-    console.error(`Error during inserting process for item :`, error);
-  }
-
-  }else {
+    } catch (error) {
+      console.error(`Error during inserting process for item :`, error);
+    }
+  } else {
     console.log("The item is not available in stock at the moment!")
   }
   

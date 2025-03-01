@@ -14,7 +14,6 @@ import { Component, input, output, EventEmitter, Input, Output } from '@angular/
 export class PrimaryButtonComponent {
   label = input('');
   @Input() action: string = '';
-  @Output() clicked = new EventEmitter<void>();
 
   buttonClicked = output();
 
@@ -23,7 +22,7 @@ export class PrimaryButtonComponent {
       localStorage.removeItem("token");
     }
     else {
-      this.clicked.emit();
+      this.buttonClicked.emit();
     }
   }
 }

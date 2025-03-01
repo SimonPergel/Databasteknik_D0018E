@@ -129,7 +129,7 @@ cartCheckout(cartID: number, totalprice: number, purchasedGoods: string){
   }
 
   getCarts(productID: number): Promise<void> {
-    return fetch('http://localhost:5201/api/mycontroller/getcarts?productid='+productID)
+    return fetch('http://localhost:5201/api/mycontroller/getcarts?UserID='+productID)
     .then(response => {
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -138,8 +138,6 @@ cartCheckout(cartID: number, totalprice: number, purchasedGoods: string){
     })
     .then(data => {
       this.carts = data
-      localStorage.setItem("myData", this.carts[0].purchaseID.toString());
-      console.log(localStorage.getItem("myData")); // "Hello, Angular!"
     })
     .catch(error => console.error("API call failed:", error));
   }
