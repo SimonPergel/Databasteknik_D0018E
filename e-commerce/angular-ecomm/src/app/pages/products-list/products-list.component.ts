@@ -1,4 +1,4 @@
-import { Component, signal, Type } from '@angular/core';
+import { Component, signal, Type, Injectable } from '@angular/core';
 import { Product } from '../../models/product.models';
 import { ProductCardComponent } from "./product-card/product-card.component";
 import { DataService } from '../../services/data.service';
@@ -28,6 +28,9 @@ import { ActivatedRoute } from '@angular/router';
   styleUrl: './products-list.component.scss'
 })
 
+@Injectable({
+  providedIn: 'root'
+})
 export class ProductsListComponent {
   products: Product []=[]
   id!: string;
@@ -45,6 +48,7 @@ export class ProductsListComponent {
             next: (response) => {
               console.log("Fetched Products:", response);
               this.products = response; // Store the API data in products
+              localStorage.setItem("products", JSON.stringify(this.products));
               console.log('Product Object:', this.products); //  to debug
             },
             error: (error) => {
@@ -57,6 +61,7 @@ export class ProductsListComponent {
             next: (response) => {
               console.log("Fetched Products:", response);
               this.products = response;
+              localStorage.setItem("products", JSON.stringify(this.products));
               console.log("Product Object:", this.products);
             },
             error: (error) => {

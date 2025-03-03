@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { PrimaryButtonComponent } from "../primary-button/primary-button.component";
 import { CartService } from '../../services/cart.service';
 import { RouterLink, ActivatedRoute } from '@angular/router';
@@ -19,13 +19,17 @@ export class HeaderComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private authGuard: AuthenticationGuard
+    private authGuard: AuthenticationGuard,
+    private cdRef: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
       this.id = params['id'];
       if (this.id != null && this.authGuard.canActivate()) {
+        this.cartService.loadCart();
+        this.cartService.loadCart();
+        this.cdRef.detectChanges();
         this.template = 'loggedin';
       }
       else {
