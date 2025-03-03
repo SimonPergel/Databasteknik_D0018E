@@ -82,14 +82,7 @@ get totalPrice(): number {
 
       // emty the whole cart
       const resp = await this.cartService.emtyCart(CartIDs);
-      /*
-      // delete all items inside the cart
-      for (const item of this.cartItems()){
-        const resp = await this.cartService.deleteFromCart(item.productID);
-        console.log(`Deleted item with purchaseID: ${item.purchaseID}`);
-      }
-      console.log("All items is deleted from the cart! ")
-      */
+      // prints for debug and error handling
       console.log(`Checkout successful for item ${this.purchasedGoods}:`, response);
       console.log(`All items was successfully emtied from the cart: ${CartIDs}:`, resp);
     } catch (error) {

@@ -141,4 +141,32 @@ cartCheckout(cartID: number, totalprice: number, purchasedGoods: string){
     })
     .catch(error => console.error("API call failed:", error));
   }
+
+  // this function updates the inStock status if the quantity becomes zero
+  updateStockStatus(name: string){
+    fetch('http://localhost:5201/api/mycontroller/removeproduct?name='+name)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => console.log("API Response:", data))
+    .catch(error => console.error("API call failed:", error));
+  }
+  
+  getProduct():Promise<void> {
+    return fetch('http://localhost:5201/api/mycontroller/getproductsadmin')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+      this.carts = data
+    })
+    .catch(error => console.error("API call failed:", error));
+  }
+
 }
