@@ -44,9 +44,9 @@ async insertHandler() {
   }
   
   //TODO: the number of products that is in stock is the maximum number of that product the user should be able to add
-
+/*
   const maxLim = await this.cartService.getProduct();
-
+*/
   if (this.product().quantity !== 0) {
     try {
     const response = await this.cartService.insertIntoCart(Number(localStorage.getItem("token")), 1, this.product());
