@@ -25,7 +25,7 @@ export class DataService {
   getRunning(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/running`);
   }
-  
+
 
 isProductSoldOut(cartID: number): Promise<boolean> {
     return fetch(`http://localhost:5201/api/mycontroller/isProductSoldOut?cartID=${cartID}`)

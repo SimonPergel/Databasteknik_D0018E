@@ -18,15 +18,9 @@ import { Cart } from '../../../models/cart.models';
       </div>
 
       <span class="absolute top-2 right-3 text-sm font-bald" 
-      [class]= "product().inStock ? 'text-green-500' : 'text-red-500'">
-        @if (product().quantity) {
-          {{product().quantity}} left
-        }@else {
-          Out of stock
-        }
-
-
-
+      [class.text-green-500]="product().quantity > 0"
+      [class.text-red-500]="product().quantity === 0">
+        {{ product().quantity > 0 ? product().quantity + ' left' : 'Out of stock' }}
       </span>
     </div>
   </div>
@@ -38,19 +32,27 @@ export class ProductCardComponent {
   cartService = inject(CartService);
 
   product = input.required<Product>();
- // product = input.required<Cart>();
-
- // this method handles the inserting into cart part
+  // keeps track of how many times inserthandler is called (the add button is pressed)
+  counter: number = 0; 
+  // this method handles the inserting into cart part
 async insertHandler() {
+  
   // check if the product is in stock, if not, the customer shouldent be able to add it to the cart
   if (Number(localStorage.getItem("token")) === 0) {
     alert("You have to log in to add products to your cart")
     return
   }
-  if (this.product().inStock !== 0) {
+  
+  //TODO: the number of products that is in stock is the maximum number of that product the user should be able to add
+
+  const maxLim = await this.cartService.getProduct();
+
+  if (this.product().quantity !== 0) {
     try {
     const response = await this.cartService.insertIntoCart(Number(localStorage.getItem("token")), 1, this.product());
     console.log(`The inserting process was successful for item ${this.product().name}:`, response);
+    // adds one every time the add to cart button is pressed
+    this.counter = this.counter +1; 
 
     } catch (error) {
       console.error(`Error during inserting process for item :`, error);
@@ -62,5 +64,7 @@ async insertHandler() {
   
 
 }
+
+// help function
 
 }
