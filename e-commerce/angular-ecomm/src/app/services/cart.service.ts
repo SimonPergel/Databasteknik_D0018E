@@ -167,8 +167,8 @@ cartCheckout(cartID: number, totalprice: number, purchasedGoods: string){
     .then(data => console.log("API Response:", data))
     .catch(error => console.error("API call failed:", error));
   }
-  
-  getProduct():Promise<void> {
+  // gets the current status of the products for checkout purpose
+  getProduct():Promise<Product[]> {
     return fetch('http://localhost:5201/api/mycontroller/getproductsadmin')
     .then(response => {
         if (!response.ok) {
@@ -176,12 +176,15 @@ cartCheckout(cartID: number, totalprice: number, purchasedGoods: string){
         }
         return response.json();
     })
-    .then(data => {
-      this.carts = data
-    })
-    .catch(error => console.error("API call failed:", error));
-  }
-
+    .then((data: Product[]) => { 
+      console.log("Received products:", data);
+      return data;  // Now always returning Product[]
+  })
+  .catch(error => {
+      console.error("API call failed:", error);
+      return [];  // Return an empty array to match expected return type
+  });
+}
 
   getProductFromCarts(productID: number): Promise<void> {
     return fetch('http://localhost:5201/api/mycontroller/getproductfromcarts?ProductID='+productID)

@@ -71,6 +71,23 @@ get totalPrice(): number {
     try {
       // Get all cart IDs and calculate the total price
       const cartID = this.cartItems().map(item => item.cartID);
+      const productStatus = await this.cartService.getProduct(); // returns a Product[]
+
+      console.log("Product Status (From DB):", productStatus);
+
+      // this should check if any items in the cart exceeds stock
+
+      for ( const item of this.cartItems()) {
+        const product = productStatus.find(p => p.id === item.productID); // trying to match cart item to stock item
+
+        if ( product && item.quantity > product.quantity) {
+          alert(`Cannot checkout! Not enough stock for ${item.ProductName}.`);
+          console.log(`to few in stock for: ${item.ProductName}`, productStatus)
+        return; // Stop checkout process
+
+        }
+        
+      }
       //ensures that each checkout request is complete before moving forward
       const response = await this.cartService.cartCheckout(CartIDs, this.totalPrice, this.purchasedGoods);
       
@@ -82,9 +99,9 @@ get totalPrice(): number {
 
       // emty the whole cart
       const resp = await this.cartService.emtyCart(CartIDs);
-      // prints for debug and error handling
       console.log(`Checkout successful for item ${this.purchasedGoods}:`, response);
       console.log(`All items was successfully emtied from the cart: ${CartIDs}:`, resp);
+
     } catch (error) {
       console.error(`Error during checkout for item :`, error);
     }
