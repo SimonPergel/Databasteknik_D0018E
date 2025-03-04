@@ -19,15 +19,15 @@ import { ProductAndRatingService } from '../app/services/productandRating.servic
       </span>
     </div>
   `,
-  styles: [`
-    .star {
-      font-size: 30px;
-      color: lightgray;
-      cursor: pointer;
-    }
-    .star.filled {
-      color: gold;
-    }
+  styles: [` 
+    .star { 
+      font-size: 30px; 
+      color: lightgray; 
+      cursor: pointer; 
+    } 
+    .star.filled { 
+      color: gold; 
+    } 
   `]
 })
 export class StarRatingComponent implements OnInit, OnDestroy {
@@ -36,14 +36,15 @@ export class StarRatingComponent implements OnInit, OnDestroy {
 
   stars: boolean[] = [false, false, false, false, false];
   hoverIndex: number | null = null;
-  productId: number | null = null;
   private productIdSubscription: Subscription | null = null;
   private ratingSubscription: Subscription | null = null;
+  productId: number | null = null;
 
   starRatingService = inject(StarRatingService);
   productAndRatingService = inject(ProductAndRatingService);
 
   ngOnInit(): void {
+    // Subscribe to product ID changes
     this.productIdSubscription = this.productAndRatingService.currentProductId$.subscribe((productId) => {
       if (productId !== null) {
         this.productId = productId;
@@ -56,6 +57,7 @@ export class StarRatingComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    // Unsubscribe to avoid memory leaks
     if (this.productIdSubscription) {
       this.productIdSubscription.unsubscribe();
     }
@@ -70,17 +72,20 @@ export class StarRatingComponent implements OnInit, OnDestroy {
     this.ratingChange.emit(this.rating);
 
     if (this.productId !== null) {
+      // Call setProductId to update the product ID in the service
+      this.productAndRatingService.setProductId(this.productId);  // Set the product ID in the service
+
       const userID = 1; // Replace with actual user ID
       this.starRatingService.starRate(userID, this.productId, this.rating)
         .then((success: any) => {
           if (success) {
-            console.log('Rating successfully updated!');
+            console.log('Rating successfully updated for product ID: ' + this.productId);
           } else {
-            console.error('Failed to update the rating.');
+            console.error('Failed to update the rating for product ID: ' + this.productId);
           }
         })
         .catch((error: any) => {
-          console.error('Error updating the rating:', error);
+          console.error('Error updating the rating for product ID: ' + this.productId, error);
         });
     }
   }

@@ -1,7 +1,8 @@
+
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, switchMap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { StarRatingService } from './star-rating.services';
-import { switchMap } from 'rxjs/operators';  // Make sure to import switchMap here
 
 @Injectable({
   providedIn: 'root',
@@ -10,10 +11,8 @@ export class ProductAndRatingService {
   private productIdSource = new BehaviorSubject<number | null>(null);
   currentProductId$ = this.productIdSource.asObservable();
 
-  // Inject StarRatingService for rating operations
-  starRatingService = inject(StarRatingService);
-
   constructor() {}
+  starRatingService = inject(StarRatingService);
 
   // Set the productId
   setProductId(productId: number): void {
@@ -21,24 +20,27 @@ export class ProductAndRatingService {
     this.productIdSource.next(productId);
   }
 
-  // Get the current productId as an Observable
+  // Get the current productId
   getProductId(): Observable<number | null> {
     return this.currentProductId$;
   }
 
-  // Get the current rating for the product from StarRatingService
-  // This will return an Observable that the caller can subscribe to
   getProductIdRating(): Observable<number | null> {
-      return this.getProductId().pipe(
-        switchMap((productId: number | null) => {
-          if (productId !== null) {
-            return this.starRatingService.updateStars(productId);  // Fetch rating from the service
-          }
+    return this.getProductId().pipe(
+      switchMap(productId => {
+        if (productId !== null) {
+          return this.starRatingService.updateStars(productId);
+        } else {
           return new Observable<number | null>((observer) => {
             observer.next(null);
             observer.complete();
-          });  // If productId is null, return an observable with null value
-        })
-      );
-    }
+          });
+        }
+      })
+    );
+  }
+  
+
+  
+
 }
