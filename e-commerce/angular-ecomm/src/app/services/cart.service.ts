@@ -100,6 +100,8 @@ export class CartService {
     })
     .then(data => console.log("API Response:", data))
     .catch(error => console.error("API call failed:", error));
+    await this.getCarts(Number(localStorage.getItem("token")));
+    this.loadCart();
   }
 async depleteStockQuantity(productID: number, minusQuantity: number) {
   fetch('http://localhost:5201/api/mycontroller/depletestockquantity?productID='+productID+'&MinusQuantity='+minusQuantity)

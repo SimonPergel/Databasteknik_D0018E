@@ -1,4 +1,4 @@
-import { Component, computed, inject, Input } from '@angular/core';
+import { ChangeDetectorRef, Component, computed, inject, Input } from '@angular/core';
 import { CartService } from '../../../services/cart.service';
 import { PrimaryButtonComponent } from "../../../component/primary-button/primary-button.component";
 import { DataService } from '../../../services/data.service';
@@ -31,6 +31,8 @@ export class CheckoutComponent {
   cartService = inject(CartService);
   cartItem = inject(CartItemComponent);
   cart = inject(CartComponent);
+
+  constructor(private cdRef: ChangeDetectorRef) { }
   
   purchasedGoods = '' // this string will hold all the name of the items + the number of that item in one string
 
@@ -107,6 +109,7 @@ get totalPrice(): number {
 
       // emty the whole cart
       const resp = await this.cartService.emtyCart(CartIDs);
+      this.cdRef.detectChanges();
       console.log(`Checkout successful for item ${this.purchasedGoods}:`, response);
       console.log(`All items was successfully emtied from the cart: ${CartIDs}:`, resp);
 
