@@ -4,6 +4,8 @@ import { PrimaryButtonComponent } from "../../../component/primary-button/primar
 import { DataService } from '../../../services/data.service';
 import { Cart } from '../../../models/cart.models';
 import { Product } from '../../../models/product.models';
+import { CartItemComponent } from '../cart-item/cart-item.component';
+import { CartComponent } from '../cart.component';
 
 //Sources 
 // reduce()- https://www.geeksforgeeks.org/typescript-array-reduce-method/
@@ -27,6 +29,8 @@ import { Product } from '../../../models/product.models';
 })
 export class CheckoutComponent {
   cartService = inject(CartService);
+  cartItem = inject(CartItemComponent);
+  cart = inject(CartComponent);
   
   purchasedGoods = '' // this string will hold all the name of the items + the number of that item in one string
 
@@ -38,18 +42,22 @@ get totalPrice(): number {
 }
   // this function handles checkout button clicked
  async handleCheckout(): Promise<void> {
-  let CartIDs = 1;
+  let CartIDs = Number(localStorage.getItem("token"));
     if (this.cartItems().length === 0) {
       console.log("Cart is empty!");
       return;
   }
 
   // this groups the items in the cart by there name and sum up there quantities
+  console.log("cartItems in handleCheckout function:", this.cartItems());
   const groupedItems = this.cartItems().reduce((acc, item) => { // reduce iterates over the cartItem array and stores the result in acc
-    if (acc[item.ProductName]) {
-      acc[item.ProductName] += item.quantity; // Add quantity if already exists
+    const name = this.cart.productList.find(p => p.id === item.productID)?.name ?? ""; 
+    if (acc[name]) {
+      console.log("Item product name in checkout:", this.cart.productList.find(p => p.id === item.productID)?.name);
+      acc[name] += item.quantity; // Add quantity if already exists
     } else {
-      acc[item.ProductName] = item.quantity; // Initialize if it's the first time
+      console.log("Item product name in checkout:", this.cart.productList.find(p => p.id === item.productID)?.name);
+      acc[name] = item.quantity; // Initialize if it's the first time
     }
     return acc;
   }, {} as { [key: string]: number }); // starts as an emty object

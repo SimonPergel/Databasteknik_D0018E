@@ -1,9 +1,12 @@
-import { Component, inject, input, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, input, ChangeDetectorRef, Injectable } from '@angular/core';
 import { ButtonComponent } from "../../../components/button/button.component";
 import { CartService } from '../../../services/cart.service';
 import { Cart } from '../../../models/cart.models';
 import { CartComponent } from '../cart.component';
 
+@Injectable({
+  providedIn: 'root'
+})
 @Component({
   selector: 'app-cart-item',
   imports: [ButtonComponent],
