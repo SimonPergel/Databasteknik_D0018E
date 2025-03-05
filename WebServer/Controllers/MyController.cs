@@ -189,6 +189,21 @@ public bool isProductSoldOut( int cartID, int productID){
         }
     }
 
+    [HttpGet("updateuserbalance")]
+    public IActionResult updateUserBalance(int User_id, int totalPrice) { // Removes a cart from the Cart table. Define purchase id.
+    // http://localhost:5201/api/mycontroller/updateUserBalance?User_id=1&totalPrice=2
+        Console.WriteLine("updated the Users balance in unser table");
+    string SQLQuery = "UPDATE Users SET Balance = Balance - @TotalPrice WHERE User_id = @UserID";
+        try {
+            makeConnection(SQLQuery);                                                                        // Makes the connection to the database and runs the SQLQuery.
+            var result = new { Message = "User balance updated successfully!", User_id, totalPrice};         // TODO: Make better return message.
+            return Ok(result);                                                                               // Returns a OK with a result message.
+        } catch (Exception exception) {                                                                      // Catches an exception and returns the exception message.
+            var result = new { Message = exception.Message};
+            return BadRequest(result);
+        }
+    }
+
 
     [HttpGet("updatecarts")]
     public IActionResult updateCarts(int cartID, int productID, int quantity, int price) { // Updates a cart in the Cart table, define order id, product id, quantity and price.
