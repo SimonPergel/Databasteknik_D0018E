@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Product } from '../models/product.models';
 import { Observable } from 'rxjs';
 import { Cart } from '../models/cart.models';
+import { StarRatingService } from './star-rating.services';
 
 @Injectable({
   providedIn: 'root'
@@ -25,10 +26,10 @@ export class DataService {
   getRunning(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/running`);
   }
+  
 
-
-isProductSoldOut(cartID: number): Promise<boolean> {
-    return fetch(`http://localhost:5201/api/mycontroller/isProductSoldOut?cartID=${cartID}`)
+isProductSoldOut(cartID: number, productID :number): Promise<boolean> {
+    return fetch(`http://localhost:5201/api/mycontroller/isProductSoldOut?cartID=${cartID}&productID=${productID}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -87,23 +88,24 @@ cartCheckout(cartID: number, productID: number, desiredQuantity: number){
   .then(data => console.log("API Response:", data))
   .catch(error => console.error("API call failed:", error));
 
+
+
 }
 
-  checkAdmin(id: number): Promise<boolean> {
-    return fetch('http://localhost:5201/api/mycontroller/checkadmin?UserID='+id)
-    .then(response => {
-      if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then((data: boolean) => {
-      return data
-    })
-    .catch(error => {
-      console.error("API call failed:", error)
-      return false;
-    });
-  }
-    
+checkAdmin(id: number): Promise<boolean> {
+  return fetch('http://localhost:5201/api/mycontroller/checkadmin?UserID='+id)
+  .then(response => {
+    if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then((data: boolean) => {
+    return data
+  })
+  .catch(error => {
+    console.error("API call failed:", error)
+    return false;
+  });
+}
 }

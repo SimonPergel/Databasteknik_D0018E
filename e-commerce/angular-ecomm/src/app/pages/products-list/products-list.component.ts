@@ -9,21 +9,12 @@ import { ActivatedRoute } from '@angular/router';
   selector: 'app-products-list',
   imports: [ProductCardComponent],
   template: `
-  
+
   <div class="p-8 grid grid-cols-2 gap-4">
     @for (product of products; track product.id ) {
       <app-product-card [product]="product"/>
       }
     </div>
-    
-<!--
-    <div class="p-8 grid grid-cols-2 gap-4">
-      <app-product-card 
-        *ngFor="let product of products; trackBy: trackById" 
-        [product]="product">
-      </app-product-card>
-    </div>
-    -->
   `,
   styleUrl: './products-list.component.scss'
 })
@@ -32,6 +23,7 @@ import { ActivatedRoute } from '@angular/router';
   providedIn: 'root'
 })
 export class ProductsListComponent {
+  pageRating: number = 3; // Default rating 
   products: Product []=[]
   id!: string;
   //products: Cart []=[]
@@ -48,7 +40,6 @@ export class ProductsListComponent {
             next: (response) => {
               console.log("Fetched Products:", response);
               this.products = response; // Store the API data in products
-              localStorage.setItem("products", JSON.stringify(this.products));
               console.log('Product Object:', this.products); //  to debug
             },
             error: (error) => {
@@ -61,7 +52,6 @@ export class ProductsListComponent {
             next: (response) => {
               console.log("Fetched Products:", response);
               this.products = response;
-              localStorage.setItem("products", JSON.stringify(this.products));
               console.log("Product Object:", this.products);
             },
             error: (error) => {
@@ -76,6 +66,6 @@ export class ProductsListComponent {
   }
 
   trackById(index: number, product: Product) {
-    return product.id; // Improves performance by tracking items correctly
+    return product.id; // ✅ ✅ Improves performance by tracking items correctly
   }
 }
