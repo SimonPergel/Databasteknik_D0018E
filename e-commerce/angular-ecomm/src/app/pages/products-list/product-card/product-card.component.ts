@@ -27,6 +27,12 @@ import { ProductAndRatingService } from '../../../services/productandRating.serv
           {{ product.quantity ? product.quantity + ' left' : 'Out of stock' }}
         </span>
       </div>
+
+      <span class="absolute top-2 right-3 text-sm font-bald" 
+      [class.text-green-500]="product.quantity > 0"
+      [class.text-red-500]="product.quantity === 0">
+        {{ product.quantity > 0 ? product.quantity + ' left' : 'Out of stock' }}
+      </span>
     </div>
   `,
   styles: []
@@ -35,7 +41,7 @@ export class ProductCardComponent implements OnInit {
   pageRating: number = 3; // Default rating will now be updated to the average rating
   aggregateRating: number = 0; // Average rating from all users
   hasUserRated: boolean = false; // Flag to check if the user rated
-
+  counter: number = 0; // Counter to track how many times the add button is pressed
 
   cartService = inject(CartService);
   productAndRatingService = inject(ProductAndRatingService);
@@ -46,10 +52,16 @@ export class ProductCardComponent implements OnInit {
 
   // This method handles the inserting into cart part
   async insertHandler() {
-    if (this.product.inStock !== 0) {
+    if (Number(localStorage.getItem("token")) === 0) {
+      alert("You have to log in to add products to your cart");
+      return;
+    }
+
+    if (this.product.quantity !== 0) {
       try {
-        const response = await this.cartService.insertIntoCart(1, 1, this.product);
+        const response = await this.cartService.insertIntoCart(Number(localStorage.getItem("token")), 1, this.product);
         console.log(`The inserting process was successful for item ${this.product.name}:`, response);
+        this.counter = this.counter + 1; // Increment counter every time the add button is pressed
       } catch (error) {
         console.error(`Error during inserting process for item :`, error);
       }
@@ -70,8 +82,8 @@ export class ProductCardComponent implements OnInit {
       },
       error => {
         console.error("Error fetching rating:", error);
-    }
-  );
+      }
+    );
   }
 
   // This method will be called when the rating changes

@@ -25,7 +25,7 @@ export class DataService {
   getRunning(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/running`);
   }
-  
+
 
 isProductSoldOut(cartID: number, productID :number): Promise<boolean> {
     return fetch(`http://localhost:5201/api/mycontroller/isProductSoldOut?cartID=${cartID}&productID=${productID}`)
@@ -88,6 +88,7 @@ cartCheckout(cartID: number, productID: number, desiredQuantity: number){
   .catch(error => console.error("API call failed:", error));
 
 }
+
   checkAdmin(id: number): Promise<boolean> {
     return fetch('http://localhost:5201/api/mycontroller/checkadmin?UserID='+id)
     .then(response => {
@@ -104,4 +105,5 @@ cartCheckout(cartID: number, productID: number, desiredQuantity: number){
       return false;
     });
   }
+    
 }

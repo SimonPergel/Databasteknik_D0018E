@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 import { Product } from '../models/product.models';
 import { ProductCardComponent } from '../pages/products-list/product-card/product-card.component';
 import { Observable } from 'rxjs';
@@ -11,13 +11,26 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 export class CartService {
   private apiUrl = 'http://localhost:3000'; // Replace with your actual endpoint
 
-  constructor(private http: HttpClient) { }
-    carts: Cart []=[]
-    //OBSERVER METHODS
-    //cart = signal<Product[]>([]);
-    cart = signal<Cart[]>([]);
-    
-    
+  cart = signal<Cart[]>([]);
+  constructor(private http: HttpClient) {
+    this.loadCart();
+  }
+  carts: Cart []=[]
+  //OBSERVER METHODS
+  //cart = signal<Product[]>([]);
+  loadCart() {
+    this.getCarts(Number(localStorage.getItem("token"))).then(() => {
+      this.cart.set(this.carts);
+    })
+  }
+
+  cartLength = computed(() => {
+    return this.cart().length;
+  });
+
+  usersCart = (computed(() => {
+    return [...this.cart().filter(item => item.cartID === Number(localStorage.getItem("token")))];
+  }));
 
   insertIntoCart(cartID: number, quantity: number, product: Product) {
    // console.log('Product Object:', product); //  to debug
@@ -55,7 +68,7 @@ export class CartService {
     cartItems.splice(index, 1);
     //updates the cart with the modified 
     this.cart.set(cartItems);
-    await this.getCarts(productID);
+    await this.getProductFromCarts(productID);
     fetch('http://localhost:5201/api/mycontroller/deletefromcart?purchaseID='+this.carts[0].purchaseID) 
     .then(response => {
         if (!response.ok) {
@@ -65,9 +78,9 @@ export class CartService {
     })
     .then(data => console.log("API Response:", data))
     .catch(error => console.error("API call failed:", error));
-
+    await this.getCarts(Number(localStorage.getItem("token")));
+    this.loadCart();
    } 
-   
   }
 
   async emtyCart(cartID: number) {
@@ -87,6 +100,8 @@ export class CartService {
     })
     .then(data => console.log("API Response:", data))
     .catch(error => console.error("API call failed:", error));
+    await this.getCarts(Number(localStorage.getItem("token")));
+    this.loadCart();
   }
 async depleteStockQuantity(productID: number, minusQuantity: number) {
   fetch('http://localhost:5201/api/mycontroller/depletestockquantity?productID='+productID+'&MinusQuantity='+minusQuantity)
@@ -129,7 +144,7 @@ cartCheckout(cartID: number, totalprice: number, purchasedGoods: string){
   }
 
   getCarts(productID: number): Promise<void> {
-    return fetch('http://localhost:5201/api/mycontroller/getcarts?productid='+productID)
+    return fetch('http://localhost:5201/api/mycontroller/getcarts?UserID='+productID)
     .then(response => {
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -138,8 +153,51 @@ cartCheckout(cartID: number, totalprice: number, purchasedGoods: string){
     })
     .then(data => {
       this.carts = data
-      localStorage.setItem("myData", this.carts[0].purchaseID.toString());
-      console.log(localStorage.getItem("myData")); // "Hello, Angular!"
+    })
+    .catch(error => console.error("API call failed:", error));
+  }
+
+  // this function updates the inStock status if the quantity becomes zero
+  updateStockStatus(name: string){
+    fetch('http://localhost:5201/api/mycontroller/removeproduct?name='+name)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => console.log("API Response:", data))
+    .catch(error => console.error("API call failed:", error));
+  }
+  // gets the current status of the products for checkout purpose
+  getProduct():Promise<Product[]> {
+    return fetch('http://localhost:5201/api/mycontroller/getproductsadmin')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then((data: Product[]) => { 
+      console.log("Received products:", data);
+      return data;  // Now always returning Product[]
+  })
+  .catch(error => {
+      console.error("API call failed:", error);
+      return [];  // Return an empty array to match expected return type
+  });
+}
+
+  getProductFromCarts(productID: number): Promise<void> {
+    return fetch('http://localhost:5201/api/mycontroller/getproductfromcarts?ProductID='+productID)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      this.carts = data;
     })
     .catch(error => console.error("API call failed:", error));
   }

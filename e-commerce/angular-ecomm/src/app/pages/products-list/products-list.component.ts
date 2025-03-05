@@ -1,8 +1,9 @@
-import { Component, signal, Type } from '@angular/core';
+import { Component, signal, Type, Injectable } from '@angular/core';
 import { Product } from '../../models/product.models';
 import { ProductCardComponent } from "./product-card/product-card.component";
 import { DataService } from '../../services/data.service';
 import { Cart } from '../../models/cart.models';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-products-list',
@@ -18,56 +19,53 @@ import { Cart } from '../../models/cart.models';
   styleUrl: './products-list.component.scss'
 })
 
-/*export class ProductClass implements Product {
-  id: number;
-  name: string;
-  quantity: number;
-  inStock?: number;
-  price: number;
-
-  constructor(id: number, name: string, quantity: number, inStock: number, price: number) {
-    this.id = id;
-    this.name = name;
-    this.quantity = quantity;
-    this.inStock = inStock;
-    this.price = price;
-  }
-} */
-
+@Injectable({
+  providedIn: 'root'
+})
 export class ProductsListComponent {
   pageRating: number = 3; // Default rating 
   products: Product []=[]
+  id!: string;
+  //products: Cart []=[]
   constructor(
     private dataService: DataService,
+    private route: ActivatedRoute
   ) {}
-  ngOnInit(): void {
-    this.dataService.getProductsAdmin().subscribe( {
-      next: (response) => {
-        console.log("Fetched Products:", response);
-        this.products = response; // ✅ Store the API data in products
-      },
-      error: (error) => {
-        console.error("Error fetching products:", error);
+  async ngOnInit() {
+    this.route.queryParams.subscribe(async params => {
+      this.id = params['id'];
+      try {
+        if (await this.dataService.checkAdmin(Number(this.id))) {
+          this.dataService.getProductsAdmin().subscribe( {
+            next: (response) => {
+              console.log("Fetched Products:", response);
+              this.products = response; // Store the API data in products
+              console.log('Product Object:', this.products); //  to debug
+            },
+            error: (error) => {
+              console.error("Error fetching products:", error);
+            }
+          });
+        }
+        else {
+          this.dataService.getProductsUser().subscribe( {
+            next: (response) => {
+              console.log("Fetched Products:", response);
+              this.products = response;
+              console.log("Product Object:", this.products);
+            },
+            error: (error) => {
+              console.error("Error fetching products:", error);
+            }
+          });
+        }
+      } catch (error: any) {
+        console.error("An error occured:", error);
       }
     });
   }
 
   trackById(index: number, product: Product) {
-    return product.id; // ✅ Improves performance by tracking items correctly
+    return product.id; // ✅ ✅ Improves performance by tracking items correctly
   }
 }
-//    products = signal<Product[]>([])
-
-//    data = this.dataService.getProductsAdmin();
-/*  ngOnInit() {
-    fetch("http://localhost:5201/api/mycontroller/getproductsadmin")
-      .then(response => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then(data => this.products.set(data.json()))
-    .then(data => console.log("API Response:", data))
-  }
-*/

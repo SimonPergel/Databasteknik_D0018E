@@ -410,10 +410,36 @@ public IActionResult InsertProduct([FromBody] Product product) {
      }
 
     [HttpGet("getcarts")]
-    public IActionResult GetCarts(int productid) { // This retrieves all products in stock.
-    // http://localhost:5201/api/mycontroller/getcarts?productid=5
+    public IActionResult GetCarts(int UserID) {
+    // http://localhost:5201/api/mycontroller/getcarts?UserID=5
         Console.WriteLine("getCarts function is reached");
-        string SQLQuery = "SELECT * FROM Carts WHERE Product_id = " + productid + ";";
+        string SQLQuery = "SELECT * FROM Carts WHERE Cart_id = " + UserID + ";";
+        try {
+            List<Cart> carts = new List<Cart>();               // Create a product object as a list for the reader to input to.
+            var (connection, reader) = StartReader(SQLQuery);           // Makes a connection to the database and starts a reader.
+            while (reader.Read()) {                                     // Read each row and map to the Product object.
+                carts.Add(new Cart {
+                    cartID = reader.GetInt32("Cart_id"),                 // Assuming column name 'Product_id'.
+                    productID = reader.GetInt32("Product_id"),
+                    Quantity = reader.GetInt32("Quantity"),
+                    Price = reader.GetInt32("Price"),
+                    purchaseID = reader.GetInt32("Purchase_id")
+                });
+            }
+            reader.Close();                                             // Closes the reader.
+            connection.Close();                                         // Closes the connection to the database.
+            return Ok(carts);                                           // Returns the retrieved products as JSON.
+        } catch (Exception exception) {                                 // Catches an exception and returns the exception message.
+            var result = new { Message = exception.Message };
+            return BadRequest(result);
+        }
+    }
+
+    [HttpGet("getproductfromcarts")]
+    public IActionResult GetProductFromCarts(int productID) {
+    // http://localhost:5201/api/mycontroller/getcarts?UserID=5
+        Console.WriteLine("getproductfromCarts function is reached");
+        string SQLQuery = "SELECT * FROM Carts WHERE Product_id = " + productID + ";";
         try {
             List<Cart> carts = new List<Cart>();               // Create a product object as a list for the reader to input to.
             var (connection, reader) = StartReader(SQLQuery);           // Makes a connection to the database and starts a reader.

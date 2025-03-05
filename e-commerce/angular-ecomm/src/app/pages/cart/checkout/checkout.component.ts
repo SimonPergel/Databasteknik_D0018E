@@ -1,9 +1,11 @@
-import { Component, computed, inject, Input } from '@angular/core';
+import { ChangeDetectorRef, Component, computed, inject, Input } from '@angular/core';
 import { CartService } from '../../../services/cart.service';
 import { PrimaryButtonComponent } from "../../../component/primary-button/primary-button.component";
 import { DataService } from '../../../services/data.service';
 import { Cart } from '../../../models/cart.models';
 import { Product } from '../../../models/product.models';
+import { CartItemComponent } from '../cart-item/cart-item.component';
+import { CartComponent } from '../cart.component';
 
 //Sources 
 // reduce()- https://www.geeksforgeeks.org/typescript-array-reduce-method/
@@ -27,6 +29,10 @@ import { Product } from '../../../models/product.models';
 })
 export class CheckoutComponent {
   cartService = inject(CartService);
+  cartItem = inject(CartItemComponent);
+  cart = inject(CartComponent);
+
+  constructor(private cdRef: ChangeDetectorRef) { }
   
   purchasedGoods = '' // this string will hold all the name of the items + the number of that item in one string
 
@@ -38,18 +44,22 @@ get totalPrice(): number {
 }
   // this function handles checkout button clicked
  async handleCheckout(): Promise<void> {
-  let CartIDs = 1;
+  let CartIDs = Number(localStorage.getItem("token"));
     if (this.cartItems().length === 0) {
       console.log("Cart is empty!");
       return;
   }
 
   // this groups the items in the cart by there name and sum up there quantities
+  console.log("cartItems in handleCheckout function:", this.cartItems());
   const groupedItems = this.cartItems().reduce((acc, item) => { // reduce iterates over the cartItem array and stores the result in acc
-    if (acc[item.ProductName]) {
-      acc[item.ProductName] += item.quantity; // Add quantity if already exists
+    const name = this.cart.productList.find(p => p.id === item.productID)?.name ?? ""; 
+    if (acc[name]) {
+      console.log("Item product name in checkout:", this.cart.productList.find(p => p.id === item.productID)?.name);
+      acc[name] += item.quantity; // Add quantity if already exists
     } else {
-      acc[item.ProductName] = item.quantity; // Initialize if it's the first time
+      console.log("Item product name in checkout:", this.cart.productList.find(p => p.id === item.productID)?.name);
+      acc[name] = item.quantity; // Initialize if it's the first time
     }
     return acc;
   }, {} as { [key: string]: number }); // starts as an emty object
@@ -71,6 +81,23 @@ get totalPrice(): number {
     try {
       // Get all cart IDs and calculate the total price
       const cartID = this.cartItems().map(item => item.cartID);
+      const productStatus = await this.cartService.getProduct(); // returns a Product[]
+
+      console.log("Product Status (From DB):", productStatus);
+
+      // this should check if any items in the cart exceeds stock
+
+      for ( const item of this.cartItems()) {
+        const product = productStatus.find(p => p.id === item.productID); // trying to match cart item to stock item
+
+        if ( product && item.quantity > product.quantity) {
+          alert(`Cannot checkout! Not enough stock for ${item.ProductName}.`);
+          console.log(`to few in stock for: ${item.ProductName}`, productStatus)
+        return; // Stop checkout process
+
+        }
+        
+      }
       //ensures that each checkout request is complete before moving forward
       const response = await this.cartService.cartCheckout(CartIDs, this.totalPrice, this.purchasedGoods);
       
@@ -82,16 +109,10 @@ get totalPrice(): number {
 
       // emty the whole cart
       const resp = await this.cartService.emtyCart(CartIDs);
-      /*
-      // delete all items inside the cart
-      for (const item of this.cartItems()){
-        const resp = await this.cartService.deleteFromCart(item.productID);
-        console.log(`Deleted item with purchaseID: ${item.purchaseID}`);
-      }
-      console.log("All items is deleted from the cart! ")
-      */
+      this.cdRef.detectChanges();
       console.log(`Checkout successful for item ${this.purchasedGoods}:`, response);
       console.log(`All items was successfully emtied from the cart: ${CartIDs}:`, resp);
+
     } catch (error) {
       console.error(`Error during checkout for item :`, error);
     }
