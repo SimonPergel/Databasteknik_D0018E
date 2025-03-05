@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, Input, OnInit } from '@angular/core';
 import { Product } from '../../../models/product.models';
 import { PrimaryButtonComponent } from "../../../component/primary-button/primary-button.component";
 import { CartService } from '../../../services/cart.service';
@@ -33,13 +33,16 @@ import { ProductAndRatingService } from '../../../services/productandRating.serv
 })
 export class ProductCardComponent implements OnInit {
   pageRating: number = 3; // Default rating will now be updated to the average rating
+  aggregateRating: number = 0; // Average rating from all users
+  hasUserRated: boolean = false; // Flag to check if the user rated
+
 
   cartService = inject(CartService);
   productAndRatingService = inject(ProductAndRatingService);
 
   @Input() product!: Product;  // Corrected input usage
 
-  constructor() {}
+  constructor(private cdr: ChangeDetectorRef) {}
 
   // This method handles the inserting into cart part
   async insertHandler() {
@@ -59,13 +62,16 @@ export class ProductCardComponent implements OnInit {
     console.log("Product in ProductCard:", this.product);
     this.productAndRatingService.setProductId(this.product.id);
 
-    // Fetch and update the rating once productId is set
-    const ratingObservable = this.productAndRatingService.getProductIdRating().pipe();
-    if (ratingObservable) {
-      ratingObservable.subscribe(rating => {
-        this.pageRating = rating ?? 0; // Update pageRating with the fetched rating
-      });
+    this.productAndRatingService.getProductIdRatingFromProductCardComponent(this.product.id).subscribe(
+      rating => {
+        console.log(`Fetched rating for Product ${this.product.id}:`, rating);
+        this.pageRating = rating ?? 0;
+        this.cdr.detectChanges();  // Force UI update
+      },
+      error => {
+        console.error("Error fetching rating:", error);
     }
+  );
   }
 
   // This method will be called when the rating changes

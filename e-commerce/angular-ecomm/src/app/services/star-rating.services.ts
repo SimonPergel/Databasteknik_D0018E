@@ -35,4 +35,13 @@ export class StarRatingService {
       return false; // Failure
     }
   }
+
+  checkRatingUser(productID: number, userID: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/checkRatingUser?productId=${productID}&userId =${userID}`).pipe(
+      catchError(error => {
+        console.error("❌ Error fetching rating:", error);
+        return throwError(() => new Error("Failed to fetch rating"));
+      })
+    );
+  }
 }

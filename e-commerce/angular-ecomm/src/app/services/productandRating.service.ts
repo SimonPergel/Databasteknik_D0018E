@@ -4,6 +4,7 @@ import { BehaviorSubject, switchMap } from 'rxjs';
 import { Observable } from 'rxjs';
 import { StarRatingService } from './star-rating.services';
 
+
 @Injectable({
   providedIn: 'root',
 })
@@ -39,7 +40,14 @@ export class ProductAndRatingService {
       })
     );
   }
-  
+  getProductIdRatingFromProductCardComponent(productId: number): Observable<number> {
+    return this.starRatingService.updateStars(productId);
+  }
+/*
+  getP_IDRatingFromUser(productId: number): Observable<number> {
+    return this.starRatingService.UserProductRating(productId, this.starRatingService.userID);
+  }
+    */
 
   
 

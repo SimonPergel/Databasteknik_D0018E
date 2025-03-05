@@ -568,4 +568,45 @@ public bool Rate(int Rating, int productID, int userID)
     }
 }
 
+[HttpGet("CheckRatingUser")]
+ public double? CheckRatingUser(int productId, int userId)
+{
+    try
+    {
+        Console.WriteLine($"Checking product rating for product {productId} and user {userId}");
+
+        string SQLQuery = @"
+            SELECT rating FROM ratings 
+            WHERE product_id = @ProductID AND user_id = @UserID 
+            LIMIT 1;
+        ";
+
+        using (var connection = new MySqlConnection(Globals.connectionString))
+        {
+            connection.Open();
+            using (var command = new MySqlCommand(SQLQuery, connection))
+            {
+                command.Parameters.AddWithValue("@ProductID", productId);
+                command.Parameters.AddWithValue("@UserID", userId);
+
+                var result = command.ExecuteScalar();
+                
+                if (result == null) 
+                {
+                    Console.WriteLine("❌ No rating found for this user and product.");
+                    return null; // Fail state
+                }
+
+                return Convert.ToDouble(result);
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"❌ Error checking rating: {ex.Message}");
+        return null; // Fail state on error
+    }
+}
+
+
 }
