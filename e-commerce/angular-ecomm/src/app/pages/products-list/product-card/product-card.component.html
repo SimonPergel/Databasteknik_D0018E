@@ -1,0 +1,48 @@
+<ng-container *ngIf="template === 'admin'; else user">
+    <div class="bg-white shadow-md border rounded-xl p-6 flex flex-col gap-6 relative">
+        <div class="mx-auto">
+          <div class="flex flex-col mt-2">
+            <span class="text-md font-bold">{{ product.name }}</span>
+            <span class="text-sm ">{{ '$' + product.price }}</span>
+            <div class="input-container">
+                <form (ngSubmit)="onSubmit()" #quantityForm="ngForm">
+                    <label for="quantity">Add quantity:</label>
+                    <input type="text" id="quantity" [(ngModel)]="quantity" name="quantity" ngModel required placeholder="Enter quantity you want to add">
+            
+                    <button type="submit">Add</button>
+                </form>
+            </div>
+          </div>
+  
+          <h2>Rate this product:</h2>
+          <app-star-rating [(rating)]="pageRating" (ratingChange)="onRatingChange()"></app-star-rating>
+          <p>Your rating: {{ pageRating }}</p>
+          <span class="absolute top-2 right-3 text-sm font-bald" 
+            [class.text-green-500]="product.quantity > 0"
+            [class.text-red-500]="product.quantity === 0">
+            {{ product.quantity > 0 ? product.quantity + ' left' : 'Out of stock' }}
+          </span>
+        </div>
+      </div>
+</ng-container>
+
+<ng-template #user>
+    <div class="bg-white shadow-md border rounded-xl p-6 flex flex-col gap-6 relative">
+        <div class="mx-auto">
+          <div class="flex flex-col mt-2">
+            <span class="text-md font-bold">{{ product.name }}</span>
+            <span class="text-sm ">{{ '$' + product.price }}</span>
+            <app-primary-button label="Add to cart" class="mt-3" (buttonClicked)="insertHandler()"/> 
+          </div>
+  
+          <h2>Rate this product:</h2>
+          <app-star-rating [(rating)]="pageRating" (ratingChange)="onRatingChange()"></app-star-rating>
+          <p>Your rating: {{ pageRating }}</p>
+          <span class="absolute top-2 right-3 text-sm font-bald" 
+            [class.text-green-500]="product.quantity > 0"
+            [class.text-red-500]="product.quantity === 0">
+            {{ product.quantity > 0 ? product.quantity + ' left' : 'Out of stock' }}
+          </span>
+        </div>
+      </div>
+</ng-template>
