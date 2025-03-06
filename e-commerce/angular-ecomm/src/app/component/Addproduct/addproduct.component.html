@@ -1,0 +1,15 @@
+<div class="input-container">
+    <h2>Add new product</h2>
+    <form (ngSubmit)="onSubmit()" #newProductForm="ngForm">
+        <label for="productName">Product name:</label>
+        <input type="text" id="productName" [(ngModel)]="productName" name="productName" ngModel required placeholder="Enter the Product name">
+
+        <label for="quantity">Quantity:</label>
+        <input type="text" id="quantity" [(ngModel)]="quantity" name="quantity" ngModel required placeholder="Enter the quantity">
+
+        <label for="price">Price:</label>
+        <input type="text" id="price" [(ngModel)]="price" name="price" ngModel required placeholder="Enter the price">
+
+        <button type="submit">Add product</button>
+    </form>
+</div>

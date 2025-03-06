@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +15,7 @@ export class StarRatingService {
   updateStars(productID: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/checkRating?productID=${productID}`).pipe(
       catchError(error => {
-        console.error("❌ Error fetching rating:", error);
+        console.error("  Error fetching rating:", error);
         return throwError(() => new Error("Failed to fetch rating"));
       })
     );
@@ -31,17 +31,35 @@ export class StarRatingService {
       console.log("✅ Rating submitted successfully:", response);
       return true; // Success
     } catch (error) {
-      console.error("❌ Failed to submit rating:", error);
+      console.error("  Failed to submit rating:", error);
       return false; // Failure
     }
   }
 
-  checkRatingUser(productID: number, userID: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/checkRatingUser?productId=${productID}&userId =${userID}`).pipe(
-      catchError(error => {
-        console.error("❌ Error fetching rating:", error);
-        return throwError(() => new Error("Failed to fetch rating"));
+  checkRatingUser(productID: number, userID: number): Promise<number> {
+    return fetch(`${this.apiUrl}/checkRatingUser?productId=${productID}&userId=${userID}`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();  // Convert response to JSON
       })
-    );
+      .then(data => {
+        console.log("Received rating:", data); 
+        
+        if (typeof data === "number") {
+          return data;  // ✅ Ensure it's a number
+        } else if (data && typeof data.rating === "number") {
+          return data.rating;  // ✅ Handle case where rating is inside an object
+        } else {
+          console.warn("Unexpected API response format:", data);
+          return 0;  // Default value if the format is wrong
+        }
+      })
+      .catch(error => {
+        console.error(" API call failed:", error);
+        return 0;  // ✅ Return a default value instead of `undefined`
+      });
   }
+  
 }

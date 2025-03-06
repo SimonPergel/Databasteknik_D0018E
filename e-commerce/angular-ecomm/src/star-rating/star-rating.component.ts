@@ -75,7 +75,7 @@ export class StarRatingComponent implements OnInit, OnDestroy {
       // Call setProductId to update the product ID in the service
       this.productAndRatingService.setProductId(this.productId);  // Set the product ID in the service
 
-      const userID = 1; // Replace with actual user ID
+      const userID = Number(localStorage.getItem("token")) ; // Replace with actual user ID
       this.starRatingService.starRate(userID, this.productId, this.rating)
         .then((success: any) => {
           if (success) {
