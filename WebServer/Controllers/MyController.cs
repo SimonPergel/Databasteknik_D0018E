@@ -192,8 +192,10 @@ public bool isProductSoldOut( int cartID, int productID){
     [HttpGet("updateuserbalance")]
     public IActionResult updateUserBalance(int User_id, int totalPrice) { // Removes a cart from the Cart table. Define purchase id.
     // http://localhost:5201/api/mycontroller/updateUserBalance?User_id=1&totalPrice=2
-        Console.WriteLine("updated the Users balance in unser table");
-    string SQLQuery = "UPDATE Users SET Balance = Balance - @TotalPrice WHERE User_id = @UserID";
+        Console.WriteLine("updated the Users balance in user table");
+    //string SQLQuery = "UPDATE Users SET Balance = Balance - @TotalPrice WHERE User_id = @UserID";
+    string SQLQuery = "UPDATE Users SET Balance = Balance - " + totalPrice +" WHERE User_id = " + User_id +";";
+
         try {
             makeConnection(SQLQuery);                                                                        // Makes the connection to the database and runs the SQLQuery.
             var result = new { Message = "User balance updated successfully!", User_id, totalPrice};         // TODO: Make better return message.

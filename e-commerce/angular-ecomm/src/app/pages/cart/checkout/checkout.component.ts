@@ -78,11 +78,6 @@ get totalPrice(): number {
 
   // prints for debug
   console.log('Purchased Goods:', this.purchasedGoods);
-
-  // TODO: cartID, totalprice, string purchaedGoods
-  // TODO: call deleteFromCart in db and on frotend
-  // TODO: check that all items is in stock
- 
   
   try {
     // save the current cart status to get the acess needed
@@ -121,7 +116,7 @@ get totalPrice(): number {
     // Ensure each checkout request is complete before moving forward
     const response = await this.cartService.cartCheckout(CartIDs, this.totalPrice, this.purchasedGoods);
     // Alter the account balance of a User
-    
+    const r  = await this.cartService.updateUserBalance(CartIDs, this.totalPrice);
   
     // Reduce stock quantities locally and in the database
     for (const item of this.cartItems()) {
@@ -134,6 +129,7 @@ get totalPrice(): number {
     this.cdRef.detectChanges();
     console.log(`Checkout successful for item ${this.purchasedGoods}:`, response);
     console.log(`All items were successfully emptied from the cart: ${CartIDs}:`, resp);
+    console.log(`Balance have been updated in db for User_id: ${CartIDs}:`, r);
   
   } catch (error) {
     console.error(`Error during checkout:`, error);
