@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from '../../../services/data.service';
 import { take } from 'rxjs';
+import { ProductsListComponent } from '../products-list.component';
 
 @Component({
   selector: 'app-product-card',
@@ -30,6 +31,7 @@ export class ProductCardComponent implements OnInit {
   cartService = inject(CartService);
   dataService = inject(DataService);
   productAndRatingService = inject(ProductAndRatingService);
+  products = inject(ProductsListComponent);
 
   @Input() product!: Product;  // Corrected input usage
 
@@ -156,12 +158,18 @@ export class ProductCardComponent implements OnInit {
   }
   
 
+  clearInput() {
+    this.quantity = '';
+  }
+
   onSubmit() {
     this.dataService.addProductQuantity(this.product.name, Number(this.quantity));
     this.cdr.detectChanges();
-    this.routes.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+    this.clearInput();
+    this.products.ngOnInit();
+    /* this.routes.navigateByUrl('/', { skipLocationChange: true }).then(() => {
       this.routes.navigate(['/'], { queryParams: { id: Number(localStorage.getItem("token")) }, queryParamsHandling: 'merge' });
-    });
+    }); */
 
     //this.routes.navigate(['/'], { queryParamsHandling: 'preserve' })
   }
