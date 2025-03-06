@@ -3,6 +3,7 @@ import { ProductsListComponent } from './pages/products-list/products-list.compo
 import { CartComponent } from './pages/cart/cart.component';
 import { LoginComponent } from './login/login.component';
 import { AuthenticationGuard } from './component/Authentication/AuthenticationGuard';
+import { AddProductComponent } from './component/Addproduct/addproduct.component';
 
 
 export const routes: Routes = [{
@@ -19,5 +20,9 @@ export const routes: Routes = [{
 {
         path: 'login',
         component: LoginComponent,
-}
+},
+{
+        path: 'addproduct',
+        component: AddProductComponent,
+},
 ];
