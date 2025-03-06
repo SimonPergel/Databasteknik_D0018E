@@ -214,4 +214,18 @@ cartCheckout(cartID: number, totalprice: number, purchasedGoods: string){
     })
     .catch(error => console.error("API call failed:", error));
   }
+
+  addUserBalance(UserID: number, balance: number) {
+    return fetch('http://localhost:5201/api/mycontroller/balanceusermath?UserID=' + UserID + '&math=' + balance)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      this.carts = data;
+    })
+    .catch(error => console.error("API call failed:", error));
+  }
 }

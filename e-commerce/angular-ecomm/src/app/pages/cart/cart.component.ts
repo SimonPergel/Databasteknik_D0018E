@@ -4,6 +4,7 @@ import { CartItemComponent } from './cart-item/cart-item.component';
 import { CheckoutComponent } from "./checkout/checkout.component";
 import { ProductsListComponent } from '../products-list/products-list.component';
 import { Product } from '../../models/product.models';
+import { FormsModule } from '@angular/forms';
 //import { Cart } from '../models/cart.models';
 
 
@@ -12,10 +13,19 @@ import { Product } from '../../models/product.models';
 })
 @Component({
   selector: 'app-cart',
-  imports: [CartItemComponent,CheckoutComponent],
+  imports: [CartItemComponent,CheckoutComponent, FormsModule],
   template: `
     <div class="p-6 flex flex-col gap-4">
       <h2 class="text-2xl ">Shopping Cart</h2>
+      <div class="input-container">
+        <h2>Add balance</h2>
+          <form (ngSubmit)="onSubmit()" #newBalanceForm="ngForm">
+            <label for="balance">Added balance:</label>
+            <input type="text" id="balance" [(ngModel)]="balance" name="balance" ngModel required placeholder="Enter the balance you want to add">
+        
+            <button type="submit">Add balance</button>
+          </form>
+      </div>
       @for (item of cartService.usersCart(); track item.productID) {
         <app-cart-item [cartItem]="item" />
       }
@@ -25,7 +35,7 @@ import { Product } from '../../models/product.models';
 
     </div>
   `,
-  styles: ``
+  styleUrls: ['./cart.component.scss'],
 })
 
 export class CartComponent {
@@ -35,6 +45,7 @@ export class CartComponent {
   products = inject(ProductsListComponent);
   //cartItem = input.required<Cart>();
   productList: Product [] = [];
+  balance!: number;
   
   ngOnInit() {
     this.cartService.loadCart();
@@ -51,5 +62,10 @@ export class CartComponent {
     } else {
       console.log("No stored data found");
     }
+  }
+
+  onSubmit() {
+    console.log("Added balance is:", this.balance);
+    this.cartService.addUserBalance(Number(localStorage.getItem("token")), this.balance);
   }
 }
