@@ -112,6 +112,7 @@ get totalPrice(): number {
         return; // Stop checkout process
       }
       //if the user dosent have enought money, it should not be possible to checkout
+      
 
 
     }
