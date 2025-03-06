@@ -535,4 +535,121 @@ public bool CheckProductAvailability(int productID, int desiredQuantity)
             return BadRequest(result);
         }
     }
+
+    //Rating methods
+
+    [HttpGet("CheckRating")]
+    public double CheckRating(int productId){
+        // http://localhost:5201/api/mycontroller/CheckRating?productId=1
+        try
+        {
+            Console.WriteLine("Checking product rating");
+            string SQLQuery = "SELECT AVG(rating) FROM ratings WHERE product_id = @ProductID;";
+            using (var connection = new MySqlConnection(Globals.connectionString))
+            {
+                connection.Open();
+                using (var command = new MySqlCommand(SQLQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@ProductID", productId);
+                    object result = command.ExecuteScalar();
+                    if (result != null && double.TryParse(result.ToString(), out double rating))
+                    {
+                        Console.WriteLine("average rating: " + rating);
+                        return rating;
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error checking product rating: " + ex.Message);
+        }
+        return 3.0;
+    }
+
+  [HttpGet("Rate")]
+public bool Rate(int Rating, int productID, int userID)
+{
+    // http://localhost:5201/api/mycontroller/Rate?Rating=5&productID=1&userID=1
+    try
+    {
+        // Use parameterized query to avoid SQL injection and ensure proper functionality
+        string SQLQuery = "INSERT INTO ratings (rating, product_id, user_id) " +
+                          "VALUES (@Rating, @Product_id, @User_id) " +
+                          "ON DUPLICATE KEY UPDATE rating = @Rating;";
+
+        using (var connection = new MySqlConnection(Globals.connectionString))
+        {
+            connection.Open();
+            using (var command = new MySqlCommand(SQLQuery, connection))
+            {
+                // Add parameters to prevent SQL injection and for proper query execution
+                command.Parameters.AddWithValue("@Rating", Rating);
+                command.Parameters.AddWithValue("@Product_id", productID);
+                command.Parameters.AddWithValue("@User_id", userID);
+
+                // Execute the query and check if rows were affected
+                int rowsAffected = command.ExecuteNonQuery();
+                if (rowsAffected > 0)
+                {
+                    Console.WriteLine("Rating added or updated successfully");
+                    CheckRating(productID);  // Assuming this method updates the rating elsewhere
+                    return true;
+                }
+                else
+                {
+                    Console.WriteLine("Rating not added or updated (maybe faulty input)");
+                    return false;
+                }
+            }
+        }
+    }
+    catch (Exception exception)
+    {
+        Console.WriteLine($"Error: {exception.Message}");
+        return false;
+    }
+}
+
+[HttpGet("CheckRatingUser")]
+ public double? CheckRatingUser(int productId, int userId)
+{
+    try
+    {
+        Console.WriteLine($"Checking product rating for product {productId} and user {userId}");
+
+        string SQLQuery = @"
+            SELECT rating FROM ratings 
+            WHERE product_id = @ProductID AND user_id = @UserID 
+            LIMIT 1;
+        ";
+
+        using (var connection = new MySqlConnection(Globals.connectionString))
+        {
+            connection.Open();
+            using (var command = new MySqlCommand(SQLQuery, connection))
+            {
+                command.Parameters.AddWithValue("@ProductID", productId);
+                command.Parameters.AddWithValue("@UserID", userId);
+
+                var result = command.ExecuteScalar();
+                
+                if (result == null) 
+                {
+                    Console.WriteLine("❌ No rating found for this user and product.");
+                    return null; // Fail state
+                }
+
+                return Convert.ToDouble(result);
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"❌ Error checking rating: {ex.Message}");
+        return null; // Fail state on error
+    }
+}
+
+
 }
