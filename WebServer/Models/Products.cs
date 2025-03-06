@@ -41,4 +41,12 @@ namespace WebServer.Models {  // Adjust the namespace if needed to match your pr
         public string? password { get; set; }
         public string? email { get; set; }
     }
+
+    public class UserInfo {
+        public int UserID { get; set; }
+        public string? role { get; set; }
+        public int Balance { get; set; }
+        public string? Account_name { get; set; }
+        public int User_information { get; set; }
+    }
 }

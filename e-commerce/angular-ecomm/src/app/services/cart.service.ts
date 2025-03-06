@@ -3,6 +3,7 @@ import { Product } from '../models/product.models';
 import { ProductCardComponent } from '../pages/products-list/product-card/product-card.component';
 import { Observable } from 'rxjs';
 import { Cart } from '../models/cart.models';
+import { userInfo } from '../models/userInfo.models';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable({
@@ -16,11 +17,19 @@ export class CartService {
     this.loadCart();
   }
   carts: Cart []=[]
+  userInfos: userInfo []=[];
+  signaluserInfo = signal<userInfo[]>([]);
   //OBSERVER METHODS
   //cart = signal<Product[]>([]);
   loadCart() {
     this.getCarts(Number(localStorage.getItem("token"))).then(() => {
       this.cart.set(this.carts);
+    })
+  }
+
+  loadUserInfo() {
+    this.getUserBalance(Number(localStorage.getItem("token"))).then(() => {
+      this.signaluserInfo.set(this.userInfos);
     })
   }
 
@@ -30,6 +39,10 @@ export class CartService {
 
   usersCart = (computed(() => {
     return [...this.cart().filter(item => item.cartID === Number(localStorage.getItem("token")))];
+  }));
+
+  getUserInfo = (computed(() => {
+    return [...this.signaluserInfo().filter(item => item.UserID === Number(localStorage.getItem("token")))];
   }));
 
   insertIntoCart(cartID: number, quantity: number, product: Product) {
@@ -216,15 +229,27 @@ cartCheckout(cartID: number, totalprice: number, purchasedGoods: string){
   }
 
   addUserBalance(UserID: number, balance: number) {
-    return fetch('http://localhost:5201/api/mycontroller/balanceusermath?UserID=' + UserID + '&math=' + balance)
+    fetch('http://localhost:5201/api/mycontroller/balanceusermath?UserID=' + UserID + '&math=' + balance)
     .then(response => {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       return response.json();
     })
+    .then(data => console.log("API Response:", data))
+    .catch(error => console.error("API call failed:", error));
+  }
+
+  getUserBalance(UserID: number): Promise<number> {
+    return fetch('http://localhost:5201/api/mycontroller/getuserinfo?UserID='+UserID)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
     .then(data => {
-      this.carts = data;
+      return data
     })
     .catch(error => console.error("API call failed:", error));
   }

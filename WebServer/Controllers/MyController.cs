@@ -651,5 +651,24 @@ public bool Rate(int Rating, int productID, int userID)
     }
 }
 
+    [HttpGet("getuserinfo")]
+    public IActionResult GetUserInfo(int UserID) {
+    // http://localhost:5201/api/mycontroller/getuserinfo?UserID=5
+        Console.WriteLine("GetUserInfo function is reached");
+        string SQLQuery = "SELECT * FROM Users WHERE User_id = " + UserID + ";";
+        try {
+            int Balance = new int();               // Create a product object as a list for the reader to input to.
+            var (connection, reader) = StartReader(SQLQuery);           // Makes a connection to the database and starts a reader.
+            while (reader.Read()) {                                     // Read each row and map to the Product object.
+                    Balance = reader.GetInt32("Balance");
+            }
+            reader.Close();                                             // Closes the reader.
+            connection.Close();                                         // Closes the connection to the database.
+            return Ok(Balance);                                           // Returns the retrieved products as JSON.
+        } catch (Exception exception) {                                 // Catches an exception and returns the exception message.
+            var result = new { Message = exception.Message };
+            return BadRequest(result);
+        }
+    }
 
 }

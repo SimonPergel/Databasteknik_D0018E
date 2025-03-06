@@ -1,10 +1,12 @@
-import { Component, inject, Input, input, Injectable } from '@angular/core';
+import { Component, inject, Input, input, Injectable, computed, ChangeDetectorRef, OnInit } from '@angular/core';
 import { CartService } from '../../services/cart.service';
 import { CartItemComponent } from './cart-item/cart-item.component';
 import { CheckoutComponent } from "./checkout/checkout.component";
 import { ProductsListComponent } from '../products-list/products-list.component';
 import { Product } from '../../models/product.models';
 import { FormsModule } from '@angular/forms';
+import { userInfo } from '../../models/userInfo.models';
+import { Router } from '@angular/router';
 //import { Cart } from '../models/cart.models';
 
 
@@ -18,9 +20,9 @@ import { FormsModule } from '@angular/forms';
     <div class="p-6 flex flex-col gap-4">
       <h2 class="text-2xl ">Shopping Cart</h2>
       <div class="input-container">
-        <h2>Add balance</h2>
+        <h2>Your balance: {{ userBalance }}</h2>
           <form (ngSubmit)="onSubmit()" #newBalanceForm="ngForm">
-            <label for="balance">Added balance:</label>
+            <label for="balance">Add more balance:</label>
             <input type="text" id="balance" [(ngModel)]="balance" name="balance" ngModel required placeholder="Enter the balance you want to add">
         
             <button type="submit">Add balance</button>
@@ -38,19 +40,26 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./cart.component.scss'],
 })
 
-export class CartComponent {
+export class CartComponent implements OnInit {
   //@Input() cart: Cart[] = []; // Declare 'cart' as an input
 // the data is allready available
   cartService = inject(CartService);
   products = inject(ProductsListComponent);
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private routes: Router
+  ) { }
   //cartItem = input.required<Cart>();
   productList: Product [] = [];
-  balance!: number;
+  balance!: string;
+  userInfos!: userInfo;
+  userBalance!: number;
   
-  ngOnInit() {
+  async ngOnInit() {
     this.cartService.loadCart();
     this.cartService.usersCart();
     this.getProductData();
+    this.getUserBalance();
   }
 
   getProductData() {
@@ -64,8 +73,16 @@ export class CartComponent {
     }
   }
 
+  async getUserBalance() {
+    const UserBalance = await this.cartService.getUserBalance(Number(localStorage.getItem("token")));
+    this.userBalance = UserBalance;
+  }
+
   onSubmit() {
     console.log("Added balance is:", this.balance);
-    this.cartService.addUserBalance(Number(localStorage.getItem("token")), this.balance);
+    this.cartService.addUserBalance(Number(localStorage.getItem("token")), Number(this.balance));
+    this.cdr.detectChanges();
+    this.balance = '';
+    this.ngOnInit();
   }
 }
