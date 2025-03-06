@@ -52,6 +52,7 @@ export class ProductsListComponent {
             next: (response) => {
               console.log("Fetched Products:", response);
               this.products = response;
+              localStorage.setItem("products", JSON.stringify(this.products));
               console.log("Product Object:", this.products);
             },
             error: (error) => {

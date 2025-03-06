@@ -120,4 +120,16 @@ addProductQuantity(name: string, quantity: number) {
   .then(data => console.log("API Response:", data))
   .catch(error => console.error("API call failed:", error));
 }
+
+addNewProduct(productName: string, quantity: number, price: number) {
+  fetch('http://localhost:5201/api/mycontroller/insertproduct?name=' + productName + '&quantity=' + quantity + '&inStock=1&price=' + price)
+  .then(response => {
+    if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(data => console.log("API Response:", data))
+  .catch(error => console.error("API call failed:", error));
+}
 }

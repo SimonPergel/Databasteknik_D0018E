@@ -54,12 +54,12 @@ public class MyController : ControllerBase {
     }
 
     [HttpGet("balanceusermath")]
-    public IActionResult balanceUserMath(string acctName, int math) { // Decrease or increase balance based on deposits or purchases. Define account name and +/- value.
-        // http://localhost:5201/api/mycontroller/balanceusermath?acctName=test&math=100
-        string SQLQuery = "UPDATE Users SET Balance = Balance + " + math + " WHERE Account_name = " + "'" + acctName + "';";
+    public IActionResult balanceUserMath(string UserID, int math) { // Decrease or increase balance based on deposits or purchases. Define account name and +/- value.
+        // http://localhost:5201/api/mycontroller/balanceusermath?UserID=2&math=100
+        string SQLQuery = "UPDATE Users SET Balance = Balance + " + math + " WHERE User_id = " + "'" + UserID + "';";
         try {
             makeConnection(SQLQuery);                                                               // Makes the connection to the database and runs the SQLQuery.
-            var result = new { Message = "User balanced changed successfully!", acctName, math};    // TODO: Make better return message.
+            var result = new { Message = "User balanced changed successfully!", UserID, math};    // TODO: Make better return message.
             return Ok(result);                                                                      // Returns a OK with a result message.
         } catch (Exception exception) {                                                             // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message};
@@ -184,6 +184,23 @@ public bool isProductSoldOut( int cartID, int productID){
             var result = new { Message = "Cart deleted successfully!", CartID};         // TODO: Make better return message.
             return Ok(result);                                                          // Returns a OK with a result message.
         } catch (Exception exception) {                                                 // Catches an exception and returns the exception message.
+            var result = new { Message = exception.Message};
+            return BadRequest(result);
+        }
+    }
+
+    [HttpGet("updateuserbalance")]
+    public IActionResult updateUserBalance(int User_id, int totalPrice) { // Removes a cart from the Cart table. Define purchase id.
+    // http://localhost:5201/api/mycontroller/updateUserBalance?User_id=1&totalPrice=2
+        Console.WriteLine("updated the Users balance in user table");
+    //string SQLQuery = "UPDATE Users SET Balance = Balance - @TotalPrice WHERE User_id = @UserID";
+    string SQLQuery = "UPDATE Users SET Balance = Balance - " + totalPrice +" WHERE User_id = " + User_id +";";
+
+        try {
+            makeConnection(SQLQuery);                                                                        // Makes the connection to the database and runs the SQLQuery.
+            var result = new { Message = "User balance updated successfully!", User_id, totalPrice};         // TODO: Make better return message.
+            return Ok(result);                                                                               // Returns a OK with a result message.
+        } catch (Exception exception) {                                                                      // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message};
             return BadRequest(result);
         }

@@ -142,6 +142,19 @@ cartCheckout(cartID: number, totalprice: number, purchasedGoods: string){
     .then(data => console.log("API Response:", data))
     .catch(error => console.error("API call failed:", error));
   }
+  // updates the users balance after checkout
+  updateUserBalance(UserID: number, totalPrice: number) {
+    fetch('http://localhost:5201/api/mycontroller/updateUserBalance?User_id='+UserID+'&totalPrice='+totalPrice)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => console.log("API Response:", data))
+    .catch(error => console.error("API call failed:", error));
+
+  }
 
   getCarts(productID: number): Promise<void> {
     return fetch('http://localhost:5201/api/mycontroller/getcarts?UserID='+productID)
@@ -190,6 +203,20 @@ cartCheckout(cartID: number, totalprice: number, purchasedGoods: string){
 
   getProductFromCarts(productID: number): Promise<void> {
     return fetch('http://localhost:5201/api/mycontroller/getproductfromcarts?ProductID='+productID)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      this.carts = data;
+    })
+    .catch(error => console.error("API call failed:", error));
+  }
+
+  addUserBalance(UserID: number, balance: number) {
+    return fetch('http://localhost:5201/api/mycontroller/balanceusermath?UserID=' + UserID + '&math=' + balance)
     .then(response => {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
