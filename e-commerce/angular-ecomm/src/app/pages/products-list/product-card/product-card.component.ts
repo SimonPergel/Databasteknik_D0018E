@@ -9,6 +9,7 @@ import { NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from '../../../services/data.service';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-product-card',
@@ -19,6 +20,7 @@ import { DataService } from '../../../services/data.service';
 export class ProductCardComponent implements OnInit {
   pageRating: number = 3; // Default rating will now be updated to the average rating
   aggregateRating: number = 0; // Average rating from all users
+  userRating: number =0;
   hasUserRated: boolean = false; // Flag to check if the user rated
   counter: number = 0; // Counter to track how many times the add button is pressed
   quantity: string = '';
@@ -33,6 +35,7 @@ export class ProductCardComponent implements OnInit {
 
   constructor(
     private cdr: ChangeDetectorRef,
+    private cdr2: ChangeDetectorRef,
     private route: ActivatedRoute,
     private routes: Router
   ) {}
@@ -57,7 +60,7 @@ export class ProductCardComponent implements OnInit {
     }
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     if (Number(localStorage.getItem("token"))) {
       this.routes.navigate(['/'], { queryParams: { id: Number(localStorage.getItem("token")) }, queryParamsHandling: 'merge' })
     }
@@ -73,26 +76,85 @@ export class ProductCardComponent implements OnInit {
     console.log("Product in ProductCard:", this.product);
     this.productAndRatingService.setProductId(this.product.id);
 
-    this.productAndRatingService.getProductIdRatingFromProductCardComponent(this.product.id).subscribe(
+    this.productAndRatingService.getProductIdRatingFromProductCardComponent(this.product.id).pipe(
+      take(1)  // Only take the first emission and automatically unsubscribe
+    ).subscribe(
       rating => {
         console.log(`Fetched rating for Product ${this.product.id}:`, rating);
-        this.pageRating = rating ?? 0;
-        this.cdr.detectChanges();  // Force UI update
+        this.aggregateRating = rating ?? 0;  // Set the aggregate rating once
       },
       error => {
         console.error("Error fetching rating:", error);
       }
     );
+    try {
+      // ✅ Await the properly fixed function
+      this.productAndRatingService.getProductIdRating().pipe(
+        take(1)
+      ).subscribe(
+        rating => {
+          this.aggregateRating = rating ?? 0;
+          console.log(`Updated aggregate rating for product ${this.product.id}:`, this.aggregateRating);
+          this.cdr.detectChanges();  // Force UI update
+        },
+        error => {
+          console.error(" Error fetching aggregate rating:", error);
+        }
+      );
+    } catch (error) {
+      console.error(" Error fetching user rating:", error);
+    }
+
+
+    //fetch personal rating
+    try {
+      // ✅ Await the properly fixed function
+      this.userRating = await this.productAndRatingService.getP_IDRatingFromUser(this.product.id);
+      console.log(`Updated user rating for product ${this.product.id}:`, this.userRating);
+      
+      this.cdr.detectChanges();  // Force UI update
+    } catch (error) {
+      console.error(" Error fetching user rating:", error);
+    }
   }
 
   // This method will be called when the rating changes
-  onRatingChange() {
+  async onRatingChange() {
     if (this.product.id !== null) {
       // Set the productId in the ProductAndRatingService when rating changes
       this.productAndRatingService.setProductId(this.product.id);
+      
+      try {
+        // ✅ Await the properly fixed function
+        this.userRating = await this.productAndRatingService.getP_IDRatingFromUser(this.product.id);
+        console.log(`Updated user rating for product ${this.product.id}:`, this.userRating);
+        
+        this.cdr.detectChanges();  // Force UI update
+      } catch (error) {
+        console.error(" Error fetching user rating:", error);
+      }
+      try {
+        // ✅ Await the properly fixed function
+        this.productAndRatingService.getProductIdRating().pipe(
+          take(1)
+        ).subscribe(
+          rating => {
+            this.aggregateRating = rating ?? 0;
+            console.log(`Updated aggregate rating for product ${this.product.id}:`, this.aggregateRating);
+            this.cdr.detectChanges();  // Force UI update
+          },
+          error => {
+            console.error(" Error fetching aggregate rating:", error);
+          }
+        );
+      } catch (error) {
+        console.error(" Error fetching user rating:", error);
+      }
+  
       console.log("Product ID set to:", this.product.id);
     }
   }
+  
 
   onSubmit() {
     this.dataService.addProductQuantity(this.product.name, Number(this.quantity));
