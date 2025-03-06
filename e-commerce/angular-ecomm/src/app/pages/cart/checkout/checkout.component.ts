@@ -111,7 +111,13 @@ get totalPrice(): number {
         alert(`Cannot checkout! Not enough stock for this product: ${name}.`); // this cool feature displays a alert box with a ok
         return; // Stop checkout process
       }
+      //if the user dosent have enought money, it should not be possible to checkout
+
+
     }
+
+    
+
   
     // Ensure each checkout request is complete before moving forward
     const response = await this.cartService.cartCheckout(CartIDs, this.totalPrice, this.purchasedGoods);
