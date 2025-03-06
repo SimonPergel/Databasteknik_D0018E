@@ -15,8 +15,8 @@
           </div>
   
           <h2>Rate this product:</h2>
-          <app-star-rating [(rating)]="pageRating" (ratingChange)="onRatingChange()"></app-star-rating>
-          <p>Your rating: {{ pageRating }}</p>
+          <app-star-rating [(rating)]="aggregateRating" (ratingChange)="onRatingChange()"></app-star-rating>
+          <p>Your rating: {{ userRating }}</p>
           <span class="absolute top-2 right-3 text-sm font-bald" 
             [class.text-green-500]="product.quantity > 0"
             [class.text-red-500]="product.quantity === 0">
@@ -36,8 +36,8 @@
           </div>
   
           <h2>Rate this product:</h2>
-          <app-star-rating [(rating)]="pageRating" (ratingChange)="onRatingChange()"></app-star-rating>
-          <p>Your rating: {{ pageRating }}</p>
+          <app-star-rating [(rating)]="aggregateRating" (ratingChange)="onRatingChange()"></app-star-rating>
+          <p>Your rating: {{ userRating }}</p>
           <span class="absolute top-2 right-3 text-sm font-bald" 
             [class.text-green-500]="product.quantity > 0"
             [class.text-red-500]="product.quantity === 0">
