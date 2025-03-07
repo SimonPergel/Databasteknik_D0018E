@@ -67,6 +67,6 @@ export class ProductsListComponent {
   }
 
   trackById(index: number, product: Product) {
-    return product.id; // ✅ ✅ Improves performance by tracking items correctly
+    return product.id; // Improves performance by tracking items correctly
   }
 }

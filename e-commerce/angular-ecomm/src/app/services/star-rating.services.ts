@@ -11,7 +11,7 @@ export class StarRatingService {
 
   constructor(private http: HttpClient) {}
 
-  /** ✅ Fetches the current rating for a product */
+  /** Fetches the current rating for a product */
   updateStars(productID: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/checkRating?productID=${productID}`).pipe(
       catchError(error => {
@@ -21,14 +21,14 @@ export class StarRatingService {
     );
   }
 
-  /** ✅ Submits a new rating and returns a boolean indicating success */
+  /** Submits a new rating and returns a boolean indicating success */
   async starRate(userID: number, productID: number, rating: number): Promise<boolean> {
     try {
       const response = await this.http
         .get<any>(`${this.apiUrl}/Rate?Rating=${rating}&productID=${productID}&userID=${userID}`)
         .toPromise();
       
-      console.log("✅ Rating submitted successfully:", response);
+      console.log("Rating submitted successfully:", response);
       return true; // Success
     } catch (error) {
       console.error("  Failed to submit rating:", error);
@@ -48,9 +48,9 @@ export class StarRatingService {
         console.log("Received rating:", data); 
         
         if (typeof data === "number") {
-          return data;  // ✅ Ensure it's a number
+          return data;  // Ensure it's a number
         } else if (data && typeof data.rating === "number") {
-          return data.rating;  // ✅ Handle case where rating is inside an object
+          return data.rating;  // Handle case where rating is inside an object
         } else {
           console.warn("Unexpected API response format:", data);
           return 0;  // Default value if the format is wrong
@@ -58,7 +58,7 @@ export class StarRatingService {
       })
       .catch(error => {
         console.error(" API call failed:", error);
-        return 0;  // ✅ Return a default value instead of `undefined`
+        return 0;  // Return a default value instead of `undefined`
       });
   }
   

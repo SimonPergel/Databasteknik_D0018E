@@ -57,7 +57,7 @@ export class ProductAndRatingService {
       const rating = await this.starRatingService.checkRatingUser(
         productId, 
         Number(localStorage.getItem("token"))
-      );  // ✅ Await the promise directly
+      );  // Await the promise directly
       console.log("Fetched user rating:", rating);
       return rating ?? 0;  // Ensure a number is always returned
     } catch (error) {

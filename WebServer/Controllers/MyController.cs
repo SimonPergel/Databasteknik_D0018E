@@ -636,7 +636,7 @@ public bool Rate(int Rating, int productID, int userID)
                 
                 if (result == null) 
                 {
-                    Console.WriteLine("❌ No rating found for this user and product.");
+                    Console.WriteLine("No rating found for this user and product.");
                     return null; // Fail state
                 }
 
@@ -646,7 +646,7 @@ public bool Rate(int Rating, int productID, int userID)
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"❌ Error checking rating: {ex.Message}");
+        Console.WriteLine($"Error checking rating: {ex.Message}");
         return null; // Fail state on error
     }
 }
