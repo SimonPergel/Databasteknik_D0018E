@@ -76,6 +76,8 @@ export class ProductCardComponent implements OnInit {
       }
     });
     console.log("Product in ProductCard:", this.product);
+
+    
     this.productAndRatingService.setProductId(this.product.id);
 
     this.productAndRatingService.getProductIdRatingFromProductCardComponent(this.product.id).pipe(

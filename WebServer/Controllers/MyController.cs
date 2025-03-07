@@ -671,4 +671,56 @@ public bool Rate(int Rating, int productID, int userID)
         }
     }
 
+
+    [HttpGet("makeComment")]
+    public IActionResult Comment(int userID, int productID, string comment) { //inserts product comments into the database
+    // http://localhost:5201/api/mycontroller/makeComment?userID=2&productID=2&comment=This%20is%20an%20Opinion
+        string SQLQuery = "INSERT INTO Comments (user_id, product_id, comments) VALUES ("+ userID + "," + productID + ",'" + comment + "' );";
+        try {
+            makeConnection(SQLQuery);                                                                               // Makes the connection to the database and runs the SQLQuery.
+            var result = new { Message = "New comment inserted successfully!", userID, productID, comment};    // TODO: Make better return message.
+            return Ok(result);                                                                                      // Returns a OK with a result message.
+        } catch (Exception exception) {                                                                             // Catches an exception and returns the exception message.
+            var result = new { Message = exception.Message};
+            return BadRequest(result);
+        }
+    }
+
+     [HttpGet("getProductComments")]
+    public IActionResult getProductComments(int productID) { // retrieves a products comments from the database to display on the product-comment page
+    // http://localhost:5201/api/mycontroller/getProductComments?productID=2
+        string SQLQuery = "SELECT * FROM Comments WHERE product_id = "+ productID+ ";";
+         try {
+            List<Opinion> Comments = new List<Opinion>();               // Create a product object as a list for the reader to input to.
+            var (connection, reader) = StartReader(SQLQuery);           // Makes a connection to the database and starts a reader.
+            while (reader.Read()) {                                     // Read each row and map to the Product object.
+                Comments.Add(new Opinion {
+                    userID = reader.GetInt32("user_id"),                 // Assuming column name 'Product_id'.
+                    productID = reader.GetInt32("product_id"),
+                    comment = reader.GetString("comments"),
+                    commentID = reader.GetInt32("comment_id")
+                });
+            }
+            reader.Close();                                             // Closes the reader.
+            connection.Close();                                         // Closes the connection to the database.
+            return Ok(Comments);                                        // Returns the retrieved products as JSON.
+        } catch (Exception exception) {                                 // Catches an exception and returns the exception message.
+            var result = new { Message = exception.Message };
+            return BadRequest(result);
+        }
+    }
+
+    [HttpGet("deleteComment")]
+    public IActionResult deleteComment(int commentID) { // Removes a comment from the Comment table. Define comment id.
+     // http://localhost:5201/api/mycontroller/deleteComment?commentID=2
+        string SQLQuery = "DELETE FROM Comments WHERE Comment_id = " +commentID+  ";";
+        try {
+            makeConnection(SQLQuery);                                               // Makes the connection to the database and runs the SQLQuery.
+            var result = new { Message = "Comment removed successfully!", commentID};    // TODO: Make better return message.
+            return Ok(result);                                                      // Returns a OK with a result message.
+        } catch (Exception exception) {                                             // Catches an exception and returns the exception message.
+            var result = new { Message = exception.Message};
+            return BadRequest(result);
+        }
+    }
 }

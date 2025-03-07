@@ -1,0 +1,21 @@
+<div class="p-8 grid grid-cols-2 gap-4">
+    <div *ngFor="let comment of comments; trackBy: trackByProductId">
+    <div class="comment-card">
+        <p><strong>User ID:</strong> {{ comment.userId }}</p> <!-- Display userId -->
+        <p><strong>Comment:</strong> {{ comment.comment }}</p> <!-- Display the comment text -->
+      
+      <!-- Remove Comment Button -->
+      <button (click)="this.commentsService.deleteComment(comment.commentId)">Remove Comment</button>
+      </div>
+    </div>
+  </div>
+  
+    <!-- Form for Submitting a Comment (Outside of the comment display loop) -->
+    <div class="submit-comment-card">
+      <h3>Submit a Comment</h3>
+      <form (ngSubmit)="this.commentsService.comment( token , productID, newCommentText)">
+          <textarea id="commentText" [(ngModel)]="newCommentText" name="commentText" rows="4" cols="50" required></textarea>
+  
+        <button type="submit">Submit</button>
+      </form>
+    </div>
