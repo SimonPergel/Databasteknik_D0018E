@@ -253,4 +253,12 @@ cartCheckout(cartID: number, totalprice: number, purchasedGoods: string){
     })
     .catch(error => console.error("API call failed:", error));
   }
+
+  getReceipts(UserID: number) {
+    return this.http.get<any>('http://localhost:5201/api/mycontroller/getReceipts?userID='+ UserID);
+  }
+
+  getComments(productID: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/getProductComments?productID=${productID}`);
+}
 }

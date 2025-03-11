@@ -723,4 +723,30 @@ public bool Rate(int Rating, int productID, int userID)
             return BadRequest(result);
         }
     }
+
+
+    [HttpGet("getReceipts")]
+     public IActionResult getReceipts(int userID) { // retrieves a products comments from the database to display on the product-comment page
+    // http://localhost:5201/api/mycontroller/getReceipts?userID=2
+        string SQLQuery = "SELECT * FROM Checkout WHERE Cart_id = "+ userID+ ";";
+         try {
+            List<Receipts> Comments = new List<Receipts>();               // Create a product object as a list for the reader to input to.
+            var (connection, reader) = StartReader(SQLQuery);           // Makes a connection to the database and starts a reader.
+            while (reader.Read()) {                                     // Read each row and map to the Product object.
+                Comments.Add(new Receipts {
+                    checkout_id = reader.GetInt32("checkout_id"),                 // Assuming column name 'Product_id'.
+                    total_price = reader.GetInt32("total_price"),
+                    cart_id = reader.GetInt32("cart_id"),
+                    purchasedGoods = reader.GetString("purchasedGoods")
+                });
+            }
+            reader.Close();                                             // Closes the reader.
+            connection.Close();                                         // Closes the connection to the database.
+            return Ok(Comments);                                        // Returns the retrieved products as JSON.
+        } catch (Exception exception) {                                 // Catches an exception and returns the exception message.
+            var result = new { Message = exception.Message };
+            return BadRequest(result);
+        }
+    }
+
 }

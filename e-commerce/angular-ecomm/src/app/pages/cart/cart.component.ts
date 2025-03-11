@@ -7,6 +7,8 @@ import { Product } from '../../models/product.models';
 import { FormsModule } from '@angular/forms';
 import { userInfo } from '../../models/userInfo.models';
 import { Router } from '@angular/router';
+import { Receipts } from '../../models/Receipts.models';
+import { CommonModule } from '@angular/common';
 //import { Cart } from '../models/cart.models';
 
 
@@ -15,7 +17,7 @@ import { Router } from '@angular/router';
 })
 @Component({
   selector: 'app-cart',
-  imports: [CartItemComponent,CheckoutComponent, FormsModule],
+  imports: [CartItemComponent,CheckoutComponent, FormsModule, CommonModule],
   template: `
     <div class="p-6 flex flex-col gap-4">
       <h2 class="text-2xl ">Shopping Cart</h2>
@@ -36,8 +38,22 @@ import { Router } from '@angular/router';
 
 
     </div>
+
+<div class="p-8 grid grid-cols-2 gap-4">
+  <div *ngFor="let receipt of receipts; trackBy: trackBycart_id">
+    <div class="Receipt-card">
+      <p><strong>Checkout ID:</strong> {{ receipt.checkout_id }}</p>
+      <p><strong>Purchased Goods:</strong> {{ receipt.purchasedGoods }}</p>
+      <p><strong>Total Price:</strong> {{ receipt.total_price }}</p>
+
+    </div>
+  </div>
+</div>
   `,
   styleUrls: ['./cart.component.scss'],
+
+
+  
 })
 
 export class CartComponent implements OnInit {
@@ -54,12 +70,24 @@ export class CartComponent implements OnInit {
   balance!: string;
   userInfos!: userInfo;
   userBalance!: number;
+  receipts: Receipts [] = [];
   
   async ngOnInit() {
     this.cartService.loadCart();
     this.cartService.usersCart();
     this.getProductData();
     this.getUserBalance();
+
+    this.cartService.getReceipts(Number(localStorage.getItem("token"))).subscribe({
+      next: (response) => {
+        console.log("Fetched Receipts:", response);
+        this.receipts = response;
+        console.log('Receipt Object:', this.receipts);
+      },
+      error: (error) => {
+        console.error("Error fetching Receipts:", error);
+      }
+    });
   }
 
   getProductData() {
@@ -84,5 +112,9 @@ export class CartComponent implements OnInit {
     this.cdr.detectChanges();
     this.balance = '';
     this.ngOnInit();
+  }
+
+  trackBycart_id(index: number, receipt: Receipts): number {
+    return receipt.cart_id;
   }
 }

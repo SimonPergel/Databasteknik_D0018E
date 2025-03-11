@@ -59,6 +59,20 @@ body {
   button:hover {
     background-color: #45a049; /* Darker green when hovering */
   }
+
+  .Receipt-card {
+    background-color: white;
+    border: 2px solid #E2E8F0; /* Light gray border */
+    border-radius: 10px; /* Rounded corners */
+    padding: 16px; /* Space inside the card */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition on hover */
+  }
+  
+  .Receipt-card:hover {
+    transform: translateY(-5px); /* Lift the card up slightly on hover */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); /* Darker shadow on hover */
+  }
   
   /* For responsiveness */
   @media (max-width: 600px) {

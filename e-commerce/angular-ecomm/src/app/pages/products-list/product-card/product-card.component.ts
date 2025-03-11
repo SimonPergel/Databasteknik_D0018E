@@ -116,7 +116,6 @@ export class ProductCardComponent implements OnInit {
 
     //fetch personal rating
     try {
-      // Await the properly fixed function
       this.userRating = await this.productAndRatingService.getP_IDRatingFromUser(this.product.id);
       console.log(`Updated user rating for product ${this.product.id}:`, this.userRating);
       
@@ -142,7 +141,6 @@ export class ProductCardComponent implements OnInit {
         console.error(" Error fetching user rating:", error);
       }
       try {
-        // Await the properly fixed function
         this.productAndRatingService.getProductIdRating().pipe(
           take(1)
         ).subscribe(
