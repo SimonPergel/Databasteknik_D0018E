@@ -6,7 +6,8 @@ import { Cart } from '../../../models/cart.models';
 import { Product } from '../../../models/product.models';
 import { CartItemComponent } from '../cart-item/cart-item.component';
 import { CartComponent } from '../cart.component';
-
+import { RouterLink } from '@angular/router';
+//import { Router } from '@angular/router';
 //Sources 
 // reduce()- https://www.geeksforgeeks.org/typescript-array-reduce-method/,
 //  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce,
@@ -16,7 +17,7 @@ import { CartComponent } from '../cart.component';
 
 @Component({
   selector: 'app-checkout',
-  imports: [PrimaryButtonComponent],
+  imports: [PrimaryButtonComponent, RouterLink],
   template: `
     <div class="bg-slate-100 p-6 rounded-x1 shadow-x1  border">
       <h2 class="text-2xl" >Summary</h2>
@@ -25,7 +26,13 @@ import { CartComponent } from '../cart.component';
           <span class="text-lg">Total</span>
           <span>{{ '$' + totalPrice}} </span>
         </div>
+        <div class="flex gap-2"> <!-- Added a flex container for both buttons -->
         <app-primary-button label="Checkout" (buttonClicked)="handleCheckout()" />
+        <!-- <app-primary-button label="Order History" (buttonClicked)="goToOrderHistory()"
+        routerLink="/orderHistory"/> -->
+       <app-primary-button label="Order History" routerLink="/orderHistory"/>
+      </div>
+
       </div>
     </div>
   `,
@@ -46,6 +53,8 @@ export class CheckoutComponent {
 get totalPrice(): number {
   return this.cartItems().reduce((total, item) => total + item.price, 0);
 }
+
+
   // this function handles checkout button clicked
  async handleCheckout(): Promise<void> {
   let CartIDs = Number(localStorage.getItem("token"));

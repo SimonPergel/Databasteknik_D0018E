@@ -8,6 +8,14 @@ namespace WebServer.Models {  // Adjust the namespace if needed to match your pr
         public int? Price { get; set; }
     }
 
+    public class CheckoutOrder {
+        public int CheckoutID {get; set; }
+        public int TotalPrice {get; set; }
+        public int CartID {get; set; }
+        public string PurchasedGoods {get; set; }
+
+    }
+
     public class Admin {
         public int UserID { get; set; }
     }

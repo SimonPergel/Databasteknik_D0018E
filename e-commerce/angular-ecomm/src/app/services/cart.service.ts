@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { Cart } from '../models/cart.models';
 import { userInfo } from '../models/userInfo.models';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Orders } from '../models/orders.models';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,7 @@ export class CartService {
     this.loadCart();
   }
   carts: Cart []=[]
+  orders: Orders []=[]
   userInfos: userInfo []=[];
   signaluserInfo = signal<userInfo[]>([]);
   //OBSERVER METHODS
@@ -214,6 +216,26 @@ cartCheckout(cartID: number, totalprice: number, purchasedGoods: string){
   });
 }
 
+// gets all the orders from the checkout table
+getOrders(CartID: number):Promise<Orders[]> {
+  return fetch('http://localhost:5201/api/mycontroller/getorders?UserID='+CartID)
+  .then(response => {
+      if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+  })
+  .then((data: Orders[]) => { 
+    console.log("Received order history:", data);
+    return data; 
+})
+.catch(error => {
+    console.error("API call failed:", error);
+    return [];  // Return an empty array to match expected return type
+});
+}
+
+
   getProductFromCarts(productID: number): Promise<void> {
     return fetch('http://localhost:5201/api/mycontroller/getproductfromcarts?ProductID='+productID)
     .then(response => {
@@ -252,5 +274,9 @@ cartCheckout(cartID: number, totalprice: number, purchasedGoods: string){
       return data
     })
     .catch(error => console.error("API call failed:", error));
+  }
+
+  getUserOrder(){
+    
   }
 }

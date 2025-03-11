@@ -6,7 +6,7 @@ import { ProductsListComponent } from '../products-list/products-list.component'
 import { Product } from '../../models/product.models';
 import { FormsModule } from '@angular/forms';
 import { userInfo } from '../../models/userInfo.models';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 //import { Cart } from '../models/cart.models';
 
 
@@ -15,7 +15,7 @@ import { Router } from '@angular/router';
 })
 @Component({
   selector: 'app-cart',
-  imports: [CartItemComponent,CheckoutComponent, FormsModule],
+  imports: [CartItemComponent, CheckoutComponent, FormsModule],
   template: `
     <div class="p-6 flex flex-col gap-4">
       <h2 class="text-2xl ">Shopping Cart</h2>
@@ -28,14 +28,12 @@ import { Router } from '@angular/router';
             <button type="submit">Add balance</button>
           </form>
       </div>
+      
       @for (item of cartService.usersCart(); track item.productID) {
         <app-cart-item [cartItem]="item" />
       }
       <!-- Pass the cart items to the checkout component -->
       <app-checkout />
-
-
-    </div>
   `,
   styleUrls: ['./cart.component.scss'],
 })
@@ -61,6 +59,7 @@ export class CartComponent implements OnInit {
     this.getProductData();
     this.getUserBalance();
   }
+
 
   getProductData() {
     const storedData = localStorage.getItem("products");

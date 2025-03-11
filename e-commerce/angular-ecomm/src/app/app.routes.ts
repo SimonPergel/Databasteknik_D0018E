@@ -4,6 +4,7 @@ import { CartComponent } from './pages/cart/cart.component';
 import { LoginComponent } from './login/login.component';
 import { AuthenticationGuard } from './component/Authentication/AuthenticationGuard';
 import { AddProductComponent } from './component/Addproduct/addproduct.component';
+import { OrderHistoryComponent } from './pages/cart/checkout/order-history/order-history.component';
 
 
 export const routes: Routes = [{
@@ -25,4 +26,9 @@ export const routes: Routes = [{
         path: 'addproduct',
         component: AddProductComponent,
 },
+{
+        path: 'orderHistory',   // the correct name here
+        component: OrderHistoryComponent,
+
+}
 ];
