@@ -1,5 +1,5 @@
 import { Component, Input, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { commentsService } from '../../services/comments.service';
 import { Opinion } from '../../models/Opinion.models';
@@ -26,7 +26,8 @@ template!: String;
 
   constructor( 
     public commentsService: commentsService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private location: Location
   ) {}
 
   async ngOnInit() {
@@ -71,6 +72,10 @@ template!: String;
 
   trackByProductId(index: number, comment: Opinion): number {
     return comment.productId; // Track by productId for each comment
+  }
+
+  ShowAlert() {
+    alert("Comment deleted, refresh page for results");  
   }
   
 }

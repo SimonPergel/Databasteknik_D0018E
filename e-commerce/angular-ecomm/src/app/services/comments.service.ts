@@ -21,7 +21,7 @@ export class commentsService {
 
 
     comment(userID: number, productID: number, comment: string){
-
+        alert("comment submitted, refresh page for results")
         let encode :string = comment.replace(/ /g, "%20");
         console.log(encode);
 
