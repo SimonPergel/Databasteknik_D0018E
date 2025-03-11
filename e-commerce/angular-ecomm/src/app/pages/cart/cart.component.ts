@@ -38,17 +38,6 @@ import { CommonModule } from '@angular/common';
 
 
     </div>
-
-<div class="p-8 grid grid-cols-2 gap-4">
-  <div *ngFor="let receipt of receipts; trackBy: trackBycart_id">
-    <div class="Receipt-card">
-      <p><strong>Checkout ID:</strong> {{ receipt.checkout_id }}</p>
-      <p><strong>Purchased Goods:</strong> {{ receipt.purchasedGoods }}</p>
-      <p><strong>Total Price:</strong> {{ receipt.total_price }}</p>
-
-    </div>
-  </div>
-</div>
   `,
   styleUrls: ['./cart.component.scss'],
 
