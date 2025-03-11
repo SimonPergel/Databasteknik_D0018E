@@ -7,7 +7,7 @@ import { AddProductComponent } from './component/Addproduct/addproduct.component
 import { CommentsComponent } from './components/comments/comments.component';
 
 
-export const routes: Routes = [{
+export const routes2: Routes = [{
         path: '',
         pathMatch: 'full',
         component: ProductsListComponent,
@@ -29,7 +29,6 @@ export const routes: Routes = [{
 
 {
         path: 'comments',
-        pathMatch: 'full',
         component: CommentsComponent,
 },
 

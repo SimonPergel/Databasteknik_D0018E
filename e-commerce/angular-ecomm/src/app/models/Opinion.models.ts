@@ -1,6 +1,6 @@
 export interface Opinion {
-    commentId: number;
-    userId: number;
+    commentID: number;
+    userID: number;
     productId: number;
     comment: string;
 }

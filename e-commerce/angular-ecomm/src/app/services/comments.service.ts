@@ -38,6 +38,7 @@ export class commentsService {
 
     
     public deleteComment(commentID: number) {
+        console.log("Trying deletion of Comment ID:", commentID);
         fetch('http://localhost:5201/api/mycontroller/deleteComment?commentID='+ commentID)
         .then(response => {
             if (!response.ok) {

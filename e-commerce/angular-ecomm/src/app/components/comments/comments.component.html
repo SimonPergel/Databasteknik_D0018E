@@ -1,21 +1,68 @@
+<ng-container *ngIf="template === 'admin'; else user">
 <div class="p-8 grid grid-cols-2 gap-4">
-    <div *ngFor="let comment of comments; trackBy: trackByProductId">
+  <div *ngFor="let comment of comments; trackBy: trackByProductId">
     <div class="comment-card">
-        <p><strong>User ID:</strong> {{ comment.userId }}</p> <!-- Display userId -->
-        <p><strong>Comment:</strong> {{ comment.comment }}</p> <!-- Display the comment text -->
-      
-      <!-- Remove Comment Button -->
-      <button (click)="this.commentsService.deleteComment(comment.commentId)">Remove Comment</button>
-      </div>
+      <p><strong>User ID:</strong> {{ comment.userID }}</p> <!-- Display userId -->
+      <p>{{ comment.comment }}</p> <!-- Display the comment text -->
+
+      <button (click)="this.commentsService.deleteComment(comment.commentID)">
+        Remove Comment
+      </button>
     </div>
   </div>
+</div>
+
   
     <!-- Form for Submitting a Comment (Outside of the comment display loop) -->
     <div class="submit-comment-card">
       <h3>Submit a Comment</h3>
-      <form (ngSubmit)="this.commentsService.comment( token , productID, newCommentText)">
-          <textarea id="commentText" [(ngModel)]="newCommentText" name="commentText" rows="4" cols="50" required></textarea>
-  
-        <button type="submit">Submit</button>
+      <form (ngSubmit)="this.commentsService.comment(token, productID, newCommentText)">
+        <div class="form-group">
+          <label for="commentText">Your Comment:</label>
+          <textarea id="commentText" [(ngModel)]="newCommentText" name="commentText" rows="4" cols="50" required placeholder="Write your comment here..."></textarea>
+        </div>
+        <div class="form-group">
+          <button type="submit" [disabled]="!newCommentText">Submit</button>
+        </div>
       </form>
     </div>
+  </ng-container>
+
+
+
+
+
+  <ng-template #user>
+<div class="p-8 grid grid-cols-2 gap-4">
+  <div *ngFor="let comment of comments; trackBy: trackByProductId">
+    <div class="comment-card">
+      <p><strong>User ID:</strong> {{ comment.userID }}</p> <!-- Display userId -->
+      <p>{{ comment.comment }}</p> <!-- Display the comment text -->
+
+      <!-- Remove Comment Button (only visible if the user is the owner of the comment) -->
+      <button *ngIf="comment.userID === userID" (click)="this.commentsService.deleteComment(comment.commentID)">
+        Remove Comment
+      </button>
+    </div>
+  </div>
+</div>
+
+  
+    <!-- Form for Submitting a Comment (Outside of the comment display loop) -->
+    <div class="submit-comment-card">
+      <h3>Submit a Comment</h3>
+      <form (ngSubmit)="this.commentsService.comment(token, productID, newCommentText)">
+        <div class="form-group">
+          <label for="commentText">Your Comment:</label>
+          <textarea id="commentText" [(ngModel)]="newCommentText" name="commentText" rows="4" cols="50" required placeholder="Write your comment here..."></textarea>
+        </div>
+        <div class="form-group">
+          <button type="submit" [disabled]="!newCommentText">Submit</button>
+        </div>
+      </form>
+    </div>
+  </ng-template>
+ 
+
+
+  

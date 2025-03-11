@@ -7,10 +7,12 @@ import { StarRatingComponent } from '../../../../star-rating/star-rating.compone
 import { ProductAndRatingService } from '../../../services/productandRating.service';
 import { NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DataService } from '../../../services/data.service';
 import { take } from 'rxjs';
 import { ProductsListComponent } from '../products-list.component';
+import { CommentsComponent } from "../../../components/comments/comments.component";;
+
 
 @Component({
   selector: 'app-product-card',
@@ -19,6 +21,7 @@ import { ProductsListComponent } from '../products-list.component';
   styleUrls: ['./product-card.component.scss']
 })
 export class ProductCardComponent implements OnInit {
+  p_Id!: number;
   pageRating: number = 3; // Default rating will now be updated to the average rating
   aggregateRating: number = 0; // Average rating from all users
   userRating: number =0;
@@ -32,6 +35,7 @@ export class ProductCardComponent implements OnInit {
   dataService = inject(DataService);
   productAndRatingService = inject(ProductAndRatingService);
   products = inject(ProductsListComponent);
+
 
   @Input() product!: Product;  // Corrected input usage
 
@@ -175,6 +179,15 @@ export class ProductCardComponent implements OnInit {
 
     //this.routes.navigate(['/'], { queryParamsHandling: 'preserve' })
   }
+
+
+  goComments(){
+    this.routes.navigate(['/comments'], { queryParams:  { id: this.product.id, userId: this.id} }); 
+    console.log("Navigating to comments page");
+  }
+
+
+
 }
 
 // CODE FOR THE SECOND QUANTITY / OUT OF STOCK TEXT //
