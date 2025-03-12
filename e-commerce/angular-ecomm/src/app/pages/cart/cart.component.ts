@@ -55,14 +55,14 @@ export class CartComponent implements OnInit {
   balance!: string;
   userInfos!: userInfo;
   userBalance!: number;
-  receipts: Receipts [] = [];
+  //receipts: Receipts [] = [];
   
   async ngOnInit() {
     this.cartService.loadCart();
     this.cartService.usersCart();
     this.getProductData();
     this.getUserBalance();
-
+/*
     this.cartService.getReceipts(Number(localStorage.getItem("token"))).subscribe({
       next: (response) => {
         console.log("Fetched Receipts:", response);
@@ -73,6 +73,7 @@ export class CartComponent implements OnInit {
         console.error("Error fetching Receipts:", error);
       }
     });
+    */
   }
 
 
@@ -99,8 +100,9 @@ export class CartComponent implements OnInit {
     this.balance = '';
     this.ngOnInit();
   }
-
+/*
   trackBycart_id(index: number, receipt: Receipts): number {
     return receipt.cart_id;
   }
+    */
 }
