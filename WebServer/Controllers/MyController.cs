@@ -309,13 +309,13 @@ public IActionResult InsertProduct([FromBody] Product product) {
         }
     }
 
-    [HttpGet("removeproduct")]  // no put route made
-    public IActionResult notForSale(string name) { // Removes a product in the Product table. Define name.
-    // http://localhost:5201/api/mycontroller/removeproduct?name=Pencil
-        string SQLQuery = "DELETE FROM Products WHERE Product_name = " + "'" + name +  "';";
+    [HttpGet("deleteProduct")]  // no put route made
+    public IActionResult deleteProduct(int productID) { // Removes a product in the Product table. Define name.
+    // http://localhost:5201/api/mycontroller/deleteProduct?ProductID=
+        string SQLQuery = "DELETE FROM Products WHERE Product_id = " + "" + productID +  ";";
         try {
             makeConnection(SQLQuery);                                               // Makes the connection to the database and runs the SQLQuery.
-            var result = new { Message = "Product removed successfully!", name};    // TODO: Make better return message.
+            var result = new { Message = "Product removed successfully!", productID};    // TODO: Make better return message.
             return Ok(result);                                                      // Returns a OK with a result message.
         } catch (Exception exception) {                                             // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message};

@@ -11,6 +11,10 @@
             
                     <button type="submit">Add</button>
                 </form>
+                <app-primary-button 
+                [label]="'Delete This Product'"
+                (buttonClicked)="this.dataService.deleteProduct(this.product.id)">
+              </app-primary-button>
             </div>
           </div>
   

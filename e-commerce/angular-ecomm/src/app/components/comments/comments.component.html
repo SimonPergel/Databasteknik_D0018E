@@ -5,7 +5,7 @@
       <p><strong>User ID:</strong> {{ comment.userID }}</p> <!-- Display userId -->
       <p>{{ comment.comment }}</p> <!-- Display the comment text -->
 
-      <button (click)="this.commentsService.deleteComment(comment.commentID);ShowAlert();"> 
+      <button (click)="this.commentsService.deleteComment(comment.commentID); ShowAlertNay()"> 
     
         Remove Comment
       </button>
@@ -41,7 +41,7 @@
       <p>{{ comment.comment }}</p> <!-- Display the comment text -->
 
       <!-- Remove Comment Button (only visible if the user is the owner of the comment) -->
-             <button (click)="this.commentsService.deleteComment(comment.commentID);ShowAlert(); ">
+      <button *ngIf="comment.userID === userID" (click)="this.commentsService.deleteComment(comment.commentID);this.ShowAlertNay();">
         Remove Comment
       </button>
     </div>

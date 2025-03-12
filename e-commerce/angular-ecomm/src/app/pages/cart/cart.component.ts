@@ -38,6 +38,7 @@ import { CommonModule } from '@angular/common';
 
 
     </div>
+
   `,
   styleUrls: ['./cart.component.scss'],
 
@@ -46,7 +47,7 @@ import { CommonModule } from '@angular/common';
 })
 
 export class CartComponent implements OnInit {
-  //@Input() cart: Cart[] = []; // Declare 'cart' as an input
+  //@Input() cart: Cart[] ss= []; // Declare 'cart' as an input
 // the data is allready available
   cartService = inject(CartService);
   products = inject(ProductsListComponent);

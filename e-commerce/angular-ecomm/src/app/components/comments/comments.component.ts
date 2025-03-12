@@ -38,8 +38,6 @@ template!: String;
   
     });
     */
-
-
    
     this.route.queryParams.subscribe(async params => {
       if (await this.dataService.checkAdmin(Number(localStorage.getItem("token")))) {;
@@ -73,9 +71,8 @@ template!: String;
   trackByProductId(index: number, comment: Opinion): number {
     return comment.productId; // Track by productId for each comment
   }
-
-  ShowAlert() {
+  
+  ShowAlertNay() {
     alert("Comment deleted, refresh page for results");  
   }
-  
 }
