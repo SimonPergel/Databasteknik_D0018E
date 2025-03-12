@@ -1,21 +1,21 @@
 
-  
-<div class="bg-slate-100 p-6 rounded-xl shadow-xl border">
+<!-- This code represent the template for the Order History page-->
+<div class="bg-slate-150 p-6 rounded-xl shadow-x2 border">
         <h2 class="text-2xl">Order History</h2>
-        <div class="flex flex-col gap-4">
+        <div class="flex flex-col gap-4"> <!--tailwind utility, styles the container-->
           <div *ngIf="orders.length > 0; else noOrders">
             <div *ngFor="let order of orders" class="border p-4 rounded-lg shadow">
-              <h3 class="text-lg font-semibold">Order #{{ order.Checkout_id }}</h3>
-              <p><strong>Total Price:</strong> ${{ order.Total_price }}</p>
+              <h3 class="text-lg font-semibold">OrderID #{{ order.checkoutID }}</h3>
+              <p><strong>Total Price:</strong> ${{ order.totalPrice }}</p>
               <p><strong>Purchased Goods:</strong> {{ order.purchasedGoods }}</p>
             </div>
           </div>
+          <!-- If no orders where found, print "No orders found"-->
           <ng-template #noOrders>
             <p>No orders found.</p>
           </ng-template>
         </div>
-      
-         Back button 
+       <!-- This is the "Back" button which leeds back to the cart-->
         <div class="mt-6">
           <app-button-back label="Back" routerLink="/cart"></app-button-back>
         </div>

@@ -3,7 +3,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 @Component({
   selector: 'app-button-back',
   template: `
-    <button class="text-black w-full px-5 py-2 rounded-xl shadow-md hover:bg-1" (click)="buttonClicked.emit()">
+    <button class="bg-sky-500 text-black w-full px-5 py-2 rounded-xl shadow-md hover:bg-1" (click)="buttonClicked.emit()">
       {{ label }}
     </button>
   `,

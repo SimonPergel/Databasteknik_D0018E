@@ -15,23 +15,26 @@ import { CommonModule } from '@angular/common';
 })
 export class OrderHistoryComponent implements OnInit {
   cartService = inject(CartService);
-  orders: Orders[] = []; // Store fetched orders
+  orders: Orders[] = []; // Store fetched data
 
   ngOnInit() {
+    //get the current users CartID
     const CartID = Number(localStorage.getItem("token"));
+    // check for cartID
     if (!CartID) {
-      console.error("No CartID found in localStorage!");
+      console.error("There was no CartID that matched the current logged in user!");
       return;
     }
-
+    // this part fetches orders that match with the current usersID
     this.cartService.getOrders(CartID).then(data => {
-      this.orders = data;
+      this.orders = data; // saves the fetched data in this.orders
+      console.log("this is the orders that are fetched:",this.orders);
     }).catch(error => {
       console.error("Error fetching orders:", error);
     });
   }
-  // Define trackBy function to optimize rendering
+  // This is helps angular track seprate objects, if one changes dosent mean every object is changed 
   trackByOrderId(index: number, order: Orders): number {
-    return order.Checkout_id;  // assuming CheckoutID is the unique identifier
+    return order.checkoutID;  
   }
 }

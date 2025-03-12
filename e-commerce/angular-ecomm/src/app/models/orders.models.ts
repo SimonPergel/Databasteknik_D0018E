@@ -1,6 +1,6 @@
 export interface Orders {
-        Checkout_id: number;
-        Total_price: number;
+        checkoutID: number;
+        totalPrice: number;
         Cart_id: number;
         purchasedGoods: string;
 }
