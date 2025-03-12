@@ -147,7 +147,9 @@ deleteProduct(productID: number) {
 }
 
 alterProductPrice (productID:number, newPrice: number){
-  
+  if(newPrice < 0){
+    alert("can't set a negative price")
+  }else{
   fetch('http://localhost:5201/api/mycontroller/alterproductprice?productID='+ productID + '&newPrice=' + newPrice)
   .then(response => {
     if (!response.ok) {
@@ -158,5 +160,6 @@ alterProductPrice (productID:number, newPrice: number){
   })
   .then(data => console.log("API Response:", data))
   .catch(error => console.error("API call failed:", error));
+}
 }
 }
