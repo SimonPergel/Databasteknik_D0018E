@@ -1,0 +1,82 @@
+.comment-card {
+    background-color: #f9f9f9;  /* Light background for each comment */
+    border: 1px solid #ddd;     /* Light gray border around the comment */
+    border-radius: 8px;         /* Rounded corners */
+    padding: 16px;              /* Padding around the content */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);  /* Slight shadow for depth */
+    margin-bottom: 16px;        /* Space between comments */
+  }
+  
+  .comment-card p {
+    margin: 8px 0;              /* Spacing between paragraph elements */
+  }
+  
+  .comment-card button {
+    background-color: #ff4d4d;  /* Red background for delete button */
+    color: white;               /* White text for the button */
+    border: none;               /* Remove border */
+    padding: 8px 16px;          /* Padding inside the button */
+    cursor: pointer;           /* Pointer cursor on hover */
+    border-radius: 4px;         /* Rounded corners on the button */
+    font-weight: bold;          /* Bold text for button */
+  }
+  
+  .comment-card button:hover {
+    background-color: #e04343;  /* Darker red on hover */
+  }
+
+  .submit-comment-card {
+    background-color: #fff;  /* White background for the form */
+    border: 1px solid #ddd;  /* Light border for the form */
+    border-radius: 8px;      /* Rounded corners */
+    padding: 16px;           /* Padding inside the form */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);  /* Subtle shadow for depth */
+    max-width: 600px;        /* Max width of the form */
+    margin: 20px auto;       /* Center the form on the page */
+  }
+  
+  .submit-comment-card h3 {
+    font-size: 1.5rem;  /* Slightly larger font for the heading */
+    margin-bottom: 12px; /* Space below the heading */
+  }
+  
+  .submit-comment-card .form-group {
+    margin-bottom: 16px;  /* Spacing between form elements */
+  }
+  
+  .submit-comment-card label {
+    font-weight: bold;    /* Make the label bold */
+    margin-bottom: 8px;   /* Space below the label */
+    display: block;       /* Make the label take full width */
+  }
+  
+  .submit-comment-card textarea {
+    width: 100%;          /* Make the textarea take the full width of the container */
+    padding: 10px;        /* Padding inside the textarea */
+    border: 1px solid #ddd;  /* Light border for the textarea */
+    border-radius: 4px;   /* Rounded corners for the textarea */
+    font-size: 1rem;      /* Set the font size */
+    resize: vertical;     /* Allow the user to resize vertically */
+  }
+  
+  .submit-comment-card button {
+    background-color: #4CAF50;  /* Green background for the submit button */
+    color: white;               /* White text for the button */
+    border: none;               /* Remove border */
+    padding: 10px 20px;         /* Padding inside the button */
+    border-radius: 4px;         /* Rounded corners for the button */
+    font-size: 1rem;            /* Set the font size */
+    cursor: pointer;           /* Pointer cursor on hover */
+    font-weight: bold;          /* Bold text on the button */
+    transition: background-color 0.3s; /* Smooth transition for background color */
+  }
+  
+  .submit-comment-card button:hover {
+    background-color: #45a049;  /* Darker green on hover */
+  }
+  
+  .submit-comment-card button:disabled {
+    background-color: #ccc;     /* Gray background when disabled */
+    cursor: not-allowed;        /* Not allowed cursor when disabled */
+  }
+  

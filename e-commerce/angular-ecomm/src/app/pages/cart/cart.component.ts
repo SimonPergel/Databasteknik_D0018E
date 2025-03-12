@@ -36,10 +36,13 @@ import { Router, RouterLink } from '@angular/router';
       <app-checkout />
   `,
   styleUrls: ['./cart.component.scss'],
+
+
+  
 })
 
 export class CartComponent implements OnInit {
-  //@Input() cart: Cart[] = []; // Declare 'cart' as an input
+  //@Input() cart: Cart[] ss= []; // Declare 'cart' as an input
 // the data is allready available
   cartService = inject(CartService);
   products = inject(ProductsListComponent);
@@ -52,12 +55,24 @@ export class CartComponent implements OnInit {
   balance!: string;
   userInfos!: userInfo;
   userBalance!: number;
+  receipts: Receipts [] = [];
   
   async ngOnInit() {
     this.cartService.loadCart();
     this.cartService.usersCart();
     this.getProductData();
     this.getUserBalance();
+
+    this.cartService.getReceipts(Number(localStorage.getItem("token"))).subscribe({
+      next: (response) => {
+        console.log("Fetched Receipts:", response);
+        this.receipts = response;
+        console.log('Receipt Object:', this.receipts);
+      },
+      error: (error) => {
+        console.error("Error fetching Receipts:", error);
+      }
+    });
   }
 
 
@@ -83,5 +98,9 @@ export class CartComponent implements OnInit {
     this.cdr.detectChanges();
     this.balance = '';
     this.ngOnInit();
+  }
+
+  trackBycart_id(index: number, receipt: Receipts): number {
+    return receipt.cart_id;
   }
 }

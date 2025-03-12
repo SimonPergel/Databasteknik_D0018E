@@ -132,4 +132,17 @@ addNewProduct(productName: string, quantity: number, price: number) {
   .then(data => console.log("API Response:", data))
   .catch(error => console.error("API call failed:", error));
 }
+
+deleteProduct(productID: number) {
+  fetch('http://localhost:5201/api/mycontroller/deleteProduct?productID='+ productID)
+  .then(response => {
+    if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    alert("Product deleted, refresh for new view")
+    return response.json();
+  })
+  .then(data => console.log("API Response:", data))
+  .catch(error => console.error("API call failed:", error));
+}
 }
