@@ -30,6 +30,7 @@ export class ProductCardComponent implements OnInit {
   quantity: string = '';
   template!: string;
   id!: number;
+  newPrice!: number; 
 
   cartService = inject(CartService);
   dataService = inject(DataService);

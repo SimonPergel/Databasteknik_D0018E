@@ -355,12 +355,12 @@ public IActionResult InsertProduct([FromBody] Product product) {
     }
 
     [HttpGet("alterproductprice")] //no put route made
-    public IActionResult alterProductPrice(string name, int newPrice) { // Updates a product in the Product table to change its price. Define name and new price.
-    // http://localhost:5201/api/mycontroller/alterproductprice?name=Pencil&newPrice=15
-        string SQLQuery = "UPDATE Products SET Price = " + newPrice +  " WHERE Product_name = " + "'" + name +  "';";
+    public IActionResult alterProductPrice(int productID, int newPrice) { // Updates a product in the Product table to change its price. Define name and new price.
+    // http://localhost:5201/api/mycontroller/alterproductprice?productID=5&newPrice=15
+        string SQLQuery = "UPDATE Products SET Price = " + newPrice +  " WHERE Product_id = " +  productID +  ";";
         try {
             makeConnection(SQLQuery);                                                               // Makes the connection to the database and runs the SQLQuery.
-            var result = new { Message = "Product price updated successfully!", name, newPrice};    // TODO: Make better return message.
+            var result = new { Message = "Product price updated successfully!", productID, newPrice};    // TODO: Make better return message.
             return Ok(result);                                                                      // Returns a OK with a result message.
         } catch (Exception exception) {                                                             // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message};

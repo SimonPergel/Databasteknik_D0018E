@@ -145,4 +145,18 @@ deleteProduct(productID: number) {
   .then(data => console.log("API Response:", data))
   .catch(error => console.error("API call failed:", error));
 }
+
+alterProductPrice (productID:number, newPrice: number){
+  
+  fetch('http://localhost:5201/api/mycontroller/alterproductprice?productID='+ productID + '&newPrice=' + newPrice)
+  .then(response => {
+    if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    alert("productID " +productID + " has had it's price changed to " + newPrice)
+    return response.json();
+  })
+  .then(data => console.log("API Response:", data))
+  .catch(error => console.error("API call failed:", error));
+}
 }
