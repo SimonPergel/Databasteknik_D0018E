@@ -6,9 +6,7 @@ import { ProductsListComponent } from '../products-list/products-list.component'
 import { Product } from '../../models/product.models';
 import { FormsModule } from '@angular/forms';
 import { userInfo } from '../../models/userInfo.models';
-import { Router } from '@angular/router';
-import { Receipts } from '../../models/Receipts.models';
-import { CommonModule } from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
 //import { Cart } from '../models/cart.models';
 
 
@@ -17,7 +15,7 @@ import { CommonModule } from '@angular/common';
 })
 @Component({
   selector: 'app-cart',
-  imports: [CartItemComponent,CheckoutComponent, FormsModule, CommonModule],
+  imports: [CartItemComponent, CheckoutComponent, FormsModule],
   template: `
     <div class="p-6 flex flex-col gap-4">
       <h2 class="text-2xl ">Shopping Cart</h2>
@@ -30,15 +28,12 @@ import { CommonModule } from '@angular/common';
             <button type="submit">Add balance</button>
           </form>
       </div>
+      
       @for (item of cartService.usersCart(); track item.productID) {
         <app-cart-item [cartItem]="item" />
       }
       <!-- Pass the cart items to the checkout component -->
       <app-checkout />
-
-
-    </div>
-
   `,
   styleUrls: ['./cart.component.scss'],
 
@@ -60,14 +55,14 @@ export class CartComponent implements OnInit {
   balance!: string;
   userInfos!: userInfo;
   userBalance!: number;
-  receipts: Receipts [] = [];
+  //receipts: Receipts [] = [];
   
   async ngOnInit() {
     this.cartService.loadCart();
     this.cartService.usersCart();
     this.getProductData();
     this.getUserBalance();
-
+/*
     this.cartService.getReceipts(Number(localStorage.getItem("token"))).subscribe({
       next: (response) => {
         console.log("Fetched Receipts:", response);
@@ -78,7 +73,9 @@ export class CartComponent implements OnInit {
         console.error("Error fetching Receipts:", error);
       }
     });
+    */
   }
+
 
   getProductData() {
     const storedData = localStorage.getItem("products");
@@ -103,8 +100,9 @@ export class CartComponent implements OnInit {
     this.balance = '';
     this.ngOnInit();
   }
-
+/*
   trackBycart_id(index: number, receipt: Receipts): number {
     return receipt.cart_id;
   }
+    */
 }

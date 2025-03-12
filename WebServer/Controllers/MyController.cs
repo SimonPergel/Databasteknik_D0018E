@@ -395,6 +395,34 @@ public IActionResult InsertProduct([FromBody] Product product) {
         }
     }
 
+    
+    [HttpGet("getorders")]
+    public IActionResult GetOrders(int UserID) {
+    // http://localhost:5201/api/mycontroller/getorders?UserID=5
+        Console.WriteLine("getCarts function is reached");
+        string SQLQuery = "SELECT * FROM Checkout WHERE Cart_id = " + UserID + ";";
+        try {
+            List<CheckoutOrder> orders = new List<CheckoutOrder>();               
+            var (connection, reader) = StartReader(SQLQuery);          
+            while (reader.Read()) {                                     
+                orders.Add(new CheckoutOrder {
+                    CheckoutID = reader.GetInt32("Checkout_id"),                 
+                    TotalPrice = reader.GetInt32("Total_price"),
+                    CartID = reader.GetInt32("Cart_id"),
+                    PurchasedGoods = reader.GetString("purchasedGoods"),
+                });
+            }
+            reader.Close();                                             // Closes the reader.
+            connection.Close();                                         // Closes the connection to the database.
+            return Ok(orders);                                           // Returns the retrieved products as JSON.
+        } catch (Exception exception) {                                 // Catches an exception and returns the exception message.
+            var result = new { Message = exception.Message };
+            return BadRequest(result);
+        }
+    }
+
+
+
     [HttpGet("getproductsuser")]
     public IActionResult GetProductsUser() { // This retrieves all products in stock.
     // http://localhost:5201/api/mycontroller/getproductsuser
@@ -451,6 +479,8 @@ public IActionResult InsertProduct([FromBody] Product product) {
             return BadRequest(result);
         }
     }
+
+
 
     [HttpGet("getproductfromcarts")]
     public IActionResult GetProductFromCarts(int productID) {

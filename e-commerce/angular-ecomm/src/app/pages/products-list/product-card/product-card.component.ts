@@ -63,6 +63,7 @@ export class ProductCardComponent implements OnInit {
         console.error(`Error during inserting process for item :`, error);
       }
     } else {
+      alert(`This product is out of stock! Not possible to add this product to the cart.`);
       console.log("The item is not available in stock at the moment!");
     }
   }
