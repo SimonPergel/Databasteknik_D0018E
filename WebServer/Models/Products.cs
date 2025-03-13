@@ -20,6 +20,14 @@ namespace WebServer.Models {  // Adjust the namespace if needed to match your pr
         public int UserID { get; set; }
     }
 
+    public class Username {
+        public string? username { get; set; }
+    }
+
+    public class Email {
+        public string? email { get; set; }
+    }
+
     public class Cart {
         public int cartID { get; set; }
         public int productID { get; set; }

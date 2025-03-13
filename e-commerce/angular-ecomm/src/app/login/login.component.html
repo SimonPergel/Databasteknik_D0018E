@@ -10,3 +10,19 @@
         <button type="submit">Login</button>
     </form>
 </div>
+
+<div class="input-container">
+    <h2>Or Sign Up</h2>
+    <form (ngSubmit)="onSignUp()" #signUpForm="ngForm">
+        <label for="email">Email:</label>
+        <input type="email" id="email" [(ngModel)]="signUpEmail" name="email" ngModel required placeholder="Enter your Email">
+
+        <label for="username">Username:</label>
+        <input type="text" id="username" [(ngModel)]="signUpUsername" name="username" ngModel required placeholder="Enter your username">
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" [(ngModel)]="signUpPassword" name="password" ngModel required placeholder="Enter your password">
+
+        <button type="submit">Sign up</button>
+    </form>
+</div>

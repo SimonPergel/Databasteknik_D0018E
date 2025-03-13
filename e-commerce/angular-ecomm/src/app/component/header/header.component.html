@@ -2,7 +2,7 @@
 
 <ng-template #loggedinadmin>
     <div class="bg-slate-100 px-4 py-3 shadow-md flex justify-between items-center">
-        <button class="text-xl" routerLink="/" queryParamsHandling="preserve"> My store</button>
+        <button class="text-xl" routerLink="/" (click)="getToFrontPage()"> My store</button>
         <app-primary-button [label]="'logout'" routerLink="/" [queryParams]="{}" action="logout"/>
         <app-primary-button [label]="'Add new product'" routerLink="/addproduct" queryParamsHandling="preserve"/>
     </div>
@@ -10,7 +10,7 @@
 
 <ng-template #loggedin>
     <div class="bg-slate-100 px-4 py-3 shadow-md flex justify-between items-center">
-        <button class="text-xl" routerLink="/" > My store</button>
+        <button class="text-xl" routerLink="/" (click)="getToFrontPage()"> My store</button>
         <app-primary-button [label]="'logout'" routerLink="/" [queryParams]="{}" action="logout"/>
         <app-primary-button [label]="'Cart (' + cartService.cartLength() + ')'" routerLink="/cart" queryParamsHandling="preserve"/>
     </div>
@@ -18,7 +18,7 @@
 
 <ng-template #loggedout>
     <div class="bg-slate-100 px-4 py-3 shadow-md flex justify-between items-center">
-        <button class="text-xl" routerLink="/" queryParamsHandling="preserve"> My store</button>
+        <button class="text-xl" routerLink="/" (click)="getToFrontPage()"> My store</button>
         <app-primary-button [label]="'login'" routerLink="/login"/>
     </div>
 </ng-template>

@@ -162,4 +162,62 @@ alterProductPrice (productID:number, newPrice: number){
   .catch(error => console.error("API call failed:", error));
 }
 }
+
+checkIfUserExists(username: string): Promise<boolean> {
+  return fetch('http://localhost:5201/api/mycontroller/checkifuserexists?username='+username)
+  .then(response => {
+    if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then((data: boolean) => {
+    return data
+  })
+  .catch(error => {
+    console.error("API call failed:", error)
+    return false;
+  });
+}
+
+checkIfEmailExists(email: string): Promise<boolean> {
+  return fetch('http://localhost:5201/api/mycontroller/checkifemailexists?email='+email)
+  .then(response => {
+    if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then((data: boolean) => {
+    return data
+  })
+  .catch(error => {
+    console.error("API call failed:", error)
+    return false;
+  });
+}
+
+createNewUser(email: string, username: string, password: string): Promise<void> {
+  return fetch('http://localhost:5201/api/mycontroller/createauthentication?email=' + email + '&username=' + username + '&password=' + password)
+  .then(response => {
+    if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(data => console.log("API Response:", data))
+  .catch(error => console.error("API call failed:", error));
+}
+
+createNewProfile(userID: number, username: string): Promise<void> {
+  return fetch('http://localhost:5201/api/mycontroller/insertuser?role=customer&balance=0&acctname=' + username + '&userInfo=' + userID)
+  .then(response => {
+    if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(data => console.log("API Response:", data))
+  .catch(error => console.error("API call failed:", error));
+}
 }

@@ -40,17 +40,31 @@ public class MyController : ControllerBase {
     //USER METHODS
 
     [HttpGet("insertuser")]
-    public IActionResult InsertUser(string role, int shpcrtid, int balance, string acctname) { // Inserts a new user into the User table. Define role, shopping cart id, balance and account name.
+    public IActionResult InsertUser(string role, int balance, string acctname, int userInfo) { // Inserts a new user into the User table. Define role, shopping cart id, balance and account name.
         // http://localhost:5201/api/mycontroller/insertuser?role=admin&shpcrtid=1&balance=1000&acctname=test
-        string SQLQuery = "INSERT into Users (role, Shopping_Cart_id, Balance, Account_name) VALUES (" + "'" + role + "'" + ", " + shpcrtid + ", " + balance + ", " + "'" + acctname + "'" +");";
+        string SQLQuery = "INSERT into Users (role, Balance, Account_name, User_information) VALUES (" + "'" + role + "'" + ", " + balance + ", '" + acctname + "', "  + userInfo + ");";
         try {
             makeConnection(SQLQuery);                                                                           // Makes the connection to the database and runs the SQLQuery.
-            var result = new { Message = "User inserted successfully!", role, shpcrtid, balance, acctname };    // TODO: Make better return message.
+            var result = new { Message = "User inserted successfully!", role, balance, acctname, userInfo };    // TODO: Make better return message.
             return Ok(result);                                                                                  // Returns a OK with a result message.
         } catch (Exception exception) {                                                                         // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message};
             return BadRequest(result);
         }  
+    }
+
+    [HttpGet("createauthentication")]
+    public IActionResult CreateAuthentication(string email, string username, string password) {
+        Console.WriteLine("CreateAuthentication is reached.");
+        string SQLQuery = "INSERT into Authentication (email, username, password) VALUES (" + "'" + email + "', '" + username + "', '" + password + "');";
+        try {
+            makeConnection(SQLQuery);
+            var result = new { Message = "Authentication created successfully!", email, username, password };
+            return Ok(result);
+        } catch (Exception exception) {
+            var result = new { Message = exception.Message};
+            return BadRequest(result);
+        }
     }
 
     [HttpGet("balanceusermath")]
@@ -86,6 +100,58 @@ public class MyController : ControllerBase {
                 return true;
             }
             var badresult = new { Message = "This account is not an admin:", UserID};     // Returns a message when requested account is not an admin.
+            return false;                                 
+        } catch (Exception exception) {                                                     // Catches an exception and returns the exception message.
+            var result = new { Message = exception.Message };   
+            return false;
+        }
+    }
+
+        [HttpGet("checkifuserexists")]
+    public bool CheckIfUserExists(string username) { // Check if admin privileges should be granted during session. Define a UserID.
+    // http://localhost:5201/api/mycontroller/checkifuserexists?username=Bob
+        string SQLQuery = "SELECT username FROM Authentication WHERE username = " + "'" + username + "';";
+        try {
+            List<Username> users = new List<Username>();
+            var (connection, reader) = StartReader(SQLQuery);                               // Makes a connection to the database and starts a reader.
+            while (reader.Read()) {                                                         // Read each row and map to the User object.
+                users.Add(new Username {
+                    username = reader.GetString("username"),                         // Reads in the account name into the Admin list
+                });
+            }
+            reader.Close();                                                                 // Closes the reader.
+            connection.Close();                                                             // Closes the connection to the database.
+            if (users.Exists(x => x.username == username)) {
+                var goodresult = new { Message = "This username already exists:", username};    // Returns a message that says the requested account is an admin.
+                return true;
+            }
+            var badresult = new { Message = "This username does not already exists", username};     // Returns a message when requested account is not an admin.
+            return false;                                 
+        } catch (Exception exception) {                                                     // Catches an exception and returns the exception message.
+            var result = new { Message = exception.Message };   
+            return false;
+        }
+    }
+
+            [HttpGet("checkifemailexists")]
+    public bool CheckIfEmailExists(string email) { // Check if admin privileges should be granted during session. Define a UserID.
+    // http://localhost:5201/api/mycontroller/checkifemailexists?email=bob@ltu.se
+        string SQLQuery = "SELECT email FROM Authentication WHERE email = " + "'" + email + "';";
+        try {
+            List<Email> users = new List<Email>();
+            var (connection, reader) = StartReader(SQLQuery);                               // Makes a connection to the database and starts a reader.
+            while (reader.Read()) {                                                         // Read each row and map to the User object.
+                users.Add(new Email {
+                    email = reader.GetString("email"),                         // Reads in the account name into the Admin list
+                });
+            }
+            reader.Close();                                                                 // Closes the reader.
+            connection.Close();                                                             // Closes the connection to the database.
+            if (users.Exists(x => x.email == email)) {
+                var goodresult = new { Message = "This email already exists:", email};    // Returns a message that says the requested account is an admin.
+                return true;
+            }
+            var badresult = new { Message = "This email does not already exist:", email};     // Returns a message when requested account is not an admin.
             return false;                                 
         } catch (Exception exception) {                                                     // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message };   

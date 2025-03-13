@@ -80,6 +80,6 @@ ngAfterViewInit(): void {
   }
 
   getToFrontPage() {
-    this.routes.navigate(['/'], { queryParams: { id: Number(localStorage.getItem("token")) }, queryParamsHandling: 'merge' })
+    this.routes.navigate(['/'], { queryParams: { id: Number(localStorage.getItem("token")) } })
   }
 }
