@@ -28,7 +28,7 @@ import { RouterLink } from '@angular/router';
         </div>
         <div class="flex gap-2"> <!-- Added a flex container for both buttons -->
         <app-primary-button label="Checkout" (buttonClicked)="handleCheckout()" />
-       <app-primary-button label="Order History" routerLink="/orderHistory"/>
+       <app-primary-button label="Order History" routerLink="/orderHistory" queryParamsHandling="preserve"/>
       </div>
 
       </div>

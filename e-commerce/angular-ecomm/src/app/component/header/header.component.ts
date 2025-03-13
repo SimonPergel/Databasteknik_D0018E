@@ -78,4 +78,8 @@ ngAfterViewInit(): void {
     }
     console.log('Current Template:', this.currentTemplate);
   }
+
+  getToFrontPage() {
+    this.routes.navigate(['/'], { queryParams: { id: Number(localStorage.getItem("token")) }, queryParamsHandling: 'merge' })
+  }
 }
