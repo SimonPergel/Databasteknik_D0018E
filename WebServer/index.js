@@ -1,4 +1,4 @@
-fetch('http://localhost:5201/api/mycontroller/deletefromcart?purchaseID=48')
+fetch('http://localhost:5201/api/mycontroller/checkadmin?UserID=1')
     .then(response => {
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
