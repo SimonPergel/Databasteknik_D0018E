@@ -235,6 +235,23 @@ getOrders(CartID: number):Promise<Orders[]> {
 });
 }
 
+getAllOrders(): Promise<Orders[]> {
+  return fetch('http://localhost:5201/api/mycontroller/getallorders')
+  .then(response => {
+      if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+  })
+  .then((data: Orders[]) => { 
+    console.log("Received order history:", data);
+    return data; 
+})
+.catch(error => {
+    console.error("API call failed:", error);
+    return [];  // Return an empty array to match expected return type
+});
+}
 
   getProductFromCarts(productID: number): Promise<void> {
     return fetch('http://localhost:5201/api/mycontroller/getproductfromcarts?ProductID='+productID)

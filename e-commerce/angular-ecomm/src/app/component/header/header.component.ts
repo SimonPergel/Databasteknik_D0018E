@@ -82,4 +82,8 @@ ngAfterViewInit(): void {
   getToFrontPage() {
     this.routes.navigate(['/'], { queryParams: { id: Number(localStorage.getItem("token")) } })
   }
+
+  getToFrontPageLoggedOut() {
+    this.routes.navigate(['/'])
+  }
 }

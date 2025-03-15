@@ -182,7 +182,7 @@ export class ProductCardComponent implements OnInit {
 
 
   goComments(){
-    this.routes.navigate(['/comments'], { queryParams:  { id: this.product.id, userId: this.id} }); 
+    this.routes.navigate(['/comments'], { queryParams:  { pid: this.product.id}, queryParamsHandling: "merge" }); 
     console.log("Navigating to comments page");
   }
 
