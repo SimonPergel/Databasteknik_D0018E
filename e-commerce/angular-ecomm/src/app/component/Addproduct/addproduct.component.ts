@@ -11,10 +11,10 @@ import { DataService } from '../../services/data.service';
     FormsModule
   ]
 })
+
 export class AddProductComponent {
   dataService = inject(DataService);
-  constructor
-  (
+  constructor (
   private routes: Router
   ) {}
   productName: string = '';

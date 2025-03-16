@@ -1,15 +1,18 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class StarRatingService {
   private apiUrl = 'http://localhost:5201/api/mycontroller'; // Replace with actual API URL
 
-  constructor(private http: HttpClient) {}
+  constructor (
+    private http: HttpClient
+  ) {}
 
   /** Fetches the current rating for a product */
   updateStars(productID: number): Observable<any> {
@@ -61,5 +64,4 @@ export class StarRatingService {
         return 0;  // Return a default value instead of `undefined`
       });
   }
-  
 }

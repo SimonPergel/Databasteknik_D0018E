@@ -1,5 +1,5 @@
-import { Component, input, output, EventEmitter, Input, Output } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, input, output, Input } from '@angular/core';
+
 @Component({
   selector: 'app-primary-button',
   template: `
@@ -10,6 +10,7 @@ import { RouterLink } from '@angular/router';
   `,
   styleUrl: './primary-button.component.scss'
 })
+
 export class PrimaryButtonComponent {
   label = input('');
   @Input() action: string = '';

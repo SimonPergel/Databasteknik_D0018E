@@ -1,9 +1,7 @@
-import { ChangeDetectorRef,Component, inject, OnInit, Input } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ButtonBackComponent } from "../button-back/button-back.component";
 import { CartService } from '../../../../services/cart.service';
-import { CartItemComponent } from '../../cart-item/cart-item.component';
-import { CartComponent } from '../../cart.component';
 import { Orders } from '../../../../models/orders.models';
 import { CommonModule } from '@angular/common';
 import { DataService } from '../../../../services/data.service';
@@ -14,8 +12,9 @@ import { DataService } from '../../../../services/data.service';
   templateUrl: './order-history.component.html',
   styleUrls: ['./order-history.component.scss']
 })
+
 export class OrderHistoryComponent implements OnInit {
-  constructor(
+  constructor (
     private route: ActivatedRoute
   ) {}
   cartService = inject(CartService);

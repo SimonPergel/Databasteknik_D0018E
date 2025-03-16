@@ -30,6 +30,7 @@ import { ProductAndRatingService } from '../app/services/productandRating.servic
     } 
   `]
 })
+
 export class StarRatingComponent implements OnInit, OnDestroy {
   @Input() rating: number = 0;
   @Output() ratingChange = new EventEmitter<number>();

@@ -2,17 +2,15 @@ import { ChangeDetectorRef, Component, inject, Input, OnInit } from '@angular/co
 import { Product } from '../../../models/product.models';
 import { PrimaryButtonComponent } from "../../../component/primary-button/primary-button.component";
 import { CartService } from '../../../services/cart.service';
-import { Cart } from '../../../models/cart.models';
 import { StarRatingComponent } from '../../../../star-rating/star-rating.component';
 import { ProductAndRatingService } from '../../../services/productandRating.service';
 import { NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from '../../../services/data.service';
 import { take } from 'rxjs';
 import { ProductsListComponent } from '../products-list.component';
-import { CommentsComponent } from "../../../components/comments/comments.component";import { commentsService } from '../../../services/comments.service';
-;
+import { commentsService } from '../../../services/comments.service';
 
 
 @Component({
@@ -21,6 +19,7 @@ import { CommentsComponent } from "../../../components/comments/comments.compone
   templateUrl: './product-card.component.html',
   styleUrls: ['./product-card.component.scss']
 })
+
 export class ProductCardComponent implements OnInit {
   p_Id!: number;
   pageRating: number = 3; // Default rating will now be updated to the average rating
@@ -31,7 +30,7 @@ export class ProductCardComponent implements OnInit {
   quantity: string = '';
   template!: string;
   id!: number;
-  newPrice!: number; 
+  newPrice!: string; 
 
   cartService = inject(CartService);
   dataService = inject(DataService);
@@ -42,7 +41,7 @@ export class ProductCardComponent implements OnInit {
 
   @Input() product!: Product;  // Corrected input usage
 
-  constructor(
+  constructor (
     private cdr: ChangeDetectorRef,
     private cdr2: ChangeDetectorRef,
     private route: ActivatedRoute,
@@ -84,7 +83,6 @@ export class ProductCardComponent implements OnInit {
       }
     });
     console.log("Product in ProductCard:", this.product);
-
     
     this.productAndRatingService.setProductId(this.product.id);
 
@@ -116,7 +114,6 @@ export class ProductCardComponent implements OnInit {
     } catch (error) {
       console.error(" Error fetching user rating:", error);
     }
-
 
     //fetch personal rating
     try {
@@ -160,14 +157,13 @@ export class ProductCardComponent implements OnInit {
       } catch (error) {
         console.error(" Error fetching user rating:", error);
       }
-  
       console.log("Product ID set to:", this.product.id);
     }
   }
-  
 
   clearInput() {
     this.quantity = '';
+    this.newPrice = '';
   }
 
   onSubmit() {
@@ -182,7 +178,6 @@ export class ProductCardComponent implements OnInit {
     //this.routes.navigate(['/'], { queryParamsHandling: 'preserve' })
   }
 
-
   goComments(){
     this.routes.navigate(['/comments'], { queryParams:  { pid: this.product.id}, queryParamsHandling: "merge" }); 
     console.log("Navigating to comments page");
@@ -191,8 +186,16 @@ export class ProductCardComponent implements OnInit {
   deleteCommentsForProduct() {
     this.dataService.deleteProduct(this.product.id);
     this.commentService.deleteProductComments(this.product.id);
+    this.cdr.detectChanges();
+    this.products.ngOnInit();
   }
 
+  updatePrice() {
+    this.dataService.alterProductPrice(this.product.id, Number(this.newPrice));
+    this.cdr.detectChanges();
+    this.clearInput();
+    this.products.ngOnInit();
+  }
 }
 
 // CODE FOR THE SECOND QUANTITY / OUT OF STOCK TEXT //

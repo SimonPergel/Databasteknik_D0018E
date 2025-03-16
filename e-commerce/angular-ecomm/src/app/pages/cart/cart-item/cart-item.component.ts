@@ -7,6 +7,7 @@ import { CartComponent } from '../cart.component';
 @Injectable({
   providedIn: 'root'
 })
+
 @Component({
   selector: 'app-cart-item',
   imports: [ButtonComponent],
@@ -22,13 +23,16 @@ import { CartComponent } from '../cart.component';
   `,
   styles:  ``
 })
+
 export class CartItemComponent {
   cartService = inject(CartService);
   cart = inject(CartComponent);
   //item = input.required<Product>();
   cartItem = input.required<Cart>();
 
-  constructor(private cdRef: ChangeDetectorRef) { }
+  constructor (
+    private cdRef: ChangeDetectorRef
+  ) { }
 
   getProductName() {
     return this.cart.productList.find(p => p.id === this.cartItem().productID)?.name ?? null;

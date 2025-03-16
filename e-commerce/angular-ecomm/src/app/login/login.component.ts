@@ -12,8 +12,9 @@ import { DataService } from '../services/data.service';
     FormsModule
   ]
 })
+
 export class LoginComponent {
-  constructor(
+  constructor (
     private routes: Router,
     private dataService: DataService
   ) {}

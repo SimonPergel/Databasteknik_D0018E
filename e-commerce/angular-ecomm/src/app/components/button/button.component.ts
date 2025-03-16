@@ -11,9 +11,9 @@ import { Component, input, output } from '@angular/core';
   `,
   styleUrl: './button.component.scss'
 })
+
 export class ButtonComponent {
   label = input('');
 
   buttonClicked = output();
-
 }

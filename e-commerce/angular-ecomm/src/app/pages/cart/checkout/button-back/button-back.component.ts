@@ -9,6 +9,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
   `,
   styleUrls: ['./button-back.component.scss']
 })
+
 export class ButtonBackComponent {
   // Using @Input() to accept the label from the parent component
   @Input() label!: string;

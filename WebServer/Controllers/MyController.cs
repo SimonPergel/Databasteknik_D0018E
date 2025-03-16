@@ -40,12 +40,12 @@ public class MyController : ControllerBase {
     //USER METHODS
 
     [HttpGet("insertuser")]
-    public IActionResult InsertUser(string role, int balance, string acctname, int userInfo) { // Inserts a new user into the User table. Define role, shopping cart id, balance and account name.
+    public IActionResult InsertUser(string role, int balance, string acctname, int userInfo) { // Inserts a new user into the User table. Define role, balance, account name and user info (linking to authentication table).
         // http://localhost:5201/api/mycontroller/insertuser?role=admin&shpcrtid=1&balance=1000&acctname=test
         string SQLQuery = "INSERT into Users (role, Balance, Account_name, User_information) VALUES (" + "'" + role + "'" + ", " + balance + ", '" + acctname + "', "  + userInfo + ");";
         try {
             makeConnection(SQLQuery);                                                                           // Makes the connection to the database and runs the SQLQuery.
-            var result = new { Message = "User inserted successfully!", role, balance, acctname, userInfo };    // TODO: Make better return message.
+            var result = new { Message = "User inserted successfully!", role, balance, acctname, userInfo };
             return Ok(result);                                                                                  // Returns a OK with a result message.
         } catch (Exception exception) {                                                                         // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message};
@@ -54,7 +54,7 @@ public class MyController : ControllerBase {
     }
 
     [HttpGet("createauthentication")]
-    public IActionResult CreateAuthentication(string email, string username, string password) {
+    public IActionResult CreateAuthentication(string email, string username, string password) { // Creates a row in the Authentication table. Define email, username and password.
         Console.WriteLine("CreateAuthentication is reached.");
         string SQLQuery = "INSERT into Authentication (email, username, password) VALUES (" + "'" + email + "', '" + username + "', '" + password + "');";
         try {
@@ -68,12 +68,12 @@ public class MyController : ControllerBase {
     }
 
     [HttpGet("balanceusermath")]
-    public IActionResult balanceUserMath(string UserID, int math) { // Decrease or increase balance based on deposits or purchases. Define account name and +/- value.
+    public IActionResult balanceUserMath(string UserID, int math) { // Decrease or increase balance based on deposits or purchases. Define user ID and +/- value.
         // http://localhost:5201/api/mycontroller/balanceusermath?UserID=2&math=100
         string SQLQuery = "UPDATE Users SET Balance = Balance + " + math + " WHERE User_id = " + "'" + UserID + "';";
         try {
             makeConnection(SQLQuery);                                                               // Makes the connection to the database and runs the SQLQuery.
-            var result = new { Message = "User balanced changed successfully!", UserID, math};    // TODO: Make better return message.
+            var result = new { Message = "User balanced changed successfully!", UserID, math};
             return Ok(result);                                                                      // Returns a OK with a result message.
         } catch (Exception exception) {                                                             // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message};
@@ -90,16 +90,16 @@ public class MyController : ControllerBase {
             var (connection, reader) = StartReader(SQLQuery);                               // Makes a connection to the database and starts a reader.
             while (reader.Read()) {                                                         // Read each row and map to the User object.
                 users.Add(new Admin {
-                    UserID = reader.GetInt32("User_id"),                         // Reads in the account name into the Admin list
+                    UserID = reader.GetInt32("User_id"),                                    // Reads in the UserID into the Admin list
                 });
             }
             reader.Close();                                                                 // Closes the reader.
             connection.Close();                                                             // Closes the connection to the database.
             if (users.Exists(x => x.UserID == UserID)) {
-                var goodresult = new { Message = "This account is an admin:", UserID};    // Returns a message that says the requested account is an admin.
+                var goodresult = new { Message = "This account is an admin:", UserID};      // Returns a message that says the requested account is an admin.
                 return true;
             }
-            var badresult = new { Message = "This account is not an admin:", UserID};     // Returns a message when requested account is not an admin.
+            var badresult = new { Message = "This account is not an admin:", UserID};       // Returns a message when requested account is not an admin.
             return false;                                 
         } catch (Exception exception) {                                                     // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message };   
@@ -107,51 +107,51 @@ public class MyController : ControllerBase {
         }
     }
 
-        [HttpGet("checkifuserexists")]
-    public bool CheckIfUserExists(string username) { // Check if admin privileges should be granted during session. Define a UserID.
+    [HttpGet("checkifuserexists")]
+    public bool CheckIfUserExists(string username) { // Check if an account with a certain username exists in Authentication table. Define a username.
     // http://localhost:5201/api/mycontroller/checkifuserexists?username=Bob
         string SQLQuery = "SELECT username FROM Authentication WHERE username = " + "'" + username + "';";
         try {
             List<Username> users = new List<Username>();
-            var (connection, reader) = StartReader(SQLQuery);                               // Makes a connection to the database and starts a reader.
-            while (reader.Read()) {                                                         // Read each row and map to the User object.
+            var (connection, reader) = StartReader(SQLQuery);                                   // Makes a connection to the database and starts a reader.
+            while (reader.Read()) {                                                             // Read each row and map to the Username object.
                 users.Add(new Username {
-                    username = reader.GetString("username"),                         // Reads in the account name into the Admin list
+                    username = reader.GetString("username"),                                    // Reads in the username into the Username list
                 });
             }
-            reader.Close();                                                                 // Closes the reader.
-            connection.Close();                                                             // Closes the connection to the database.
+            reader.Close();                                                                     // Closes the reader.
+            connection.Close();                                                                 // Closes the connection to the database.
             if (users.Exists(x => x.username == username)) {
-                var goodresult = new { Message = "This username already exists:", username};    // Returns a message that says the requested account is an admin.
+                var goodresult = new { Message = "This username already exists:", username};    // Returns a message that says the username exists.
                 return true;
             }
-            var badresult = new { Message = "This username does not already exists", username};     // Returns a message when requested account is not an admin.
+            var badresult = new { Message = "This username does not already exists", username}; // Returns a message that says the username does not exist.
             return false;                                 
-        } catch (Exception exception) {                                                     // Catches an exception and returns the exception message.
+        } catch (Exception exception) {                                                         // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message };   
             return false;
         }
     }
 
-            [HttpGet("checkifemailexists")]
-    public bool CheckIfEmailExists(string email) { // Check if admin privileges should be granted during session. Define a UserID.
+    [HttpGet("checkifemailexists")]
+    public bool CheckIfEmailExists(string email) { // Check if a certain email exists in Authentication table. Define a email
     // http://localhost:5201/api/mycontroller/checkifemailexists?email=bob@ltu.se
         string SQLQuery = "SELECT email FROM Authentication WHERE email = " + "'" + email + "';";
         try {
             List<Email> users = new List<Email>();
             var (connection, reader) = StartReader(SQLQuery);                               // Makes a connection to the database and starts a reader.
-            while (reader.Read()) {                                                         // Read each row and map to the User object.
+            while (reader.Read()) {                                                         // Read each row and map to the Email object.
                 users.Add(new Email {
-                    email = reader.GetString("email"),                         // Reads in the account name into the Admin list
+                    email = reader.GetString("email"),                                      // Reads in the email into the Email list
                 });
             }
             reader.Close();                                                                 // Closes the reader.
             connection.Close();                                                             // Closes the connection to the database.
             if (users.Exists(x => x.email == email)) {
-                var goodresult = new { Message = "This email already exists:", email};    // Returns a message that says the requested account is an admin.
+                var goodresult = new { Message = "This email already exists:", email};      // Returns a message that says the email already exists.
                 return true;
             }
-            var badresult = new { Message = "This email does not already exist:", email};     // Returns a message when requested account is not an admin.
+            var badresult = new { Message = "This email does not already exist:", email};   // Returns a message that says the email doesn't already exist.
             return false;                                 
         } catch (Exception exception) {                                                     // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message };   
@@ -169,42 +169,35 @@ public class MyController : ControllerBase {
 
 
 
-[HttpGet("isProductSoldOut")]
-public bool isProductSoldOut( int cartID, int productID){ 
-    try 
-    {
-        string SQLQuery = "SELECT COUNT(*) FROM Carts WHERE Cart_id ="+ cartID + " AND Product_id = " + productID + ";";
-        using (var connection = new MySqlConnection(Globals.connectionString))
-        {
-            connection.Open();
-            using (var command = new MySqlCommand(SQLQuery, connection))
-            {
-                command.Parameters.AddWithValue("@CartID", cartID);
-                int count = Convert.ToInt32(command.ExecuteScalar());
+    [HttpGet("isProductSoldOut")]
+    public bool isProductSoldOut( int cartID, int productID){ 
+        try {
+            string SQLQuery = "SELECT COUNT(*) FROM Carts WHERE Cart_id ="+ cartID + " AND Product_id = " + productID + ";";
+            using (var connection = new MySqlConnection(Globals.connectionString)) {
+                connection.Open();
+                using (var command = new MySqlCommand(SQLQuery, connection)) {
+                    command.Parameters.AddWithValue("@CartID", cartID);
+                    int count = Convert.ToInt32(command.ExecuteScalar());
 
-                if (count == 0)
-                {
-                    return true;
+                    if (count == 0) {
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
             }
+        } 
+        catch (Exception exception) {
+            return false;
         }
-    } 
-    catch (Exception exception) 
-    {
-        return false;
     }
-}
-
-
 
     [HttpGet("insertintocart")]
-    public IActionResult insertIntoCart(int cartID, int productID, int quantity, int price) { // Inserts a new cart into the Cart table. Define order id, product id, quantity and price.
+    public IActionResult insertIntoCart(int cartID, int productID, int quantity, int price) { // Inserts a new cart into the Cart table. Define cart id, product id, quantity and price.
     // http://localhost:5201/api/mycontroller/insertintocart?cartID=1&productID=2&quantity=20&price=15
         string SQLQuery = "INSERT INTO Carts (Cart_id, Product_id, Quantity, Price) VALUES (" + cartID + ", " + productID + ", " + quantity + ", " + price + ");";
         try {
             makeConnection(SQLQuery);                                                                               // Makes the connection to the database and runs the SQLQuery.
-            var result = new { Message = "New cart inserted successfully!", cartID, productID, quantity, price};    // TODO: Make better return message.
+            var result = new { Message = "New cart inserted successfully!", cartID, productID, quantity, price};
             return Ok(result);                                                                                      // Returns a OK with a result message.
         } catch (Exception exception) {                                                                             // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message};
@@ -213,33 +206,33 @@ public bool isProductSoldOut( int cartID, int productID){
     }
 
     [HttpGet("cartCheckout")]
-    public IActionResult cartCheckout(int CartID, int totalPrice, string purchasedGoods) { // SQL query to delete one specific item from the cart
-    // sql query add to checkout table
-    string SQLQuery = "INSERT INTO Checkout (Cart_id, Total_price, purchasedGoods) VALUES (" + CartID  + ", " + totalPrice + ", '" + purchasedGoods + "');";
+    public IActionResult cartCheckout(int CartID, int totalPrice, string purchasedGoods) { // Checks out a cart, i.e creates a row in Checkout table. Define cart ID, total price and purchased goods.
+        // sql query add to checkout table
+        string SQLQuery = "INSERT INTO Checkout (Cart_id, Total_price, purchasedGoods) VALUES (" + CartID  + ", " + totalPrice + ", '" + purchasedGoods + "');";
         try {
             makeConnection(SQLQuery);                                             // Makes the connection to the database and runs the SQLQuery.
-            var result = new { Message = "receipt added to history!", CartID};    // TODO: Make better return message.
+            var result = new { Message = "receipt added to history!", CartID};
             return Ok(result);
         } catch (Exception exception) {
             return BadRequest(new { Message = "Error processing checkout", Error = exception.Message });
         }
     }
 
-
     [HttpGet("deletefromcart")]
-    public IActionResult deleteFromCart(int purchaseID) { // Removes a cart from the Cart table. Define purchase id.
+    public IActionResult deleteFromCart(int purchaseID) { // Removes a certain purchase from the Cart table. Define purchase id.
     // http://localhost:5201/api/mycontroller/deletefromcart?purchaseID=1
         Console.WriteLine("deleteFromCart method is reached...");
         string SQLQuery = "DELETE FROM Carts WHERE Purchase_id = " + purchaseID + ";";
         try {
             makeConnection(SQLQuery);                                                   // Makes the connection to the database and runs the SQLQuery.
-            var result = new { Message = "Cart deleted successfully!", purchaseID};     // TODO: Make better return message.
+            var result = new { Message = "Cart deleted successfully!", purchaseID};
             return Ok(result);                                                          // Returns a OK with a result message.
         } catch (Exception exception) {                                                 // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message};
             return BadRequest(result);
         }
     }
+
     [HttpGet("emtycart")]
     public IActionResult emtyCart(int CartID) { // Removes a cart from the Cart table. Define purchase id.
     // http://localhost:5201/api/mycontroller/emtyCart?CartID=1
@@ -247,7 +240,7 @@ public bool isProductSoldOut( int cartID, int productID){
         string SQLQuery = "DELETE FROM Carts WHERE Cart_id = " + CartID + ";";
         try {
             makeConnection(SQLQuery);                                                   // Makes the connection to the database and runs the SQLQuery.
-            var result = new { Message = "Cart deleted successfully!", CartID};         // TODO: Make better return message.
+            var result = new { Message = "Cart deleted successfully!", CartID};
             return Ok(result);                                                          // Returns a OK with a result message.
         } catch (Exception exception) {                                                 // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message};
@@ -256,15 +249,14 @@ public bool isProductSoldOut( int cartID, int productID){
     }
 
     [HttpGet("updateuserbalance")]
-    public IActionResult updateUserBalance(int User_id, int totalPrice) { // Removes a cart from the Cart table. Define purchase id.
+    public IActionResult updateUserBalance(int User_id, int totalPrice) { // Updates the balance a user has. Define user ID and a certain sum.
     // http://localhost:5201/api/mycontroller/updateUserBalance?User_id=1&totalPrice=2
         Console.WriteLine("updated the Users balance in user table");
-    //string SQLQuery = "UPDATE Users SET Balance = Balance - @TotalPrice WHERE User_id = @UserID";
-    string SQLQuery = "UPDATE Users SET Balance = Balance - " + totalPrice +" WHERE User_id = " + User_id +";";
-
+        //string SQLQuery = "UPDATE Users SET Balance = Balance - @TotalPrice WHERE User_id = @UserID";
+        string SQLQuery = "UPDATE Users SET Balance = Balance - " + totalPrice +" WHERE User_id = " + User_id +";";
         try {
             makeConnection(SQLQuery);                                                                        // Makes the connection to the database and runs the SQLQuery.
-            var result = new { Message = "User balance updated successfully!", User_id, totalPrice};         // TODO: Make better return message.
+            var result = new { Message = "User balance updated successfully!", User_id, totalPrice};
             return Ok(result);                                                                               // Returns a OK with a result message.
         } catch (Exception exception) {                                                                      // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message};
@@ -272,14 +264,13 @@ public bool isProductSoldOut( int cartID, int productID){
         }
     }
 
-
     [HttpGet("updatecarts")]
-    public IActionResult updateCarts(int cartID, int productID, int quantity, int price) { // Updates a cart in the Cart table, define order id, product id, quantity and price.
+    public IActionResult updateCarts(int cartID, int productID, int quantity, int price) { // Updates a cart in the Cart table, define cart ID, product id, quantity and price.
     // http://localhost:5201/api/mycontroller/updatecarts?orderID=1&productID=2&quantity=14&price=7
         string SQLQuery = "UPDATE Carts SET Cart_id = " + cartID + ", Product_id = " + productID + ", Quantity = " + quantity + ", Price = " + price + " WHERE Purchase_id = " + cartID + ";";
         try {
             makeConnection(SQLQuery);                                                                           // Makes the connection to the database and runs the SQLQuery.
-            var result = new { Message = "Cart updated successfully!", cartID, productID, quantity, price };   // TODO: Make better return message.
+            var result = new { Message = "Cart updated successfully!", cartID, productID, quantity, price };
             return Ok(result);                                                                                  // Returns a OK with a result message.
         } catch (Exception exception) {                                                                         // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message};
@@ -290,12 +281,12 @@ public bool isProductSoldOut( int cartID, int productID){
     //PRODUCT Methods
 
     [HttpGet("insertproduct")]
-   public IActionResult InsertProduct( string name,  int quantity, int inStock, int price) { // Insert a product into the Product table. Define name, quantity, in stock and price.
+    public IActionResult InsertProduct( string name,  int quantity, int inStock, int price) { // Insert a product into the Product table. Define name, quantity, in stock and price.
         // http://localhost:5201/api/mycontroller/insertproduct?name=product1&quantity=10&inStock=5&price=100
         string SQLQuery = "INSERT INTO Products (Product_name, Quantity, In_stock, Price) VALUES ('" + name + "', " + quantity + ", " + inStock + ", " + price + ");";
         try {
             makeConnection(SQLQuery);                                                                           // Makes the connection to the database and runs the SQLQuery.
-            var result = new { Message = "Product inserted successfully!", name, quantity, inStock, price};     // TODO: Make better return message.
+            var result = new { Message = "Product inserted successfully!", name, quantity, inStock, price};
             return Ok(result);                                                                                  // Returns a OK with a result message.
         } catch (Exception exception) {                                                                         // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message};
@@ -353,7 +344,7 @@ public IActionResult InsertProduct([FromBody] Product product) {
         string SQLQuery = "UPDATE Products SET In_stock = 0 WHERE Product_name = " + "'" + name + "';";
         try {
             makeConnection(SQLQuery);                                                       // Makes the connection to the database and runs the SQLQuery.
-            var result = new { Message = "Product removed from sale successfully!", name};  // TODO: Make better return message.
+            var result = new { Message = "Product removed from sale successfully!", name};
             return Ok(result);                                                              // Returns a OK with a result message.
         } catch (Exception exception) {                                                     // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message};
@@ -367,7 +358,7 @@ public IActionResult InsertProduct([FromBody] Product product) {
         string SQLQuery = "UPDATE Products SET In_stock = 1 WHERE Product_name = " + "'" + name + "';";
         try {
             makeConnection(SQLQuery);                                                   // Makes the connection to the database and runs the SQLQuery.
-            var result = new { Message = "Product put on sale successfully!", name};    // TODO: Make better return message.
+            var result = new { Message = "Product put on sale successfully!", name};
             return Ok(result);                                                          // Returns a OK with a result message.
         } catch (Exception exception) {                                                 // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message};
@@ -375,27 +366,27 @@ public IActionResult InsertProduct([FromBody] Product product) {
         }
     }
 
-    [HttpGet("deleteProduct")]  // no put route made
-    public IActionResult deleteProduct(int productID) { // Removes a product in the Product table. Define name.
+    [HttpGet("deleteProduct")]
+    public IActionResult deleteProduct(int productID) { // Removes a product in the Product table. Define product ID.
     // http://localhost:5201/api/mycontroller/deleteProduct?ProductID=
         string SQLQuery = "DELETE FROM Products WHERE Product_id = " + "" + productID +  ";";
         try {
-            makeConnection(SQLQuery);                                               // Makes the connection to the database and runs the SQLQuery.
-            var result = new { Message = "Product removed successfully!", productID};    // TODO: Make better return message.
-            return Ok(result);                                                      // Returns a OK with a result message.
-        } catch (Exception exception) {                                             // Catches an exception and returns the exception message.
+            makeConnection(SQLQuery);                                                   // Makes the connection to the database and runs the SQLQuery.
+            var result = new { Message = "Product removed successfully!", productID};
+            return Ok(result);                                                          // Returns a OK with a result message.
+        } catch (Exception exception) {                                                 // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message};
             return BadRequest(result);
         }
     }
 
-    [HttpGet("addproductquantity")]  //no  put Route made
+    [HttpGet("addproductquantity")]
     public IActionResult addProductQuantity(string name, int plusQuantity) { // Updates a product in the Product table to add quantity. Define name and added quantity.
     // http://localhost:5201/api/mycontroller/addproductquantity?name=Pencil&plusQuantity=10
         string SQLQuery = "UPDATE Products SET QUANTITY = QUANTITY + " + plusQuantity +  " WHERE Product_name = " + "'" + name + "';";
         try {
             makeConnection(SQLQuery);                                                                       // Makes the connection to the database and runs the SQLQuery.
-            var result = new { Message = "Product quantity increased successfully!", name, plusQuantity};   // TODO: Make better return message.
+            var result = new { Message = "Product quantity increased successfully!", name, plusQuantity};
             return Ok(result);                                                                              // Returns a OK with a result message.
         } catch (Exception exception) {                                                                     // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message};
@@ -404,31 +395,31 @@ public IActionResult InsertProduct([FromBody] Product product) {
     }
 
     [HttpGet("depleteStockQuantity")]
-    public IActionResult DepleteStockQuantity(int productID, int MinusQuantity) {
-        Console.WriteLine("productId= " + productID+ " ,MinusQuantity =" + MinusQuantity);  // Updates a product in the Product table to decrease quantity.
+    public IActionResult DepleteStockQuantity(int productID, int MinusQuantity) { // Updates a product in the Product table to decrease quantity. Define product ID and decreased quantity.
+        Console.WriteLine("productId= " + productID+ " ,MinusQuantity =" + MinusQuantity);
         Console.WriteLine("Depleting stock quantity");
         string SQLQuery = "UPDATE Products SET Quantity = Quantity - " + MinusQuantity + 
                       " WHERE Product_id = " + productID + " ;";
         try {
-            makeConnection(SQLQuery);  // Makes the connection to the database and runs the SQLQuery.
+            makeConnection(SQLQuery);                                                                               // Makes the connection to the database and runs the SQLQuery.
             var result = new { Message = "Product quantity decreased successfully!", productID, MinusQuantity };
-            return Ok(result);  // Returns an OK with a result message.
-        } catch (Exception exception) { // Catches an exception and returns the exception message.
+            return Ok(result);                                                                                      // Returns an OK with a result message.
+        } catch (Exception exception) {                                                                             // Catches an exception and returns the exception message.
             Console.WriteLine("tried Deleting nonexistent item");
             var result = new { Message = exception.Message };
             return BadRequest(result);
         }
     }
 
-    [HttpGet("alterproductprice")] //no put route made
-    public IActionResult alterProductPrice(int productID, int newPrice) { // Updates a product in the Product table to change its price. Define name and new price.
+    [HttpGet("alterproductprice")]
+    public IActionResult alterProductPrice(int productID, int newPrice) { // Updates a product in the Product table to change its price. Define product ID and new price.
     // http://localhost:5201/api/mycontroller/alterproductprice?productID=5&newPrice=15
         string SQLQuery = "UPDATE Products SET Price = " + newPrice +  " WHERE Product_id = " +  productID +  ";";
         try {
-            makeConnection(SQLQuery);                                                               // Makes the connection to the database and runs the SQLQuery.
-            var result = new { Message = "Product price updated successfully!", productID, newPrice};    // TODO: Make better return message.
-            return Ok(result);                                                                      // Returns a OK with a result message.
-        } catch (Exception exception) {                                                             // Catches an exception and returns the exception message.
+            makeConnection(SQLQuery);                                                                   // Makes the connection to the database and runs the SQLQuery.
+            var result = new { Message = "Product price updated successfully!", productID, newPrice};
+            return Ok(result);                                                                          // Returns a OK with a result message.
+        } catch (Exception exception) {                                                                 // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message};
             return BadRequest(result);
         }
@@ -463,7 +454,7 @@ public IActionResult InsertProduct([FromBody] Product product) {
 
     
     [HttpGet("getorders")]
-    public IActionResult GetOrders(int UserID) {
+    public IActionResult GetOrders(int UserID) { // Retrives all orders for a certain user. Define User ID.
     // http://localhost:5201/api/mycontroller/getorders?UserID=5
         Console.WriteLine("getCarts function is reached");
         string SQLQuery = "SELECT * FROM Checkout WHERE Cart_id = " + UserID + ";";
@@ -488,8 +479,8 @@ public IActionResult InsertProduct([FromBody] Product product) {
     }
 
     [HttpGet("getallorders")]
-    public IActionResult GetAllOrders() {
-    // http://localhost:5201/api/mycontroller/getorders?UserID=5
+    public IActionResult GetAllOrders() { // retrieves all orders, meant for admins.
+    // http://localhost:5201/api/mycontroller/getallorders
         Console.WriteLine("getAllOrders function is reached");
         string SQLQuery = "SELECT * FROM Checkout;";
         try {
@@ -540,20 +531,20 @@ public IActionResult InsertProduct([FromBody] Product product) {
     [HttpGet("running")]
      public IActionResult running() {                            // http://localhost:5201/api/mycontroller/running
         var result = new { Message = "WebServer is running"};   // Check if the web server is running.
-            return Ok(result);
+        return Ok(result);
      }
 
     [HttpGet("getcarts")]
-    public IActionResult GetCarts(int UserID) {
+    public IActionResult GetCarts(int UserID) { // This gets the cart of a certain user. Define User ID.
     // http://localhost:5201/api/mycontroller/getcarts?UserID=5
         Console.WriteLine("getCarts function is reached");
         string SQLQuery = "SELECT * FROM Carts WHERE Cart_id = " + UserID + ";";
         try {
-            List<Cart> carts = new List<Cart>();               // Create a product object as a list for the reader to input to.
+            List<Cart> carts = new List<Cart>();                        // Create a Cart object as a list for the reader to input to.
             var (connection, reader) = StartReader(SQLQuery);           // Makes a connection to the database and starts a reader.
-            while (reader.Read()) {                                     // Read each row and map to the Product object.
+            while (reader.Read()) {                                     // Read each row and map to the Cart object.
                 carts.Add(new Cart {
-                    cartID = reader.GetInt32("Cart_id"),                 // Assuming column name 'Product_id'.
+                    cartID = reader.GetInt32("Cart_id"),                // Assuming column name 'Cart_id'.
                     productID = reader.GetInt32("Product_id"),
                     Quantity = reader.GetInt32("Quantity"),
                     Price = reader.GetInt32("Price"),
@@ -569,19 +560,17 @@ public IActionResult InsertProduct([FromBody] Product product) {
         }
     }
 
-
-
     [HttpGet("getproductfromcarts")]
-    public IActionResult GetProductFromCarts(int productID) {
+    public IActionResult GetProductFromCarts(int productID) { // Gets all carts that a certain product is in. Define Product ID.
     // http://localhost:5201/api/mycontroller/getcarts?UserID=5
         Console.WriteLine("getproductfromCarts function is reached");
         string SQLQuery = "SELECT * FROM Carts WHERE Product_id = " + productID + ";";
         try {
-            List<Cart> carts = new List<Cart>();               // Create a product object as a list for the reader to input to.
+            List<Cart> carts = new List<Cart>();                        // Create a Cart object as a list for the reader to input to.
             var (connection, reader) = StartReader(SQLQuery);           // Makes a connection to the database and starts a reader.
-            while (reader.Read()) {                                     // Read each row and map to the Product object.
+            while (reader.Read()) {                                     // Read each row and map to the Cart object.
                 carts.Add(new Cart {
-                    cartID = reader.GetInt32("Cart_id"),                 // Assuming column name 'Product_id'.
+                    cartID = reader.GetInt32("Cart_id"),                // Assuming column name 'Cart_id'.
                     productID = reader.GetInt32("Product_id"),
                     Quantity = reader.GetInt32("Quantity"),
                     Price = reader.GetInt32("Price"),
@@ -598,40 +587,32 @@ public IActionResult InsertProduct([FromBody] Product product) {
     }
 
 
-[HttpGet("CheckProductAvailability")]
-public bool CheckProductAvailability(int productID, int desiredQuantity)
-{
+    [HttpGet("CheckProductAvailability")]
+    public bool CheckProductAvailability(int productID, int desiredQuantity) { // Checkts if a product is available or not, i.e if quantity >= a desired quantity. Define Product ID and desired quantity.
     //http://localhost:5201/api/mycontroller/checkproductavailability?productid=5&desiredQuantity=1
-    try
-    {
-        string SQLQuery = "SELECT Quantity FROM Products WHERE Product_id = @ProductID;";
+        try {
+            string SQLQuery = "SELECT Quantity FROM Products WHERE Product_id = @ProductID;";
+            using (var connection = new MySqlConnection(Globals.connectionString)) {
+                connection.Open();
+                using (var command = new MySqlCommand(SQLQuery, connection)) {
+                    command.Parameters.AddWithValue("@ProductID", productID);
 
-        using (var connection = new MySqlConnection(Globals.connectionString))
-        {
-            connection.Open();
-            using (var command = new MySqlCommand(SQLQuery, connection))
-            {
-                command.Parameters.AddWithValue("@ProductID", productID);
+                    object result = command.ExecuteScalar();
 
-                object result = command.ExecuteScalar();
-
-                if (result != null && int.TryParse(result.ToString(), out int availableQuantity))
-                {
-                    return availableQuantity >= desiredQuantity;
+                    if (result != null && int.TryParse(result.ToString(), out int availableQuantity)) {
+                        return availableQuantity >= desiredQuantity;
+                    }
                 }
             }
         }
+        catch (Exception ex) {
+            Console.WriteLine("Error checking product availability: " + ex.Message);
+        }
+        return false; // Return false if an error occurs or the product is not found
     }
-    catch (Exception ex)
-    {
-        Console.WriteLine("Error checking product availability: " + ex.Message);
-    }
-
-    return false; // Return false if an error occurs or the product is not found
-}
 
     [HttpGet("getauthentication")]
-    public IActionResult GetAuthentication(string username, string password) {
+    public IActionResult GetAuthentication(string username, string password) { // Checks if an account exists with a received username and password. Define username and password.
     // http://localhost:5201/api/mycontroller/getauthentication
         Console.WriteLine("GetAuthentication function is reached");
         string SQLQuery = "SELECT * FROM Authentication WHERE username = " + "'" + username + "'" + " AND password = " + "'" + password + "';";
@@ -658,146 +639,125 @@ public bool CheckProductAvailability(int productID, int desiredQuantity)
     //Rating methods
 
     [HttpGet("CheckRating")]
-    public double CheckRating(int productId){
+    public double CheckRating(int productId) { // Checks the rating of a product. Define Product ID.
         // http://localhost:5201/api/mycontroller/CheckRating?productId=1
-        try
-        {
+        try {
             Console.WriteLine("Checking product rating");
             string SQLQuery = "SELECT AVG(rating) FROM ratings WHERE product_id = @ProductID;";
-            using (var connection = new MySqlConnection(Globals.connectionString))
-            {
+            using (var connection = new MySqlConnection(Globals.connectionString)) {
                 connection.Open();
-                using (var command = new MySqlCommand(SQLQuery, connection))
-                {
+                using (var command = new MySqlCommand(SQLQuery, connection)) {
                     command.Parameters.AddWithValue("@ProductID", productId);
                     object result = command.ExecuteScalar();
-                    if (result != null && double.TryParse(result.ToString(), out double rating))
-                    {
+                    if (result != null && double.TryParse(result.ToString(), out double rating)) {
                         Console.WriteLine("average rating: " + rating);
                         return rating;
                     }
                 }
             }
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             Console.WriteLine("Error checking product rating: " + ex.Message);
         }
         return 3.0;
     }
 
-  [HttpGet("Rate")]
-public bool Rate(int Rating, int productID, int userID)
-{
+    [HttpGet("Rate")]
+    public bool Rate(int Rating, int productID, int userID) { // Gives a rating to a defined product. Define rating, Product ID and User ID.
     // http://localhost:5201/api/mycontroller/Rate?Rating=5&productID=1&userID=1
-    try
-    {
-        // Use parameterized query to avoid SQL injection and ensure proper functionality
-        string SQLQuery = "INSERT INTO ratings (rating, product_id, user_id) " +
-                          "VALUES (@Rating, @Product_id, @User_id) " +
-                          "ON DUPLICATE KEY UPDATE rating = @Rating;";
+        try {
+            // Use parameterized query to avoid SQL injection and ensure proper functionality
+            string SQLQuery = "INSERT INTO ratings (rating, product_id, user_id) " +
+                                "VALUES (@Rating, @Product_id, @User_id) " +
+                                "ON DUPLICATE KEY UPDATE rating = @Rating;";
+            using (var connection = new MySqlConnection(Globals.connectionString)) {
+                connection.Open();
+                using (var command = new MySqlCommand(SQLQuery, connection)) {
+                    // Add parameters to prevent SQL injection and for proper query execution
+                    command.Parameters.AddWithValue("@Rating", Rating);
+                    command.Parameters.AddWithValue("@Product_id", productID);
+                    command.Parameters.AddWithValue("@User_id", userID);
 
-        using (var connection = new MySqlConnection(Globals.connectionString))
-        {
-            connection.Open();
-            using (var command = new MySqlCommand(SQLQuery, connection))
-            {
-                // Add parameters to prevent SQL injection and for proper query execution
-                command.Parameters.AddWithValue("@Rating", Rating);
-                command.Parameters.AddWithValue("@Product_id", productID);
-                command.Parameters.AddWithValue("@User_id", userID);
-
-                // Execute the query and check if rows were affected
-                int rowsAffected = command.ExecuteNonQuery();
-                if (rowsAffected > 0)
-                {
-                    Console.WriteLine("Rating added or updated successfully");
-                    CheckRating(productID);  // Assuming this method updates the rating elsewhere
-                    return true;
-                }
-                else
-                {
-                    Console.WriteLine("Rating not added or updated (maybe faulty input)");
-                    return false;
+                    // Execute the query and check if rows were affected
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0) {
+                        Console.WriteLine("Rating added or updated successfully");
+                        CheckRating(productID);  // Assuming this method updates the rating elsewhere
+                        return true;
+                    }
+                    else {
+                        Console.WriteLine("Rating not added or updated (maybe faulty input)");
+                        return false;
+                    }
                 }
             }
         }
+        catch (Exception exception) {
+            Console.WriteLine($"Error: {exception.Message}");
+            return false;
+        }
     }
-    catch (Exception exception)
-    {
-        Console.WriteLine($"Error: {exception.Message}");
-        return false;
-    }
-}
 
-[HttpGet("CheckRatingUser")]
- public double? CheckRatingUser(int productId, int userId)
-{
-    try
-    {
-        Console.WriteLine($"Checking product rating for product {productId} and user {userId}");
+    [HttpGet("CheckRatingUser")]
+    public double? CheckRatingUser(int productId, int userId) { // Checks a rating for a product a certain user has given. Define Product ID and User ID.
+        try {
+            Console.WriteLine($"Checking product rating for product {productId} and user {userId}");
 
-        string SQLQuery = @"
-            SELECT rating FROM ratings 
-            WHERE product_id = @ProductID AND user_id = @UserID 
-            LIMIT 1;
-        ";
+            string SQLQuery = @"
+                SELECT rating FROM ratings 
+                WHERE product_id = @ProductID AND user_id = @UserID 
+                LIMIT 1;
+            ";
 
-        using (var connection = new MySqlConnection(Globals.connectionString))
-        {
-            connection.Open();
-            using (var command = new MySqlCommand(SQLQuery, connection))
-            {
-                command.Parameters.AddWithValue("@ProductID", productId);
-                command.Parameters.AddWithValue("@UserID", userId);
+            using (var connection = new MySqlConnection(Globals.connectionString)) {
+                connection.Open();
+                using (var command = new MySqlCommand(SQLQuery, connection)) {
+                    command.Parameters.AddWithValue("@ProductID", productId);
+                    command.Parameters.AddWithValue("@UserID", userId);
 
-                var result = command.ExecuteScalar();
+                    var result = command.ExecuteScalar();
                 
-                if (result == null) 
-                {
-                    Console.WriteLine("No rating found for this user and product.");
-                    return null; // Fail state
+                    if (result == null) {
+                        Console.WriteLine("No rating found for this user and product.");
+                        return null; // Fail state
+                    }
+                    return Convert.ToDouble(result);
                 }
-
-                return Convert.ToDouble(result);
             }
         }
+        catch (Exception ex) {
+            Console.WriteLine($"Error checking rating: {ex.Message}");
+            return null; // Fail state on error
+        }
     }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Error checking rating: {ex.Message}");
-        return null; // Fail state on error
-    }
-}
 
     [HttpGet("getuserinfo")]
-    public IActionResult GetUserInfo(int UserID) {
+    public IActionResult GetUserInfo(int UserID) { // Gets the balance for a certain user. Define User ID.
     // http://localhost:5201/api/mycontroller/getuserinfo?UserID=5
         Console.WriteLine("GetUserInfo function is reached");
         string SQLQuery = "SELECT * FROM Users WHERE User_id = " + UserID + ";";
         try {
-            int Balance = new int();               // Create a product object as a list for the reader to input to.
+            int Balance = new int();                                    
             var (connection, reader) = StartReader(SQLQuery);           // Makes a connection to the database and starts a reader.
-            while (reader.Read()) {                                     // Read each row and map to the Product object.
+            while (reader.Read()) {                                     
                     Balance = reader.GetInt32("Balance");
             }
             reader.Close();                                             // Closes the reader.
             connection.Close();                                         // Closes the connection to the database.
-            return Ok(Balance);                                           // Returns the retrieved products as JSON.
+            return Ok(Balance);                                         // Returns the retrieved products as JSON.
         } catch (Exception exception) {                                 // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message };
             return BadRequest(result);
         }
     }
 
-
     [HttpGet("makeComment")]
-    public IActionResult Comment(int userID, int productID, string comment) { //inserts product comments into the database
+    public IActionResult Comment(int userID, int productID, string comment) { // Inserts product comments into the database. Define User ID, Product ID and comment.
     // http://localhost:5201/api/mycontroller/makeComment?userID=2&productID=2&comment=This%20is%20an%20Opinion
         string SQLQuery = "INSERT INTO Comments (user_id, product_id, comments) VALUES ("+ userID + "," + productID + ",'" + comment + "' );";
         try {
             makeConnection(SQLQuery);                                                                               // Makes the connection to the database and runs the SQLQuery.
-            var result = new { Message = "New comment inserted successfully!", userID, productID, comment};    // TODO: Make better return message.
+            var result = new { Message = "New comment inserted successfully!", userID, productID, comment};
             return Ok(result);                                                                                      // Returns a OK with a result message.
         } catch (Exception exception) {                                                                             // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message};
@@ -805,16 +765,16 @@ public bool Rate(int Rating, int productID, int userID)
         }
     }
 
-     [HttpGet("getProductComments")]
-    public IActionResult getProductComments(int productID) { // retrieves a products comments from the database to display on the product-comment page
+    [HttpGet("getProductComments")]
+    public IActionResult getProductComments(int productID) { // Retrieves a products comments from the database to display on the product-comment page. Define Product ID.
     // http://localhost:5201/api/mycontroller/getProductComments?productID=2
         string SQLQuery = "SELECT * FROM Comments WHERE product_id = "+ productID+ ";";
          try {
-            List<Opinion> Comments = new List<Opinion>();               // Create a product object as a list for the reader to input to.
+            List<Opinion> Comments = new List<Opinion>();               // Create a Opinion object as a list for the reader to input to.
             var (connection, reader) = StartReader(SQLQuery);           // Makes a connection to the database and starts a reader.
-            while (reader.Read()) {                                     // Read each row and map to the Product object.
+            while (reader.Read()) {                                     // Read each row and map to the Opinion object.
                 Comments.Add(new Opinion {
-                    userID = reader.GetInt32("user_id"),                 // Assuming column name 'Product_id'.
+                    userID = reader.GetInt32("user_id"),                 // Assuming column name 'user_id'.
                     productID = reader.GetInt32("product_id"),
                     comment = reader.GetString("comments"),
                     commentID = reader.GetInt32("comment_id")
@@ -831,11 +791,11 @@ public bool Rate(int Rating, int productID, int userID)
 
     [HttpGet("deleteComment")]
     public IActionResult deleteComment(int commentID) { // Removes a comment from the Comment table. Define comment id.
-     // http://localhost:5201/api/mycontroller/deleteComment?commentID=2
+    // http://localhost:5201/api/mycontroller/deleteComment?commentID=2
         string SQLQuery = "DELETE FROM Comments WHERE Comment_id = " +commentID+  ";";
         try {
             makeConnection(SQLQuery);                                               // Makes the connection to the database and runs the SQLQuery.
-            var result = new { Message = "Comment removed successfully!", commentID};    // TODO: Make better return message.
+            var result = new { Message = "Comment removed successfully!", commentID};
             return Ok(result);                                                      // Returns a OK with a result message.
         } catch (Exception exception) {                                             // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message};
@@ -844,42 +804,40 @@ public bool Rate(int Rating, int productID, int userID)
     }
 
     [HttpGet("deleteproductcomments")]
-    public IActionResult deleteProductComments(int productID) {
+    public IActionResult deleteProductComments(int productID) { // Delete all comments for a certain product. Define Product ID.
         // http://localhost:5201/api/mycontroller/deleteproductcomments?productID=2
         string SQLQuery = "DELETE FROM Comments where product_id = " + productID + ";";
                 try {
-            makeConnection(SQLQuery);                                               // Makes the connection to the database and runs the SQLQuery.
-            var result = new { Message = "Comments for product removed successfully!", productID};    // TODO: Make better return message.
-            return Ok(result);                                                      // Returns a OK with a result message.
-        } catch (Exception exception) {                                             // Catches an exception and returns the exception message.
+            makeConnection(SQLQuery);                                                               // Makes the connection to the database and runs the SQLQuery.
+            var result = new { Message = "Comments for product removed successfully!", productID};
+            return Ok(result);                                                                      // Returns a OK with a result message.
+        } catch (Exception exception) {                                                             // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message};
             return BadRequest(result);
         }
     }
 
-
     [HttpGet("getReceipts")]
-     public IActionResult getReceipts(int userID) { // retrieves a products comments from the database to display on the product-comment page
+    public IActionResult getReceipts(int userID) { // Retrieves all orders that a certain user has made. Define User ID.
     // http://localhost:5201/api/mycontroller/getReceipts?userID=2
         string SQLQuery = "SELECT * FROM Checkout WHERE Cart_id = "+ userID+ ";";
          try {
-            List<Receipts> Comments = new List<Receipts>();               // Create a product object as a list for the reader to input to.
-            var (connection, reader) = StartReader(SQLQuery);           // Makes a connection to the database and starts a reader.
-            while (reader.Read()) {                                     // Read each row and map to the Product object.
+            List<Receipts> Comments = new List<Receipts>();                 // Create a Receipts object as a list for the reader to input to.
+            var (connection, reader) = StartReader(SQLQuery);               // Makes a connection to the database and starts a reader.
+            while (reader.Read()) {                                         // Read each row and map to the Receipts object.
                 Comments.Add(new Receipts {
-                    checkout_id = reader.GetInt32("checkout_id"),                 // Assuming column name 'Product_id'.
+                    checkout_id = reader.GetInt32("checkout_id"),           // Assuming column name 'checkout_id'.
                     total_price = reader.GetInt32("total_price"),
                     cart_id = reader.GetInt32("cart_id"),
                     purchasedGoods = reader.GetString("purchasedGoods")
                 });
             }
-            reader.Close();                                             // Closes the reader.
-            connection.Close();                                         // Closes the connection to the database.
-            return Ok(Comments);                                        // Returns the retrieved products as JSON.
-        } catch (Exception exception) {                                 // Catches an exception and returns the exception message.
+            reader.Close();                                                 // Closes the reader.
+            connection.Close();                                             // Closes the connection to the database.
+            return Ok(Comments);                                            // Returns the retrieved products as JSON.
+        } catch (Exception exception) {                                     // Catches an exception and returns the exception message.
             var result = new { Message = exception.Message };
             return BadRequest(result);
         }
     }
-
 }

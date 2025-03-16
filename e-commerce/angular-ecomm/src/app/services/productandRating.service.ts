@@ -1,6 +1,6 @@
 
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, firstValueFrom, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, switchMap, tap } from 'rxjs';
 import { Observable } from 'rxjs';
 import { StarRatingService } from './star-rating.services';
 
@@ -8,6 +8,7 @@ import { StarRatingService } from './star-rating.services';
 @Injectable({
   providedIn: 'root',
 })
+
 export class ProductAndRatingService {
   private productIdSource = new BehaviorSubject<number | null>(null);
   currentProductId$ = this.productIdSource.asObservable();
@@ -65,9 +66,4 @@ export class ProductAndRatingService {
       return 0;  // Return a default value in case of an error
     }
   }
-  
-    
-
-  
-
 }

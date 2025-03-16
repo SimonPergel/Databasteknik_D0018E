@@ -1,8 +1,7 @@
-import { Component, signal, Type, Injectable } from '@angular/core';
+import { Component, Injectable } from '@angular/core';
 import { Product } from '../../models/product.models';
 import { ProductCardComponent } from "./product-card/product-card.component";
 import { DataService } from '../../services/data.service';
-import { Cart } from '../../models/cart.models';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -22,12 +21,13 @@ import { ActivatedRoute } from '@angular/router';
 @Injectable({
   providedIn: 'root'
 })
+
 export class ProductsListComponent {
   pageRating: number = 3; // Default rating 
   products: Product []=[]
   id!: string;
   //products: Cart []=[]
-  constructor(
+  constructor (
     private dataService: DataService,
     private route: ActivatedRoute
   ) {}

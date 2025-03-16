@@ -1,4 +1,4 @@
-import { Component, inject, Input, input, Injectable, computed, ChangeDetectorRef, OnInit } from '@angular/core';
+import { Component, inject, Injectable, ChangeDetectorRef, OnInit } from '@angular/core';
 import { CartService } from '../../services/cart.service';
 import { CartItemComponent } from './cart-item/cart-item.component';
 import { CheckoutComponent } from "./checkout/checkout.component";
@@ -6,13 +6,13 @@ import { ProductsListComponent } from '../products-list/products-list.component'
 import { Product } from '../../models/product.models';
 import { FormsModule } from '@angular/forms';
 import { userInfo } from '../../models/userInfo.models';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 //import { Cart } from '../models/cart.models';
-
 
 @Injectable({
   providedIn: 'root'
 })
+
 @Component({
   selector: 'app-cart',
   imports: [CartItemComponent, CheckoutComponent, FormsModule],
@@ -36,17 +36,14 @@ import { Router, RouterLink } from '@angular/router';
       <app-checkout />
   `,
   styleUrls: ['./cart.component.scss'],
-
-
-  
 })
 
 export class CartComponent implements OnInit {
   //@Input() cart: Cart[] ss= []; // Declare 'cart' as an input
-// the data is allready available
+  // the data is allready available
   cartService = inject(CartService);
   products = inject(ProductsListComponent);
-  constructor(
+  constructor (
     private cdr: ChangeDetectorRef,
     private routes: Router
   ) { }
@@ -61,8 +58,8 @@ export class CartComponent implements OnInit {
     this.cartService.loadCart();
     this.cartService.usersCart();
     this.getProductData();
-    this.getUserBalance();
-/*
+    await this.getUserBalance();
+    /*
     this.cartService.getReceipts(Number(localStorage.getItem("token"))).subscribe({
       next: (response) => {
         console.log("Fetched Receipts:", response);
@@ -75,7 +72,6 @@ export class CartComponent implements OnInit {
     });
     */
   }
-
 
   getProductData() {
     const storedData = localStorage.getItem("products");
@@ -93,16 +89,17 @@ export class CartComponent implements OnInit {
     this.userBalance = UserBalance;
   }
 
-  onSubmit() {
+  async onSubmit() {
     console.log("Added balance is:", this.balance);
     this.cartService.addUserBalance(Number(localStorage.getItem("token")), Number(this.balance));
+    await this.getUserBalance();
     this.cdr.detectChanges();
     this.balance = '';
     this.ngOnInit();
   }
-/*
+  /*
   trackBycart_id(index: number, receipt: Receipts): number {
     return receipt.cart_id;
   }
-    */
+  */
 }

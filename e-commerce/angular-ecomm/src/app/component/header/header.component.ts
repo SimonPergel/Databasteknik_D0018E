@@ -2,7 +2,6 @@ import { Component, inject, OnInit, ChangeDetectorRef, ViewChild, TemplateRef, A
 import { PrimaryButtonComponent } from "../primary-button/primary-button.component";
 import { CartService } from '../../services/cart.service';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
-import { NgIf } from '@angular/common';
 import { AuthenticationGuard } from '../Authentication/AuthenticationGuard';
 import { DataService } from '../../services/data.service';
 import { CommonModule } from '@angular/common';
@@ -14,6 +13,7 @@ import { CommonModule } from '@angular/common';
 
   styles: ``
 })
+
 export class HeaderComponent implements OnInit,  AfterViewInit {
   template!: string;
   currentTemplate!: TemplateRef<any>;
@@ -25,7 +25,7 @@ export class HeaderComponent implements OnInit,  AfterViewInit {
   @ViewChild('loggedin') loggedin!: TemplateRef<any>;
   @ViewChild('loggedout') loggedout!: TemplateRef<any>;
 
-  constructor(
+  constructor (
     private route: ActivatedRoute,
     private authGuard: AuthenticationGuard,
     private cdRef: ChangeDetectorRef,
@@ -59,7 +59,7 @@ export class HeaderComponent implements OnInit,  AfterViewInit {
     });
   }
 
-ngAfterViewInit(): void {
+  ngAfterViewInit(): void {
     this.getTemplate();
   }
 
