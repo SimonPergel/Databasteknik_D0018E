@@ -53,5 +53,18 @@ export class commentsService {
     getComments(productID: number): Observable<any> {
         return this.http.get<any>(`${this.apiUrl}/getProductComments?productID=${productID}`);
     }
+
+    public deleteProductComments(productID: number) {
+        console.log("Trying deletion of comments for productID:", productID);
+        fetch('http://localhost:5201/api/mycontroller/deleteproductcomments?productID='+ productID)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+            })
+            .then(data => console.log("API Response:", data))
+            .catch(error => console.error("API call failed:", error));
+    }
 }
 

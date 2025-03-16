@@ -11,7 +11,8 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DataService } from '../../../services/data.service';
 import { take } from 'rxjs';
 import { ProductsListComponent } from '../products-list.component';
-import { CommentsComponent } from "../../../components/comments/comments.component";;
+import { CommentsComponent } from "../../../components/comments/comments.component";import { commentsService } from '../../../services/comments.service';
+;
 
 
 @Component({
@@ -34,6 +35,7 @@ export class ProductCardComponent implements OnInit {
 
   cartService = inject(CartService);
   dataService = inject(DataService);
+  commentService = inject(commentsService);
   productAndRatingService = inject(ProductAndRatingService);
   products = inject(ProductsListComponent);
 
@@ -186,7 +188,10 @@ export class ProductCardComponent implements OnInit {
     console.log("Navigating to comments page");
   }
 
-
+  deleteCommentsForProduct() {
+    this.dataService.deleteProduct(this.product.id);
+    this.commentService.deleteProductComments(this.product.id);
+  }
 
 }
 

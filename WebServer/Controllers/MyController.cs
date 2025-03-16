@@ -843,6 +843,20 @@ public bool Rate(int Rating, int productID, int userID)
         }
     }
 
+    [HttpGet("deleteproductcomments")]
+    public IActionResult deleteProductComments(int productID) {
+        // http://localhost:5201/api/mycontroller/deleteproductcomments?productID=2
+        string SQLQuery = "DELETE FROM Comments where product_id = " + productID + ";";
+                try {
+            makeConnection(SQLQuery);                                               // Makes the connection to the database and runs the SQLQuery.
+            var result = new { Message = "Comments for product removed successfully!", productID};    // TODO: Make better return message.
+            return Ok(result);                                                      // Returns a OK with a result message.
+        } catch (Exception exception) {                                             // Catches an exception and returns the exception message.
+            var result = new { Message = exception.Message};
+            return BadRequest(result);
+        }
+    }
+
 
     [HttpGet("getReceipts")]
      public IActionResult getReceipts(int userID) { // retrieves a products comments from the database to display on the product-comment page
