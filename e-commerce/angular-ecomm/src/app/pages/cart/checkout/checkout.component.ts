@@ -118,6 +118,10 @@ export class CheckoutComponent {
         }
         //if the user dosent have enought money, it should not be possible to checkout
       }
+      if (this.totalPrice > await this.cartService.getUserBalance(Number(localStorage.getItem("token")))) {
+        alert("Cannot checkout! User balance too low.");
+        return;
+      }
 
       // Ensure each checkout request is complete before moving forward
       const response = await this.cartService.cartCheckout(CartIDs, this.totalPrice, this.purchasedGoods);
