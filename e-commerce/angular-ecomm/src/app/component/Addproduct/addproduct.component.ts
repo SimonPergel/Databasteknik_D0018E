@@ -26,6 +26,14 @@ export class AddProductComponent {
     console.log('Quantity:', this.quantity);
     console.log('Price:', this.price);
 
+    if (Number(this.quantity) < 0 || Number(this.price) <= 0) {
+      alert("Either the quantity or negative or price is 0 or negative. Please try again!");
+      this.productName = '';
+      this.quantity = '';
+      this.price = '';
+      return
+    }
+
     await this.dataService.addNewProduct(this.productName, Number(this.quantity), Number(this.price));
     this.routes.navigate(['/'], { queryParams: { queryParams: Number(localStorage.getItem("token")) }, queryParamsHandling: 'merge' })
   }

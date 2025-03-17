@@ -167,6 +167,13 @@ export class ProductCardComponent implements OnInit {
   }
 
   onSubmit() {
+    if ((this.product.quantity + Number(this.quantity)) < 0) {
+      alert("You cannot set quantity less then 0");
+      this.cdr.detectChanges();
+      this.clearInput();
+      this.products.ngOnInit();
+      return
+    }
     this.dataService.addProductQuantity(this.product.name, Number(this.quantity));
     this.cdr.detectChanges();
     this.clearInput();
