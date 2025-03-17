@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 // Use MySql.Data for MySQL
 public static class Globals {
-    public static string connectionString = "Server=16.170.225.238;Port=3306;Database=Shop;User Id=foo;Password=hejhej;";   // Correct MySQL connection string.
+    public static string connectionString = "Server=16.171.10.180;Port=3306;Database=Shop;User Id=foo;Password=hejhej;";   // Correct MySQL connection string.
 }
 
 [ApiController]                 // Create a API Controller.
